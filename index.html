@@ -2,44 +2,104 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AND | SUPER APP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AND FIX</title>
     <script src="https://meet.jit.si/external_api.js"></script>
     <style>
-        :root { --main: #00ff88; --bg: #050505; --card: #111; --text: #eee; --border: #222; --sec: #ff0055; }
-        [data-theme="light"] { --bg: #f0f2f5; --card: #ffffff; --text: #111; --border: #ddd; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding-bottom: 80px; transition: 0.3s; }
+        :root { --main: #00ff88; --bg: #000; --card: #111; --text: #eee; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        header { padding: 15px; text-align: center; background: var(--card); border-bottom: 1px solid var(--border); font-weight: bold; position: sticky; top: 0; z-index: 1000; }
-        .stats { display: flex; justify-content: space-around; padding: 8px; font-size: 10px; background: #000; color: var(--main); font-family: monospace; border-bottom: 1px solid var(--border); }
+        /* КНОПКИ ТЕПЕРЬ СВЕРХУ ДЛЯ УДОБСТВА */
+        nav { display: flex; background: var(--card); border-bottom: 1px solid #222; }
+        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; color: #666; }
+        .nav-item.active { color: var(--main); border-bottom: 2px solid var(--main); }
 
-        .container { max-width: 600px; margin: 0 auto; padding: 10px; }
-        .box { background: var(--card); margin-bottom: 15px; padding: 15px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .content { flex: 1; overflow-y: auto; padding: 10px; }
+        .box { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #222; }
         
-        input, textarea { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 10px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
-        input:focus { border-color: var(--main); }
-
-        .btn { border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; font-size: 14px; }
-        .btn-main { background: var(--main); color: #000; }
-        .btn-sec { background: var(--sec); color: #fff; }
-        .btn-ai { background: transparent; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; }
-
-        /* Контейнер для видео JITSI */
-        #jitsi-container { width: 100%; height: 450px; background: #000; border-radius: 15px; overflow: hidden; margin-top: 10px; border: 1px solid var(--main); }
-
-        nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--border); z-index: 2000; }
-        .nav-item { cursor: pointer; font-size: 11px; font-weight: bold; color: #666; text-align: center; }
-        .nav-item.active { color: var(--main); }
-        .nav-item.active-sec { color: var(--sec); }
-
+        input, textarea { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box; margin-bottom: 10px; }
+        .btn { background: var(--main); color: #000; border: none; padding: 10px; width: 100%; border-radius: 5px; font-weight: bold; }
+        
+        #v-chat { width: 100%; height: 300px; background: #000; border-radius: 10px; margin-top: 10px; }
         .hidden { display: none; }
-        .panic-mode { background: #000; color: red; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-family: monospace; }
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
-<div id="main-app">
-    <header id="h-title">AND NETWORK</header>
-    
-    <div class="stats">
-        <div>ПОСТОВ: <span id
+<nav>
+    <div class="nav-item active" id="n-feed" onclick="tab('feed')">ЛЕНТА</div>
+    <div class="nav-item" id="n-call" onclick="tab('call')">ВИДЕО</div>
+    <div class="nav-item" id="n-sec" onclick="tab('sec')">СЕКРЕТ</div>
+</nav>
+
+<div class="content">
+    <div id="t-feed">
+        <div class="box">
+            <input type="text" id="search" placeholder="🔍 Поиск..." oninput="render()">
+            <textarea id="msg" placeholder="Текст поста..." rows="2"></textarea>
+            <button class="btn" onclick="send()">ОПУБЛИКОВАТЬ</button>
+        </div>
+        <div id="feed"></div>
+    </div>
+
+    <div id="t-call" class="hidden">
+        <div class="box">
+            <input type="text" id="room" placeholder="Название комнаты">
+            <button class="btn" onclick="startCall()">ВОЙТИ В ЗВОНОК</button>
+            <div id="v-chat" class="hidden"></div>
+        </div>
+    </div>
+
+    <div id="t-sec" class="hidden">
+        <div class="box">
+            <input type="password" id="pass" placeholder="Пароль">
+            <button class="btn" style="background:#ff0055" onclick="unlock()">ВОЙТY</button>
+        </div>
+        <div id="s-content" class="hidden">
+            <div id="s-feed"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let posts = JSON.parse(localStorage.getItem('p')) || [];
+    let api = null;
+
+    function send() {
+        let t = document.getElementById('msg'); if(!t.value.trim()) return;
+        posts.unshift({t: t.value, d: new Date().toLocaleTimeString()});
+        t.value = ''; localStorage.setItem('p', JSON.stringify(posts)); render();
+    }
+
+    function render() {
+        let q = document.getElementById('search').value.toLowerCase();
+        document.getElementById('feed').innerHTML = posts.filter(p => p.t.toLowerCase().includes(q))
+            .map(p => `<div class="box"><small style="color:var(--main)">${p.d}</small><div>${p.t}</div></div>`).join('');
+    }
+
+    function startCall() {
+        let r = document.getElementById('room').value || 'AND-Room';
+        let v = document.getElementById('v-chat'); v.classList.remove('hidden');
+        if(api) api.dispose();
+        api = new JitsiMeetExternalAPI("meet.jit.si", { roomName: r, parentNode: v, width: '100%', height: 300 });
+    }
+
+    function tab(name) {
+        ['feed', 'call', 'sec'].forEach(x => {
+            document.getElementById('t-'+x).classList.toggle('hidden', x !== name);
+            document.getElementById('n-'+x).classList.toggle('active', x === name);
+        });
+        if(name !== 'call' && api) api.dispose();
+    }
+
+    function unlock() {
+        if(document.getElementById('pass').value === '1234') {
+            document.getElementById('s-content').classList.remove('hidden');
+            alert('Доступ открыт');
+        } else { alert('Ошибка'); }
+    }
+
+    render(); // Запуск ленты при старте
+</script>
+</body>
+</html>
