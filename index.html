@@ -2,104 +2,104 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AND FIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AND MOBILE</title>
     <script src="https://meet.jit.si/external_api.js"></script>
     <style>
-        :root { --main: #00ff88; --bg: #000; --card: #111; --text: #eee; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        :root { --main: #00ff88; --bg: #000; --card: #1a1a1a; --text: #eee; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: sans-serif; }
         
-        /* КНОПКИ ТЕПЕРЬ СВЕРХУ ДЛЯ УДОБСТВА */
-        nav { display: flex; background: var(--card); border-bottom: 1px solid #222; }
-        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; color: #666; }
-        .nav-item.active { color: var(--main); border-bottom: 2px solid var(--main); }
+        /* МЕНЮ СВЕРХУ */
+        .nav { display: flex; background: #111; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 10; }
+        .nav-btn { flex: 1; padding: 15px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; color: #777; }
+        .nav-btn.active { color: var(--main); border-bottom: 2px solid var(--main); }
 
-        .content { flex: 1; overflow-y: auto; padding: 10px; }
-        .box { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #222; }
+        .container { padding: 15px; }
+        .box { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
         
-        input, textarea { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box; margin-bottom: 10px; }
-        .btn { background: var(--main); color: #000; border: none; padding: 10px; width: 100%; border-radius: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; }
+        .btn { background: var(--main); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; }
         
-        #v-chat { width: 100%; height: 300px; background: #000; border-radius: 10px; margin-top: 10px; }
+        #video-chat { width: 100%; height: 350px; background: #000; border-radius: 8px; margin-top: 10px; display: none; }
         .hidden { display: none; }
+        .post { border-left: 3px solid var(--main); padding-left: 10px; }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="nav-item active" id="n-feed" onclick="tab('feed')">ЛЕНТА</div>
-    <div class="nav-item" id="n-call" onclick="tab('call')">ВИДЕО</div>
-    <div class="nav-item" id="n-sec" onclick="tab('sec')">СЕКРЕТ</div>
-</nav>
+<div class="nav">
+    <div class="nav-btn active" id="b-feed" onclick="show('feed')">ЛЕНТА</div>
+    <div class="nav-btn" id="b-call" onclick="show('call')">ВИДЕО</div>
+    <div class="nav-btn" id="b-sec" onclick="show('sec')">СЕКРЕТ</div>
+</div>
 
-<div class="content">
-    <div id="t-feed">
+<div class="container">
+    <div id="p-feed">
         <div class="box">
-            <input type="text" id="search" placeholder="🔍 Поиск..." oninput="render()">
-            <textarea id="msg" placeholder="Текст поста..." rows="2"></textarea>
-            <button class="btn" onclick="send()">ОПУБЛИКОВАТЬ</button>
+            <input type="text" id="find" placeholder="🔍 Поиск..." oninput="draw()">
+            <textarea id="txt" placeholder="Напиши что-нибудь..." rows="2"></textarea>
+            <button class="btn" onclick="add()">ОПУБЛИКОВАТЬ</button>
         </div>
-        <div id="feed"></div>
+        <div id="wall"></div>
     </div>
 
-    <div id="t-call" class="hidden">
+    <div id="p-call" class="hidden">
         <div class="box">
-            <input type="text" id="room" placeholder="Название комнаты">
-            <button class="btn" onclick="startCall()">ВОЙТИ В ЗВОНОК</button>
-            <div id="v-chat" class="hidden"></div>
+            <input type="text" id="room" placeholder="Имя комнаты">
+            <button class="btn" onclick="goCall()">НАЧАТЬ ЗВОНОК</button>
+            <div id="video-chat"></div>
         </div>
     </div>
 
-    <div id="t-sec" class="hidden">
-        <div class="box">
-            <input type="password" id="pass" placeholder="Пароль">
-            <button class="btn" style="background:#ff0055" onclick="unlock()">ВОЙТY</button>
+    <div id="p-sec" class="hidden">
+        <div class="box" id="lock">
+            <input type="password" id="key" placeholder="Пароль">
+            <button class="btn" style="background:#ff0055; color:#fff" onclick="openSec()">ВОЙТИ</button>
         </div>
-        <div id="s-content" class="hidden">
-            <div id="s-feed"></div>
-        </div>
+        <div id="sec-wall" class="hidden"></div>
     </div>
 </div>
 
 <script>
-    let posts = JSON.parse(localStorage.getItem('p')) || [];
-    let api = null;
+    let db = JSON.parse(localStorage.getItem('posts_db')) || [];
+    let jApi = null;
 
-    function send() {
-        let t = document.getElementById('msg'); if(!t.value.trim()) return;
-        posts.unshift({t: t.value, d: new Date().toLocaleTimeString()});
-        t.value = ''; localStorage.setItem('p', JSON.stringify(posts)); render();
+    function add() {
+        let i = document.getElementById('txt'); if(!i.value.trim()) return;
+        db.unshift({t: i.value, d: new Date().toLocaleTimeString()});
+        i.value = ''; localStorage.setItem('posts_db', JSON.stringify(db)); draw();
     }
 
-    function render() {
-        let q = document.getElementById('search').value.toLowerCase();
-        document.getElementById('feed').innerHTML = posts.filter(p => p.t.toLowerCase().includes(q))
-            .map(p => `<div class="box"><small style="color:var(--main)">${p.d}</small><div>${p.t}</div></div>`).join('');
+    function draw() {
+        let q = document.getElementById('find').value.toLowerCase();
+        document.getElementById('wall').innerHTML = db.filter(x => x.t.toLowerCase().includes(q))
+            .map(x => `<div class="box post"><small style="color:var(--main)">${x.d}</small><div>${x.t}</div></div>`).join('');
     }
 
-    function startCall() {
-        let r = document.getElementById('room').value || 'AND-Room';
-        let v = document.getElementById('v-chat'); v.classList.remove('hidden');
-        if(api) api.dispose();
-        api = new JitsiMeetExternalAPI("meet.jit.si", { roomName: r, parentNode: v, width: '100%', height: 300 });
-    }
-
-    function tab(name) {
-        ['feed', 'call', 'sec'].forEach(x => {
-            document.getElementById('t-'+x).classList.toggle('hidden', x !== name);
-            document.getElementById('n-'+x).classList.toggle('active', x === name);
+    function show(id) {
+        ['feed', 'call', 'sec'].forEach(t => {
+            document.getElementById('p-'+t).classList.toggle('hidden', t !== id);
+            document.getElementById('b-'+t).classList.toggle('active', t === id);
         });
-        if(name !== 'call' && api) api.dispose();
+        if(id !== 'call' && jApi) { jApi.dispose(); document.getElementById('video-chat').style.display='none'; }
     }
 
-    function unlock() {
-        if(document.getElementById('pass').value === '1234') {
-            document.getElementById('s-content').classList.remove('hidden');
-            alert('Доступ открыт');
-        } else { alert('Ошибка'); }
+    function goCall() {
+        let r = document.getElementById('room').value || 'WorkRoom';
+        let v = document.getElementById('video-chat'); v.style.display = 'block';
+        if(jApi) jApi.dispose();
+        jApi = new JitsiMeetExternalAPI("meet.jit.si", { roomName: r, parentNode: v, width: '100%', height: 350 });
     }
 
-    render(); // Запуск ленты при старте
+    function openSec() {
+        if(document.getElementById('key').value === '1234') {
+            document.getElementById('lock').classList.add('hidden');
+            document.getElementById('sec-wall').classList.remove('hidden');
+            document.getElementById('sec-wall').innerHTML = '<div class="box">Секретная зона активирована</div>';
+        } else { alert('Нет!'); }
+    }
+
+    draw(); // Запускаем отображение сразу
 </script>
 </body>
 </html>
