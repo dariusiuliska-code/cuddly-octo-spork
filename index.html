@@ -14,6 +14,7 @@
             background-attachment: fixed;
         }
 
+        /* Навигация и Шапка */
         .top-bar { display: flex; justify-content: space-between; padding: 12px 20px; background: rgba(0,0,0,0.85); border-bottom: 1px solid #333; backdrop-filter: blur(15px); z-index: 10; }
         .logo { font-weight: bold; color: var(--main); text-shadow: 0 0 10px var(--main); letter-spacing: 2px; }
         #weather { font-size: 12px; color: var(--main); }
@@ -23,6 +24,7 @@
         .nav-btn.active { color: var(--main); border-bottom-color: var(--main); background: rgba(0,255,136,0.1); }
         .nav-btn.tt-btn { color: var(--tt); }
 
+        /* Контент */
         .container { flex: 1; overflow-y: auto; padding: 15px; backdrop-filter: brightness(0.4) blur(1px); }
         .box { background: var(--card); padding: 18px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #444; }
 
@@ -31,13 +33,14 @@
         .btn { background: var(--main); color: #000; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 11px; }
         .btn:active { transform: scale(0.97); }
 
+        /* TikTok Виджет */
         .tt-frame { background: #000; border: 1px solid var(--tt); height: 400px; border-radius: 12px; overflow: hidden; }
         
+        /* Сообщения */
         .hidden { display: none !important; }
         .post { border-bottom: 1px solid #333; padding: 10px 0; margin-bottom: 5px; }
         .post b { color: var(--main); font-size: 11px; display: block; }
         .label { font-size: 10px; color: var(--main); text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .label.tt { color: var(--tt); }
     </style>
 </head>
 <body>
@@ -56,7 +59,7 @@
 <div class="container">
     <div id="p-chat" class="page">
         <div class="box">
-            <textarea id="msg-val" placeholder="Написать сообщение в ленту..." rows="2"></textarea>
+            <textarea id="msg-val" placeholder="Написать в ленту..." rows="2"></textarea>
             <button class="btn" onclick="sendMsg()">ОПУБЛИКОВАТЬ</button>
         </div>
         <div id="chat-wall" class="box"></div>
@@ -64,38 +67,39 @@
 
     <div id="p-tiktok" class="page hidden">
         <div class="box">
-            <span class="label tt">TikTok Поиск</span>
-            <input type="text" id="tt-search" placeholder="@user или тренд..." onkeypress="if(event.key==='Enter') ttProcess()">
-            <button class="btn" style="background: var(--tt); color: #fff;" onclick="ttProcess()">НАЙТИ В TIKTOK</button>
+            <span class="label" style="color:var(--tt)">TikTok Поиск</span>
+            <input type="text" id="tt-search" placeholder="@user или запрос..." onkeypress="if(event.key==='Enter') ttSearch()">
+            <button class="btn" style="background: var(--tt); color: #fff;" onclick="ttSearch()">ПОИСК</button>
         </div>
         <div class="box tt-frame">
-            <iframe id="tt-view" src="https://www.tiktok.com/embed/v2/trending" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+            <iframe src="https://www.tiktok.com/embed/v2/trending" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
         </div>
     </div>
 
     <div id="p-media" class="page hidden">
         <div class="box">
-            <span class="label">Музыкальный центр</span>
-            <input type="text" id="m-search" placeholder="Песня или исполнитель...">
-            <button class="btn" onclick="mSearch('music')">НАЙТИ МУЗЫКУ</button>
+            <span class="label">Музыка</span>
+            <input type="text" id="m-search" placeholder="Название трека...">
+            <button class="btn" onclick="mediaSearch('music')">YouTube Music</button>
         </div>
 
         <div class="box">
-            <span class="label">Кинотеатр</span>
+            <span class="label">Кино</span>
             <input type="text" id="v-search" placeholder="Название фильма...">
-            <button class="btn" style="background:#ff4444; color:#fff" onclick="mSearch('video')">СМОТРЕТЬ БЕСПЛАТНО</button>
+            <button class="btn" style="background:#ff4444; color:#fff" onclick="mediaSearch('video')">Смотреть онлайн</button>
         </div>
 
         <div class="box">
-            <span class="label" style="color:#00d4ff">Конференц-связь</span>
-            <button class="btn" style="background:#00d4ff; color:#000" onclick="window.open('https://meet.jit.si/' + Math.random().toString(36).substring(7), '_blank')">ЗАПУСТИТЬ ВИДЕОЧАТ 🎥</button>
+            <span class="label" style="color:#00d4ff">Конференция</span>
+            <button class="btn" style="background:#00d4ff; color:#000" onclick="window.open('https://meet.jit.si/' + Math.random().toString(36).substring(7), '_blank')">СОЗДАТЬ ВИДЕОКОМНАТУ 🎥</button>
         </div>
     </div>
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('posts')) || [];
+    let posts = JSON.parse(localStorage.getItem('os_posts')) || [];
 
+    // Навигация
     function tab(name, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById('p-'+name).classList.remove('hidden');
@@ -103,38 +107,42 @@
         el.classList.add('active');
     }
 
-    function ttProcess() {
+    // TikTok Поиск
+    function ttSearch() {
         const val = document.getElementById('tt-search').value.trim();
         if(!val) return;
         let url = val.startsWith('@') ? `https://www.tiktok.com/${val}` : `https://www.tiktok.com/search?q=${encodeURIComponent(val)}`;
         window.open(url, '_blank');
     }
     
+    // Сообщения
     function sendMsg() {
         const inp = document.getElementById('msg-val');
         if(!inp.value.trim()) return;
-        db.unshift({t: inp.value, d: new Date().toLocaleString()});
+        posts.unshift({text: inp.value, date: new Date().toLocaleString()});
         inp.value = '';
-        localStorage.setItem('posts', JSON.stringify(db));
-        draw();
+        localStorage.setItem('os_posts', JSON.stringify(posts));
+        renderPosts();
     }
 
-    function draw() {
+    function renderPosts() {
         const wall = document.getElementById('chat-wall');
-        if(db.length === 0) { wall.innerHTML = '<div style="color:#666; text-align:center">Лента пуста</div>'; return; }
-        wall.innerHTML = db.map(m => `<div class="post"><b>${m.d}</b>${m.t}</div>`).join('');
+        if(posts.length === 0) { wall.innerHTML = '<div style="color:#666; text-align:center">Лента пуста</div>'; return; }
+        wall.innerHTML = posts.map(p => `<div class="post"><b>${p.date}</b>${p.text}</div>`).join('');
     }
 
-    function mSearch(type) {
+    // Медиа Поиск
+    function mediaSearch(type) {
         const m = document.getElementById('m-search').value;
         const v = document.getElementById('v-search').value;
         if(type === 'music' && m) window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(m)}`, '_blank');
         if(type === 'video' && v) window.open(`https://www.google.com/search?q=${encodeURIComponent(v)}+смотреть+онлайн+бесплатно`, '_blank');
     }
 
+    // Инициализация
     window.onload = () => {
-        draw();
-        fetch('https://wttr.in/?format=%c+%t').then(r => r.text()).then(t => document.getElementById('weather').innerText = t).catch(()=>"");
+        renderPosts();
+        fetch('https://wttr.in/?format=%c+%t').then(r => r.text()).then(t => document.getElementById('weather').innerText = t).catch(()=>"📡 CONNECTED");
     }
 </script>
 </body>
