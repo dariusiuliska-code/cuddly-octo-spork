@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AND GLOBAL OS | FINAL FIX</title>
+    <title>AND GLOBAL OS | VOX EDITION</title>
     <style>
         :root { --main: #00ff88; --ai: #00d4ff; --bg: #050505; --card: rgba(20, 20, 20, 0.9); }
         
@@ -33,15 +33,18 @@
 
         .terminal { background: #000; border: 1px solid var(--ai); color: var(--ai); font-family: 'Consolas', monospace; height: 350px; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; }
         #log { flex: 1; overflow-y: auto; padding: 15px; font-size: 13px; line-height: 1.6; }
-        .ai-input { border: none !important; border-top: 1px solid #222 !important; border-radius: 0 !important; margin: 0 !important; background: #080808 !important; }
+        
+        /* Стили для голосового ввода */
+        .ai-controls { display: flex; background: #080808; border-top: 1px solid #222; }
+        .ai-input { flex: 1; border: none !important; border-radius: 0 !important; margin: 0 !important; background: transparent !important; }
+        .mic-btn { background: transparent; border: none; color: var(--ai); padding: 10px 20px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .mic-btn.active { color: #ff4444; text-shadow: 0 0 10px #ff4444; animation: pulse 1.5s infinite; }
 
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         .hidden { display: none !important; }
         .post { border-bottom: 1px solid #333; padding: 10px 0; margin-bottom: 5px; }
         .post b { color: var(--main); font-size: 11px; display: block; }
         .label { font-size: 10px; color: var(--ai); text-transform: uppercase; margin-bottom: 8px; display: block; }
-        
-        .loading-dots::after { content: '...'; animation: dots 1.5s infinite; }
-        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } }
     </style>
 </head>
 <body>
@@ -68,8 +71,11 @@
 
     <div id="p-ai" class="page hidden">
         <div class="box terminal">
-            <div id="log">>>> Gemini Core v7.0 ONLINE. <br>>>> Команда: <b>фон [тема]</b> — меняет окружение. <br>>>> Пример: <i>фон океан</i></div>
-            <input type="text" id="ai-val" class="ai-input" placeholder="Введите директиву..." onkeypress="if(event.key==='Enter') aiProcess()">
+            <div id="log">>>> Система VOX ONLINE. <br>>>> Нажмите на микрофон 🎤 для голосовой команды или введите текст.</div>
+            <div class="ai-controls">
+                <input type="text" id="ai-val" class="ai-input" placeholder="Введите директиву..." onkeypress="if(event.key==='Enter') aiProcess()">
+                <button id="mic-btn" class="mic-btn" onclick="toggleMic()">🎤</button>
+            </div>
         </div>
     </div>
 
@@ -84,19 +90,47 @@
             <input type="text" id="v-search" placeholder="Название фильма...">
             <button class="btn" style="background:#ff4444; color:#fff" onclick="mSearch('video')">СМОТРЕТЬ БЕСПЛАТНО</button>
         </div>
-        <div class="box">
-            <span class="label">Защищенная видеоконференция</span>
-            <button class="btn" style="background:#222; color:var(--main); border:1px solid var(--main)" onclick="window.open('https://meet.jit.si/GlobalRoomAND', '_blank')">ЗАПУСТИТЬ ВИДЕОЧАТ 🎥</button>
-        </div>
     </div>
 </div>
 
 <script>
     let db = JSON.parse(localStorage.getItem('posts')) || [];
-    
-    // --- ТВОЙ ОБНОВЛЕННЫЙ КЛЮЧ ---
     const API_KEY = "AIzaSyDiEFH6m9bjkWJv89qwxXTYHApYTv21G78";
+    
+    // --- ГОЛОСОВОЙ ПОИСК ---
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    let isListening = false;
 
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'ru-RU';
+        recognition.continuous = false;
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('ai-val').value = transcript;
+            aiProcess(); // Автоматически отправляем после распознавания
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            document.getElementById('mic-btn').classList.remove('active');
+        };
+    }
+
+    function toggleMic() {
+        if (!SpeechRecognition) return alert("Ваш браузер не поддерживает голосовой ввод.");
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+            isListening = true;
+            document.getElementById('mic-btn').classList.add('active');
+        }
+    }
+
+    // --- ЛОГИКА ИИ ---
     async function askGemini(text) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
         try {
@@ -104,23 +138,40 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: "Ты — бортовой ИИ системы AND GLOBAL OS. Отвечай кратко, технично, как продвинутый компьютер. Текущий запрос пользователя: " + text }] }]
+                    contents: [{ parts: [{ text: "Кратко ответь пользователю: " + text }] }]
                 })
             });
             const data = await response.json();
             return data.candidates[0].content.parts[0].text;
-        } catch (e) {
-            return "ОШИБКА ДОСТУПА К ЯДРУ: ПРОВЕРЬТЕ API КЛЮЧ.";
-        }
+        } catch (e) { return "ОШИБКА ГОЛОСОВОГО ЯДРА."; }
     }
 
+    async function aiProcess() {
+        const inp = document.getElementById('ai-val');
+        const log = document.getElementById('log');
+        const val = inp.value.trim();
+        if(!val) return;
+
+        log.innerHTML += `<div style="color:#fff; margin-top:10px;">> ${val}</div>`;
+        inp.value = '';
+
+        const loadingId = "loading-" + Date.now();
+        log.innerHTML += `<div id="${loadingId}" style="color:var(--ai)">[VOX]: Обработка...</div>`;
+        log.scrollTop = log.scrollHeight;
+
+        const response = await askGemini(val);
+        document.getElementById(loadingId).innerHTML = `[AI]: ${response}`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    // Остальные функции (tab, draw, mSearch) остаются как в твоем коде
     function tab(name, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById('p-'+name).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
     }
-
+    
     function sendMsg() {
         const inp = document.getElementById('msg-val');
         if(!inp.value.trim()) return;
@@ -132,37 +183,8 @@
 
     function draw() {
         const wall = document.getElementById('chat-wall');
-        if(db.length === 0) {
-            wall.innerHTML = '<div style="color:#666; text-align:center">Лента пуста</div>';
-            return;
-        }
+        if(db.length === 0) { wall.innerHTML = '<div style="color:#666; text-align:center">Лента пуста</div>'; return; }
         wall.innerHTML = db.map(m => `<div class="post"><b>${m.d}</b>${m.t}</div>`).join('');
-    }
-
-    async function aiProcess() {
-        const inp = document.getElementById('ai-val');
-        const log = document.getElementById('log');
-        const val = inp.value.trim();
-        if(!val) return;
-
-        log.innerHTML += `<div style="color:#fff; margin-top:10px;">> ${val}</div>`;
-        const cmd = val.toLowerCase();
-        inp.value = '';
-
-        if(cmd.startsWith("фон ")) {
-            const theme = val.substring(4).trim();
-            const randomUrl = `https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600`; 
-            document.body.style.backgroundImage = `url('https://source.unsplash.com/featured/1600x900?${encodeURIComponent(theme)}')`;
-            log.innerHTML += `<div style="color:var(--ai)">[SYSTEM]: Визуализация "${theme}" активирована.</div>`;
-        } else {
-            const loadingId = "loading-" + Date.now();
-            log.innerHTML += `<div id="${loadingId}" style="color:var(--ai)">[SYSTEM]: Обработка данных<span class="loading-dots"></span></div>`;
-            log.scrollTop = log.scrollHeight;
-
-            const response = await askGemini(val);
-            document.getElementById(loadingId).innerHTML = `[AI]: ${response}`;
-        }
-        log.scrollTop = log.scrollHeight;
     }
 
     function mSearch(type) {
