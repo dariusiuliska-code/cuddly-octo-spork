@@ -3,90 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AND | GLOBAL OS + WINAMP</title>
+    <title>AND | GLOBAL OS AI</title>
     <script src="https://meet.jit.si/external_api.js"></script>
     <style>
-        :root { --main: #00ff88; --bg: #000; --card: rgba(26, 26, 26, 0.9); --text: #eee; --winamp: #3a3a3a; }
+        :root { --main: #00ff88; --bg: #000; --card: rgba(20, 20, 20, 0.9); --text: #eee; --ai-color: #00d4ff; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; background-size: cover; background-position: center; }
         
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #333; z-index: 100; }
-        #weather-info { font-size: 14px; font-weight: bold; color: var(--main); }
-        .logo { font-weight: bold; letter-spacing: 2px; color: var(--main); }
+        /* Панель */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid #333; z-index: 1000; }
+        #weather-info { font-size: 13px; font-weight: bold; color: var(--main); }
+        .logo { font-weight: bold; letter-spacing: 2px; color: var(--main); text-shadow: 0 0 8px var(--main); }
 
-        .nav { display: flex; background: rgba(17, 17, 17, 0.95); border-bottom: 1px solid #333; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
-        .nav-btn { flex: 0 0 auto; padding: 15px 20px; font-size: 11px; font-weight: bold; cursor: pointer; color: #777; text-transform: uppercase; border-bottom: 2px solid transparent; }
-        .nav-btn.active { color: var(--main); border-bottom: 2px solid var(--main); }
+        /* Навигация */
+        .nav { display: flex; background: rgba(15, 15, 15, 0.95); border-bottom: 1px solid #333; overflow-x: auto; scrollbar-width: none; }
+        .nav-btn { flex: 1; padding: 15px 10px; font-size: 10px; font-weight: bold; cursor: pointer; color: #666; text-transform: uppercase; text-align: center; border-bottom: 2px solid transparent; min-width: 70px; }
+        .nav-btn.active { color: var(--main); border-bottom: 2px solid var(--main); background: rgba(0,255,136,0.05); }
+        .nav-btn.ai-btn { color: var(--ai-color); }
+        .nav-btn.ai-btn.active { border-bottom-color: var(--ai-color); }
 
-        .container { flex: 1; overflow-y: auto; padding: 10px; position: relative; }
-        .box { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #444; backdrop-filter: blur(10px); }
+        .container { flex: 1; overflow-y: auto; padding: 10px; }
+        .box { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; backdrop-filter: blur(10px); }
         
-        input, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.7); border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 10px; outline: none; font-size: 16px; }
-        .btn { background: var(--main); color: #000; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
+        .btn { background: var(--main); color: #000; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        /* WINAMP PLAYER */
-        .winamp { background: var(--winamp); border: 2px solid #555; padding: 10px; border-radius: 5px; color: #00ff00; font-family: monospace; box-shadow: inset 0 0 10px #000; }
-        .wa-display { background: #000; padding: 5px; margin-bottom: 10px; border: 1px solid #555; font-size: 12px; overflow: hidden; white-space: nowrap; }
-        .wa-controls { display: flex; gap: 5px; justify-content: center; }
-        .wa-btn { background: #555; border: 1px solid #777; color: white; padding: 5px 10px; font-size: 10px; cursor: pointer; border-radius: 3px; }
+        /* AI TERMINAL */
+        .ai-terminal { background: rgba(0, 20, 40, 0.9); border: 1px solid var(--ai-color); color: var(--ai-color); font-family: 'Courier New', monospace; min-height: 300px; display: flex; flex-direction: column; }
+        #ai-log { flex: 1; overflow-y: auto; padding: 10px; font-size: 14px; margin-bottom: 10px; }
+        .ai-input { border-color: var(--ai-color) !important; color: #fff !important; }
+
+        /* Winamp */
+        .winamp { background: #333; border: 3px solid #555; padding: 10px; border-radius: 4px; box-shadow: inset 0 0 15px #000; }
+        .wa-display { background: #000; padding: 8px; color: #00ff00; font-family: monospace; font-size: 12px; margin-bottom: 10px; }
 
         .hidden { display: none !important; }
-        #video-persistent-container { width: 100%; border-radius: 12px; overflow: hidden; background: #000; height: 350px; border: 1px solid #333; margin-top: 10px; }
+        #video-container { width: 100%; border-radius: 8px; height: 350px; background: #000; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="top-bar">
-    <div class="logo">AND GLOBAL</div>
-    <div id="weather-info">🌤 Загрузка...</div>
+    <div class="logo">AND GLOBAL OS</div>
+    <div id="weather-info">🌤...</div>
 </div>
 
 <div class="nav">
-    <div class="nav-btn active" onclick="show('feed', this)">ЧАТ / ЛЕНТА 💬</div>
-    <div class="nav-btn" onclick="show('music', this)">PLAYER 📻</div>
-    <div class="nav-btn" onclick="show('video', this)">ВИДЕОСВЯЗЬ 🎥</div>
-    <div class="nav-btn" onclick="show('search', this)">ПОИСК 🔍</div>
+    <div class="nav-btn active" onclick="show('feed', this)">ЧАТ 💬</div>
+    <div class="nav-btn ai-btn" onclick="show('ai', this)">AI 🤖</div>
+    <div class="nav-btn" onclick="show('music', this)">MUSIC 📻</div>
+    <div class="nav-btn" onclick="show('video', this)">VIDEO 🎥</div>
+    <div class="nav-btn" onclick="show('search', this)">SEARCH 🔍</div>
 </div>
 
 <div class="container">
     <div id="p-feed" class="page">
         <div class="box">
-            <textarea id="txt" placeholder="Напиши сообщение в чат..." rows="2"></textarea>
+            <textarea id="txt" placeholder="Сообщение..." rows="2"></textarea>
             <button class="btn" onclick="add()">ОТПРАВИТЬ</button>
         </div>
         <div id="wall"></div>
     </div>
 
+    <div id="p-ai" class="page hidden">
+        <div class="box ai-terminal">
+            <div id="ai-log">>>> Система готова. Введите ваш запрос к AI Gemini...</div>
+            <input type="text" id="ai-q" class="ai-input" placeholder="Спроси меня о чем угодно..." onkeypress="if(event.key==='Enter') aiAsk()">
+            <button class="btn" style="background: var(--ai-color);" onclick="aiAsk()">ВЫПОЛНИТЬ</button>
+        </div>
+    </div>
+
     <div id="p-music" class="page hidden">
         <div class="box winamp">
             <div class="wa-display">
-                <div id="wa-title">WINAMP 2.91 - ПРИВЕТ!</div>
+                <div id="wa-title">WINAMP READY</div>
                 <div id="wa-time">00:00</div>
             </div>
-            <input type="text" id="wa-url" placeholder="Прямая ссылка на MP3 или Радио..." style="background:#222; font-size:12px;">
-            <div class="wa-controls">
-                <button class="wa-btn" onclick="waPlay()">PLAY</button>
-                <button class="wa-btn" onclick="waPause()">PAUSE</button>
-                <button class="wa-btn" onclick="waStop()">STOP</button>
-            </div>
+            <input type="text" id="wa-url" placeholder="Прямая ссылка на MP3/Радио...">
+            <button class="wa-btn btn" onclick="waPlay()">PLAY</button>
             <audio id="main-audio" style="display:none"></audio>
         </div>
-        <p style="font-size:10px; color:#666; text-align:center;">Вставьте ссылку на .mp3 файл и нажмите Play</p>
     </div>
 
     <div id="p-video" class="page hidden">
         <div class="box">
-            <input type="text" id="room-id" placeholder="Название комнаты">
-            <button class="btn" onclick="startCall()">НАЧАТЬ ЗВОНОК</button>
-            <button class="btn" style="background:#333; color:var(--main)" onclick="copyInvite()">🔗 ССЫЛКА ДЛЯ ДРУГА</button>
-            <div id="video-persistent-container"></div>
+            <input type="text" id="room-id" placeholder="Комната">
+            <button class="btn" onclick="startCall()">ЗВОНОК</button>
+            <div id="video-container"></div>
         </div>
     </div>
 
     <div id="p-search" class="page hidden">
         <div class="box">
-            <input type="text" id="global-q" placeholder="Что ищем?">
-            <button class="btn" onclick="webSearch('google')">GOOGLE</button>
-            <button class="btn" style="background:#4285F4; color:#fff" onclick="openLens()">📷 ПОИСК ПРЕДМЕТОВ (LENS)</button>
+            <input type="text" id="global-q" placeholder="Поиск предметов или инфо...">
+            <button class="btn" onclick="webSearch()">GOOGLE</button>
+            <button class="btn" style="background:#4285F4; color:#fff; margin-top:10px;" onclick="openLens()">📷 GOOGLE LENS</button>
         </div>
     </div>
 </div>
@@ -96,49 +106,29 @@
     let api = null;
     const audio = document.getElementById('main-audio');
 
-    // WINAMP FUNCTIONS
-    function waPlay() {
-        const url = document.getElementById('wa-url').value;
-        if (url) {
-            if(audio.src !== url) audio.src = url;
-            audio.play();
-            document.getElementById('wa-title').innerText = "PLAYING: " + url.split('/').pop();
-        } else { alert("Вставь ссылку на музыку!"); }
-    }
-    function waPause() { audio.pause(); }
-    function waStop() { audio.pause(); audio.currentTime = 0; }
-    
-    // Таймер плеера
-    audio.ontimeupdate = () => {
-        let m = Math.floor(audio.currentTime / 60);
-        let s = Math.floor(audio.currentTime % 60);
-        document.getElementById('wa-time').innerText = (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
-    };
+    // --- AI LOGIC (Имитация присутствия Gemini) ---
+    function aiAsk() {
+        const q = document.getElementById('ai-q');
+        const log = document.getElementById('ai-log');
+        if(!q.value) return;
 
-    // ЧАТ / ЛЕНТА
-    function add() {
-        let t = document.getElementById('txt'); if(!t.value) return;
-        db.unshift({t: t.value, d: new Date().toLocaleTimeString()});
-        t.value = ''; localStorage.setItem('posts_db', JSON.stringify(db)); draw();
-    }
-    function draw() {
-        document.getElementById('wall').innerHTML = db.map(x => `<div class="box" style="margin-bottom:8px; padding:10px;"><b>${x.d}</b><br>${x.t}</div>`).join('');
+        log.innerHTML += `<div style="color:#fff; margin-top:10px;">> ${q.value}</div>`;
+        const userQ = q.value.toLowerCase();
+        q.value = '';
+        
+        setTimeout(() => {
+            let resp = "Запрос обработан. Я изучаю твой GLOBAL OS. Чем еще могу помочь?";
+            if(userQ.includes("привет")) resp = "Привет! Я Gemini, встроенный AI твоей системы.";
+            if(userQ.includes("кто ты")) resp = "Я — твой AI помощник, часть AND GLOBAL OS.";
+            if(userQ.includes("погода")) resp = "Текущая погода отображается в верхнем углу твоего экрана.";
+            if(userQ.includes("время")) resp = "Сейчас " + new Date().toLocaleTimeString();
+            
+            log.innerHTML += `<div style="margin-top:5px; border-left: 2px solid var(--ai-color); padding-left:10px;">[Gemini]: ${resp}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }, 600);
     }
 
-    // ВИДЕОСВЯЗЬ
-    function startCall() {
-        let r = document.getElementById('room-id').value || 'GlobalRoom';
-        const container = document.getElementById('video-persistent-container');
-        container.innerHTML = "";
-        api = new JitsiMeetExternalAPI("meet.jit.si", { roomName: r, parentNode: container, width: '100%', height: 350 });
-    }
-    function copyInvite() {
-        let r = document.getElementById('room-id').value || 'GlobalRoom';
-        let url = window.location.origin + window.location.pathname + '?room=' + r;
-        navigator.clipboard.writeText(url); alert("Ссылка скопирована!");
-    }
-
-    // НАВИГАЦИЯ
+    // --- ФУНКЦИИ СИСТЕМЫ ---
     function show(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById('p-' + id).classList.remove('hidden');
@@ -146,16 +136,30 @@
         btn.classList.add('active');
     }
 
-    function openLens() { window.open('https://www.google.com/searchbyimage?sbisrc=4pts&image_url=', '_blank'); }
-    function webSearch(t) { window.open(`https://google.com/search?q=${document.getElementById('global-q').value}`, '_blank'); }
+    function add() {
+        let t = document.getElementById('txt'); if(!t.value) return;
+        db.unshift({t: t.value, d: new Date().toLocaleTimeString()});
+        t.value = ''; localStorage.setItem('posts_db', JSON.stringify(db)); draw();
+    }
+    function draw() {
+        document.getElementById('wall').innerHTML = db.map(x => `<div class="box" style="padding:10px;"><b>${x.d}</b><br>${x.t}</div>`).join('');
+    }
+
+    function waPlay() {
+        const u = document.getElementById('wa-url').value;
+        if(u) { audio.src = u; audio.play(); document.getElementById('wa-title').innerText = "PLAYING..."; }
+    }
+
+    function startCall() {
+        let r = document.getElementById('room-id').value || 'GlobalRoom';
+        const cont = document.getElementById('video-container'); cont.innerHTML = "";
+        api = new JitsiMeetExternalAPI("meet.jit.si", { roomName: r, parentNode: cont, width: '100%', height: 350 });
+    }
+
+    function openLens() { window.open('https://www.google.com/searchbyimage?sbisrc=4pts', '_blank'); }
+    function webSearch() { window.open(`https://google.com/search?q=${document.getElementById('global-q').value}`, '_blank'); }
 
     window.onload = () => {
-        const params = new URLSearchParams(window.location.search);
-        if (params.has('room')) {
-            show('video', document.querySelectorAll('.nav-btn')[2]);
-            document.getElementById('room-id').value = params.get('room');
-            startCall();
-        }
         fetch('https://wttr.in/?format=%c+%t').then(r => r.text()).then(t => document.getElementById('weather-info').innerText = t);
         draw();
     }
