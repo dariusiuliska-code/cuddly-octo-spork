@@ -3,53 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v5.6 | FINAL ULTIMATE</title>
+    <title>VOX OS v5.7 | STABLE</title>
     <style>
         :root { --main: #00ff88; --accent: #00d4ff; --tt: #ff0050; --bg: #050505; --card: rgba(20, 20, 20, 0.9); }
         body { margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', monospace; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Эффект ретро-линий */
-        body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 4px; z-index: 10000; pointer-events: none; opacity: 0.3; }
+        /* Сетка и линии */
+        body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 4px; z-index: 10000; pointer-events: none; opacity: 0.2; }
 
         .top-bar { display: flex; justify-content: space-between; padding: 12px 20px; background: #000; border-bottom: 1px solid #333; z-index: 10; align-items: center; }
         .logo { font-weight: bold; color: var(--main); text-shadow: 0 0 10px var(--main); letter-spacing: 2px; font-size: 14px; }
         #clock { color: var(--main); font-size: 11px; font-family: monospace; }
 
         .nav { display: flex; background: #000; border-bottom: 1px solid #222; overflow-x: auto; }
-        .nav-btn { flex: 1; padding: 15px; font-size: 9px; font-weight: bold; cursor: pointer; color: #555; text-align: center; border-bottom: 2px solid transparent; text-transform: uppercase; white-space: nowrap; }
+        .nav-btn { flex: 1; padding: 15px; font-size: 10px; font-weight: bold; cursor: pointer; color: #555; text-align: center; border-bottom: 2px solid transparent; text-transform: uppercase; white-space: nowrap; }
         .nav-btn.active { color: var(--main); border-bottom-color: var(--main); background: rgba(0,255,136,0.05); }
 
-        .container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 40px; }
+        .container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 50px; }
         .box { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .label { font-size: 9px; color: var(--main); text-transform: uppercase; margin-bottom: 10px; display: block; opacity: 0.7; }
 
-        input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
-        .btn { background: var(--main); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 10px; margin-bottom: 5px; }
+        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.8); border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; outline: none; font-size: 14px; }
+        .btn { background: var(--main); color: #000; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; margin-bottom: 5px; box-shadow: 0 4px 0px rgba(0,0,0,0.2); transition: 0.1s; }
+        .btn:active { transform: translateY(2px); box-shadow: none; }
 
-        /* Оциллограф */
-        #oscilloscope { width: 100%; height: 80px; background: #000; border: 1px solid var(--main); border-radius: 8px; display: none; margin-bottom: 10px; }
-
-        #video-viewport { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #444; }
+        #oscilloscope { width: 100%; height: 100px; background: #000; border: 1px solid var(--main); border-radius: 8px; display: none; margin-bottom: 10px; }
         
-        .task-item { background: rgba(255,255,255,0.03); border-left: 2px solid var(--accent); padding: 10px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 11px; }
-        .task-item.completed { opacity: 0.3; text-decoration: line-through; }
-
-        #system-logs { background: rgba(0,0,0,0.8); border: 1px dashed #333; height: 60px; overflow-y: auto; font-family: monospace; font-size: 9px; color: #666; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+        #system-logs { background: rgba(0,0,0,0.9); border: 1px dashed #333; height: 70px; overflow-y: auto; font-family: monospace; font-size: 10px; color: #00ff88; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div id="lock-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:20000; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-    <div class="logo" style="font-size: 24px; margin-bottom: 20px;">VOX ACCESS PANEL</div>
-    <div class="box" style="width: 260px;">
-        <input type="password" id="access-code" style="text-align:center" placeholder="ENTER CODE">
-        <button class="btn" onclick="checkAccess()">UNLOCK</button>
+    <div class="logo" style="font-size: 28px; margin-bottom: 30px;">VOX SYSTEM 5.7</div>
+    <div class="box" style="width: 280px; border: 1px solid var(--main);">
+        <span class="label">Введите мастер-код</span>
+        <input type="password" id="access-code" style="text-align:center; letter-spacing: 4px;" placeholder="****">
+        <button class="btn" style="background:var(--main)" onclick="checkAccess()">UNLOCK SYSTEM</button>
     </div>
 </div>
 
 <div class="top-bar">
-    <div class="logo">VOX OS v5.6</div>
+    <div class="logo">VOX OS</div>
     <div id="clock">00:00:00</div>
 </div>
 
@@ -57,64 +53,57 @@
     <div class="nav-btn active" onclick="tab('music', this)">AUDIO</div>
     <div class="nav-btn" onclick="tab('cinema', this)">CINEMA</div>
     <div class="nav-btn" onclick="tab('tasks', this)">TASKS</div>
-    <div class="nav-btn" onclick="tab('comm', this)">VIDEO</div>
     <div class="nav-btn" id="admin-nav" onclick="tab('admin', this)" style="color:var(--tt); display:none;">ADM</div>
 </div>
 
 <div class="container">
-    <div id="system-logs"><div>[ READY ]</div></div>
+    <div id="system-logs"><div>[ SYSTEM READY. ENTERING LOG MODE... ]</div></div>
 
     <div id="p-music" class="page">
         <div class="box">
-            <span class="label">Sonar Oscillator</span>
+            <span class="label">Sonar Oscillator (Микрофон)</span>
             <canvas id="oscilloscope"></canvas>
             <button class="btn" id="shazam-btn" style="background:var(--accent)" onclick="startShazam()">PUSH TO LISTEN (SHAZAM)</button>
         </div>
         <div class="box">
             <span class="label">Vox Player</span>
-            <div id="wa-track" style="font-size:11px; color:var(--main); margin-bottom:10px;">IDLE</div>
-            <button class="btn" onclick="playStream('https://lofi.stream.laut.fm/lofi', 'CHILL LO-FI')">PLAY LO-FI</button>
-            <button class="btn" style="background:var(--tt); color:#fff; margin-top:5px;" onclick="stopAudio()">STOP</button>
+            <div id="wa-track" style="font-size:12px; color:var(--main); margin-bottom:12px; font-weight:bold;">STATUS: IDLE</div>
+            <button class="btn" style="background:#00ff88" onclick="playStream('https://lofi.stream.laut.fm/lofi', 'CHILL LO-FI')">PLAY LO-FI RADIO</button>
+            <button class="btn" style="background:#ff0050; color:#fff; margin-top:8px;" onclick="stopAudio()">STOP AUDIO</button>
         </div>
         <div class="box">
-            <input type="text" id="music-q" placeholder="Search track...">
-            <button class="btn" onclick="window.open('https://soundcloud.com/search?q='+document.getElementById('music-q').value)">SEARCH</button>
+            <span class="label">Search</span>
+            <input type="text" id="music-q" placeholder="Артист или песня...">
+            <button class="btn" onclick="window.open('https://soundcloud.com/search?q='+document.getElementById('music-q').value)">SEARCH ON WEB</button>
         </div>
     </div>
 
     <div id="p-cinema" class="page hidden">
         <div class="box">
-            <div id="video-viewport">WAITING...</div>
+            <div id="video-viewport" style="width:100%; aspect-ratio:16/9; background:#000; display:flex; align-items:center; justify-content:center; color:#444; font-size:10px;">SIGNAL STANDBY</div>
         </div>
         <div class="box">
-            <input type="text" id="movie-q" placeholder="Фильм...">
-            <button class="btn" style="background:#E50914; color:white" onclick="searchMovie()">PLAY NOW</button>
+            <input type="text" id="movie-q" placeholder="Название фильма...">
+            <button class="btn" style="background:#E50914; color:white" onclick="searchMovie()">WATCH NOW</button>
         </div>
     </div>
 
     <div id="p-tasks" class="page hidden">
         <div class="box">
             <div style="display:flex; gap:10px;">
-                <input type="text" id="task-in" placeholder="New Task..." style="margin:0">
-                <button class="btn" style="width:50px; margin:0" onclick="addTask()">+</button>
+                <input type="text" id="task-in" placeholder="Новая цель..." style="margin:0">
+                <button class="btn" style="width:60px; margin:0" onclick="addTask()">ADD</button>
             </div>
         </div>
         <div id="task-list"></div>
     </div>
 
-    <div id="p-comm" class="page hidden">
-        <div class="box">
-            <input type="text" id="room-id" placeholder="ROOM CODE">
-            <button class="btn" onclick="joinMeet()">JOIN JITSI</button>
-            <button class="btn" onclick="document.getElementById('room-id').value='VOX-'+Math.random().toString(36).substr(7).toUpperCase()">GENERATE</button>
-        </div>
-    </div>
-
     <div id="p-admin" class="page hidden">
         <div class="box">
-            <span class="label">Master Key</span>
-            <div id="m-key-display" style="color:var(--main); margin-bottom:10px;"></div>
-            <button class="btn" onclick="regenKey()">REGENERATE</button>
+            <span class="label">Master Settings</span>
+            <p style="font-size:12px;">KEY: <span id="m-key-display" style="color:var(--main)"></span></p>
+            <button class="btn" onclick="regenKey()">REGENERATE KEY</button>
+            <button class="btn" style="background:#ff0050; color:#fff; margin-top:20px;" onclick="location.reload()">LOCKDOWN</button>
         </div>
     </div>
 </div>
@@ -132,15 +121,21 @@
         l.scrollTop = l.scrollHeight;
     }
 
+    // ВАЖНО: Активация аудио при разблокировке
     function checkAccess() {
         if(document.getElementById('access-code').value === master) {
             document.getElementById('lock-screen').classList.add('hidden');
             document.getElementById('admin-nav').style.display = 'block';
             document.getElementById('m-key-display').innerText = master;
-            log("WELCOME OPERATOR.");
-            renderTasks();
-            // Инициализация аудио-контекста после клика
+            
+            // ПРИНУДИТЕЛЬНО запускаем аудио-контекст
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            
+            log("ACCESS GRANTED. AUDIO ENGINE STARTED.");
+            renderTasks();
+        } else {
+            alert("ACCESS DENIED");
         }
     }
 
@@ -151,20 +146,20 @@
         el.classList.add('active');
     }
 
-    // --- ИСПРАВЛЕННЫЙ SHAZAM ---
     async function startShazam() {
         const btn = document.getElementById('shazam-btn');
         const cvs = document.getElementById('oscilloscope');
         const ctx = cvs.getContext('2d');
         
         try {
+            if (!audioCtx) audioCtx = new AudioContext();
             if (audioCtx.state === 'suspended') await audioCtx.resume();
             
             micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
             cvs.style.display = 'block';
             cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
             btn.innerText = "LISTENING...";
-            log("OSCILLATOR SYNCED.");
+            log("MIC CAPTURE: SUCCESS");
 
             const src = audioCtx.createMediaStreamSource(micStream);
             const ans = audioCtx.createAnalyser();
@@ -176,9 +171,9 @@
                 if(!micStream) return;
                 requestAnimationFrame(draw);
                 ans.getByteTimeDomainData(buf);
-                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
                 ctx.fillRect(0,0,cvs.width, cvs.height);
-                ctx.lineWidth = 2; ctx.strokeStyle = '#00ff88'; ctx.beginPath();
+                ctx.lineWidth = 3; ctx.strokeStyle = '#00ff88'; ctx.beginPath();
                 let x = 0, sw = cvs.width/buf.length;
                 for(let i=0; i<buf.length; i++) {
                     let y = (buf[i]/128.0) * cvs.height/2;
@@ -190,60 +185,68 @@
             draw();
 
             setTimeout(() => {
-                micStream.getTracks().forEach(t => t.stop());
-                micStream = null;
+                if(micStream) {
+                    micStream.getTracks().forEach(t => t.stop());
+                    micStream = null;
+                }
                 btn.innerText = "PUSH TO LISTEN (SHAZAM)";
                 cvs.style.display = 'none';
+                log("REDIRECTING TO SEARCH...");
                 window.open('https://www.aha-music.com/identify-songs-music-recognition-online', '_blank');
             }, 5000);
-        } catch(e) { log("MIC ERROR: ACCESS DENIED"); }
+        } catch(e) { 
+            log("ERROR: MIC ACCESS DENIED"); 
+            alert("Разрешите доступ к микрофону в браузере!");
+        }
     }
 
     function playStream(url, n) {
         if(audio) audio.pause();
         audio = new Audio(url);
+        audio.crossOrigin = "anonymous";
         audio.play().then(() => {
             document.getElementById('wa-track').innerText = "PLAYING: " + n;
-            log("AUDIO ONLINE.");
-        }).catch(() => log("ERROR: CLICK REQUIRED"));
+            log("AUDIO ONLINE: " + n);
+        }).catch(e => {
+            log("ERROR: BRAUWER BLOCKED AUDIO");
+            alert("Нажмите на экран, чтобы разрешить звук");
+        });
     }
 
-    function stopAudio() { if(audio){audio.pause(); audio=null;} document.getElementById('wa-track').innerText="IDLE"; }
+    function stopAudio() { if(audio){audio.pause(); audio=null;} document.getElementById('wa-track').innerText="STATUS: IDLE"; log("AUDIO STOPPED."); }
 
     function searchMovie() {
         const q = document.getElementById('movie-q').value;
+        if(!q) return;
         document.getElementById('video-viewport').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed?listType=search&list=${q}" frameborder="0" allowfullscreen></iframe>`;
+        log("CINEMA SYNC: " + q);
     }
 
     function addTask() {
         const val = document.getElementById('task-in').value;
-        if(val) { tasks.push({text: val.toUpperCase(), done: false}); renderTasks(); document.getElementById('task-in').value=''; }
+        if(val) { tasks.push({text: val.toUpperCase(), done: false}); renderTasks(); document.getElementById('task-in').value=''; log("TASK SAVED."); }
     }
 
     function renderTasks() {
         const l = document.getElementById('task-list'); l.innerHTML = '';
         tasks.forEach((t, i) => {
-            l.innerHTML += `<div class="task-item ${t.done?'completed':''}">
-                <span onclick="tasks[${i}].done=!tasks[${i}].done;renderTasks()">${t.done?'[X]':'[ ]'} ${t.text}</span>
-                <span style="color:red" onclick="tasks.splice(${i},1);renderTasks()">DEL</span>
+            l.innerHTML += `<div class="task-item ${t.done?'completed':''}" style="background:rgba(255,255,255,0.05); padding:12px; margin-bottom:8px; border-radius:8px; display:flex; justify-content:space-between;">
+                <span onclick="tasks[${i}].done=!tasks[${i}].done;renderTasks()">${t.done?'✅':'🔘'} ${t.text}</span>
+                <span style="color:red; font-weight:bold;" onclick="tasks.splice(${i},1);renderTasks()">DEL</span>
             </div>`;
         });
         localStorage.setItem('v_tasks', JSON.stringify(tasks));
-    }
-
-    function joinMeet() { 
-        const c = document.getElementById('room-id').value;
-        if(c) window.open('https://meet.jit.si/' + c, '_blank');
     }
 
     function regenKey() {
         master = "VOX-" + Math.floor(1000 + Math.random() * 8999);
         localStorage.setItem('v_master', master);
         document.getElementById('m-key-display').innerText = master;
-        log("NEW KEY: " + master);
+        log("MASTER KEY REGENERATED.");
     }
 
     setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString('ru-RU'), 1000);
+    document.addEventListener('keypress', (e) => { if(e.key === 'Enter') checkAccess(); });
 </script>
 </body>
 </html>
