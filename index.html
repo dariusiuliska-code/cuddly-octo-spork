@@ -8,98 +8,299 @@
         :root { --main: #00ff88; --tt: #ff0050; --bg: #050505; --card: rgba(20, 20, 20, 0.9); }
         
         body { 
-            margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; 
+            margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', monospace; 
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
             background-size: cover; background-position: center; transition: 1.2s ease-in-out;
-            background-attachment: fixed;
         }
 
         /* Навигация и Шапка */
-        .top-bar { display: flex; justify-content: space-between; padding: 12px 20px; background: rgba(0,0,0,0.85); border-bottom: 1px solid #333; backdrop-filter: blur(15px); z-index: 10; }
-        .logo { font-weight: bold; color: var(--main); text-shadow: 0 0 10px var(--main); letter-spacing: 2px; }
-        #weather { font-size: 12px; color: var(--main); }
+        .top-bar { display: flex; justify-content: space-between; padding: 12px 20px; background: rgba(0,0,0,0.9); border-bottom: 1px solid #333; backdrop-filter: blur(15px); z-index: 10; align-items: center; }
+        .logo { font-weight: bold; color: var(--main); text-shadow: 0 0 10px var(--main); letter-spacing: 2px; animation: flicker 3s infinite; }
+        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } 52% { opacity: 1; } }
 
-        .nav { display: flex; background: #000; border-bottom: 1px solid #222; overflow-x: auto; scrollbar-width: none; }
-        .nav-btn { flex: 1; padding: 16px; font-size: 10px; font-weight: bold; cursor: pointer; color: #555; text-align: center; border-bottom: 2px solid transparent; min-width: 90px; text-transform: uppercase; }
-        .nav-btn.active { color: var(--main); border-bottom-color: var(--main); background: rgba(0,255,136,0.1); }
-        .nav-btn.tt-btn { color: var(--tt); }
+        .status-group { display: flex; gap: 15px; align-items: center; font-size: 11px; }
+        #clock { color: var(--main); font-family: monospace; }
+        #battery { border: 1px solid var(--main); padding: 2px 6px; border-radius: 4px; }
+
+        .nav { display: flex; background: #000; border-bottom: 1px solid #222; overflow-x: auto; }
+        .nav-btn { flex: 1; padding: 15px; font-size: 10px; font-weight: bold; cursor: pointer; color: #555; text-align: center; border-bottom: 2px solid transparent; text-transform: uppercase; min-width: 80px; }
+        .nav-btn.active { color: var(--main); border-bottom-color: var(--main); background: rgba(0,255,136,0.05); }
 
         /* Контент */
-        .container { flex: 1; overflow-y: auto; padding: 15px; backdrop-filter: brightness(0.4) blur(1px); }
-        .box { background: var(--card); padding: 18px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #444; }
+        .container { flex: 1; overflow-y: auto; padding: 15px; backdrop-filter: brightness(0.5); }
+        .box { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .label { font-size: 9px; color: var(--main); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; opacity: 0.7; }
 
-        input, textarea { width: 100%; padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid #555; color: #fff; border-radius: 10px; box-sizing: border-box; margin-bottom: 12px; outline: none; font-size: 16px; }
-        
-        .btn { background: var(--main); color: #000; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 11px; }
-        .btn:active { transform: scale(0.97); }
+        /* Системные Логи */
+        #system-logs { background: rgba(0,0,0,0.8); border: 1px dashed #333; height: 100px; overflow-y: auto; font-family: monospace; font-size: 10px; color: #888; padding: 10px; border-radius: 8px; }
+        #system-logs div { border-left: 2px solid var(--main); padding-left: 8px; margin-bottom: 4px; }
 
-        /* TikTok Виджет */
-        .tt-frame { background: #000; border: 1px solid var(--tt); height: 400px; border-radius: 12px; overflow: hidden; }
+        input, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; outline: none; font-family: inherit; }
+        input:focus { border-color: var(--main); }
         
-        /* Сообщения */
+        .btn { background: var(--main); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 10px; }
+        .btn:active { transform: scale(0.98); }
+
+        /* Уведомления */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
+        .toast { background: var(--main); color: #000; padding: 10px 18px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-top: 8px; animation: slideIn 0.3s forwards; box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+
+        /* Списки и Посты */
+        .post, .todo-item { border-bottom: 1px solid #222; padding: 10px 0; position: relative; }
+        .post b { color: var(--main); font-size: 10px; display: block; }
+        .post span { font-size: 14px; }
+        .del-btn { position: absolute; right: 0; top: 10px; background: none; border: none; color: var(--tt); cursor: pointer; font-size: 10px; }
+
+        #matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: none; background: #000; }
         .hidden { display: none !important; }
-        .post { border-bottom: 1px solid #333; padding: 10px 0; margin-bottom: 5px; }
-        .post b { color: var(--main); font-size: 11px; display: block; }
-        .label { font-size: 10px; color: var(--main); text-transform: uppercase; margin-bottom: 8px; display: block; }
     </style>
 </head>
 <body>
 
+<canvas id="matrix"></canvas>
+<div id="toast-container"></div>
+
 <div class="top-bar">
-    <div class="logo">AND GLOBAL OS</div>
-    <div id="weather">📡 CONNECTED</div>
+    <div class="logo" id="os-logo">AND GLOBAL OS</div>
+    <div class="status-group">
+        <div id="clock">00:00:00</div>
+        <div id="battery">🔋 --%</div>
+        <div id="weather">📡 CONNECTING...</div>
+    </div>
 </div>
 
 <div class="nav">
-    <div class="nav-btn active" onclick="tab('chat', this)">MESSENGER 💬</div>
-    <div class="nav-btn tt-btn" onclick="tab('tiktok', this)">TIKTOK 🎬</div>
+    <div class="nav-btn active" onclick="tab('core', this)">CORE 🖥️</div>
+    <div class="nav-btn" onclick="tab('tasks', this)">TASKS 📝</div>
     <div class="nav-btn" onclick="tab('media', this)">MEDIA 🎬</div>
 </div>
 
 <div class="container">
-    <div id="p-chat" class="page">
+    <div id="system-logs"><div>[ KERNEL BOOT SUCCESSFUL ]</div></div>
+
+    <div id="p-core" class="page">
         <div class="box">
-            <textarea id="msg-val" placeholder="Написать в ленту..." rows="2"></textarea>
-            <button class="btn" onclick="sendMsg()">ОПУБЛИКОВАТЬ</button>
+            <span class="label">System Terminal</span>
+            <textarea id="msg-val" placeholder="Введите текст или /команду..." rows="2"></textarea>
+            <button class="btn" onclick="sendMsg()">EXECUTE COMMAND</button>
         </div>
         <div id="chat-wall" class="box"></div>
     </div>
 
-    <div id="p-tiktok" class="page hidden">
+    <div id="p-tasks" class="page hidden">
         <div class="box">
-            <span class="label" style="color:var(--tt)">TikTok Поиск</span>
-            <input type="text" id="tt-search" placeholder="@user или запрос..." onkeypress="if(event.key==='Enter') ttSearch()">
-            <button class="btn" style="background: var(--tt); color: #fff;" onclick="ttSearch()">ПОИСК</button>
+            <span class="label">Calendar</span>
+            <div id="calendar-display" style="text-align:center; font-weight:bold; color:var(--main); letter-spacing:1px;"></div>
         </div>
-        <div class="box tt-frame">
-            <iframe src="https://www.tiktok.com/embed/v2/trending" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+        <div class="box">
+            <span class="label">Task Manager</span>
+            <div id="todo-list"></div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <input type="text" id="todo-input" placeholder="Новая задача..." style="margin-bottom:0;">
+                <button class="btn" style="width:50px;" onclick="addTodo()">+</button>
+            </div>
         </div>
     </div>
 
     <div id="p-media" class="page hidden">
         <div class="box">
-            <span class="label">Музыка</span>
-            <input type="text" id="m-search" placeholder="Название трека...">
-            <button class="btn" onclick="mediaSearch('music')">YouTube Music</button>
+            <span class="label">TikTok Feed</span>
+            <input type="text" id="tt-search" placeholder="@user или тренд...">
+            <button class="btn" style="background:var(--tt); color:#fff;" onclick="ttSearch()">OPEN TIKTOK</button>
         </div>
-
         <div class="box">
-            <span class="label">Кино</span>
-            <input type="text" id="v-search" placeholder="Название фильма...">
-            <button class="btn" style="background:#ff4444; color:#fff" onclick="mediaSearch('video')">Смотреть онлайн</button>
-        </div>
-
-        <div class="box">
-            <span class="label" style="color:#00d4ff">Конференция</span>
-            <button class="btn" style="background:#00d4ff; color:#000" onclick="window.open('https://meet.jit.si/' + Math.random().toString(36).substring(7), '_blank')">СОЗДАТЬ ВИДЕОКОМНАТУ 🎥</button>
+            <span class="label">Audio Hub</span>
+            <button class="btn" onclick="handleCommand('/play')">START LO-FI STREAM</button>
+            <button class="btn" style="background:#444; color:#fff; margin-top:10px;" onclick="handleCommand('/stop')">HALT AUDIO</button>
         </div>
     </div>
 </div>
 
 <script>
+    window.sessionStart = Date.now();
     let posts = JSON.parse(localStorage.getItem('os_posts')) || [];
+    let todos = JSON.parse(localStorage.getItem('os_todos')) || [];
+    let audioStream = null;
 
-    // Навигация
+    // --- СИСТЕМНЫЕ ФУНКЦИИ ---
+    function updateClock() {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('ru-RU', { hour12: false });
+    }
+    setInterval(updateClock, 1000);
+
+    if ('getBattery' in navigator) {
+        navigator.getBattery().then(batt => {
+            const up = () => document.getElementById('battery').innerText = `🔋 ${Math.round(batt.level * 100)}%`;
+            up(); batt.onlevelchange = up;
+        });
+    }
+
+    function showNotify(text, color = 'var(--main)') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.background = color;
+        toast.innerText = `[ SYSTEM ]: ${text}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+
+        const logs = document.getElementById('system-logs');
+        const entry = document.createElement('div');
+        entry.innerHTML = `<span style="color:${color}">> ${new Date().toLocaleTimeString()}</span>: ${text}`;
+        logs.appendChild(entry);
+        logs.scrollTop = logs.scrollHeight;
+    }
+
+    // --- КОМАНДНЫЙ ЦЕНТР ---
+    function handleCommand(cmd) {
+        const parts = cmd.split(' ');
+        const command = parts[0].toLowerCase();
+        const arg = parts[1];
+
+        switch(command) {
+            case '/login':
+                if(arg) {
+                    localStorage.setItem('os_user', arg);
+                    document.getElementById('os-logo').innerText = `USER: ${arg.toUpperCase()}`;
+                    showNotify(`ACCESS GRANTED: ${arg}`);
+                }
+                break;
+            case '/todo':
+                const taskText = parts.slice(1).join(' ');
+                if(taskText) addTodo(taskText);
+                break;
+            case '/status':
+                const uptime = Math.floor((Date.now() - window.sessionStart) / 1000);
+                const report = `OS: VOX-EDITION | UPTIME: ${uptime}s | POSTS: ${posts.length} | TASKS: ${todos.length}`;
+                showNotify(report);
+                break;
+            case '/theme':
+                if(arg) {
+                    document.documentElement.style.setProperty('--main', arg);
+                    showNotify(`THEME MODIFIED`);
+                }
+                break;
+            case '/export':
+                const blob = new Blob([posts.map(p => `[${p.date}] ${p.author}: ${p.text}`).join('\n')], {type:'text/plain'});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'os_data_dump.txt';
+                a.click();
+                showNotify('EXPORT SUCCESSFUL');
+                break;
+            case '/matrix':
+                startMatrix();
+                break;
+            case '/clear':
+                posts = [];
+                saveAndRender();
+                showNotify('MEMORY WIPED', 'var(--tt)');
+                break;
+            case '/play':
+                if(!audioStream) audioStream = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+                audioStream.play();
+                showNotify('AUDIO STREAM ACTIVE');
+                break;
+            case '/stop':
+                if(audioStream) audioStream.pause();
+                showNotify('AUDIO STREAM HALTED');
+                break;
+            case '/help':
+                showNotify('CMDS: /login, /todo, /status, /theme, /export, /matrix, /clear, /play');
+                break;
+            default:
+                showNotify('UNKNOWN CMD', '#ffaa00');
+        }
+    }
+
+    // --- МЕССЕНДЖЕР ---
+    function sendMsg() {
+        const inp = document.getElementById('msg-val');
+        const val = inp.value.trim();
+        if(!val) return;
+
+        if(val.startsWith('/')) {
+            handleCommand(val);
+        } else {
+            const user = localStorage.getItem('os_user') || 'GUEST';
+            posts.unshift({ id: Date.now(), author: user, text: val, date: new Date().toLocaleString() });
+            saveAndRender();
+            showNotify('DATA INJECTED');
+        }
+        inp.value = '';
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('os_posts', JSON.stringify(posts));
+        const wall = document.getElementById('chat-wall');
+        wall.innerHTML = posts.map(p => `
+            <div class="post">
+                <b>${p.date} | ${p.author.toUpperCase()}</b>
+                <span>${p.text.replace(/</g, "&lt;")}</span>
+                <button class="del-btn" onclick="deletePost(${p.id})">[X]</button>
+            </div>
+        `).join('') || '<div style="color:#444; text-align:center;">EMPTY BUFFER</div>';
+    }
+
+    function deletePost(id) {
+        posts = posts.filter(p => p.id !== id);
+        saveAndRender();
+    }
+
+    // --- ЗАДАЧИ ---
+    function addTodo(text) {
+        const input = document.getElementById('todo-input');
+        const val = text || input.value.trim();
+        if(!val) return;
+        todos.push({ id: Date.now(), text: val });
+        input.value = '';
+        saveTodos();
+    }
+
+    function saveTodos() {
+        localStorage.setItem('os_todos', JSON.stringify(todos));
+        renderTodos();
+    }
+
+    function renderTodos() {
+        const list = document.getElementById('todo-list');
+        list.innerHTML = todos.map(t => `
+            <div class="todo-item">
+                <span>• ${t.text}</span>
+                <span onclick="deleteTodo(${t.id})" style="color:var(--main); cursor:pointer; float:right;">[DONE]</span>
+            </div>
+        `).join('') || '<div style="color:#444">NO TASKS</div>';
+    }
+
+    function deleteTodo(id) {
+        todos = todos.filter(t => t.id !== id);
+        saveTodos();
+    }
+
+    // --- МАТРИЦА ---
+    function startMatrix() {
+        const c = document.getElementById('matrix');
+        const ctx = c.getContext('2d');
+        c.style.display = 'block';
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const drops = Array(Math.floor(c.width/16)).fill(1);
+        const iter = setInterval(() => {
+            ctx.fillStyle = 'rgba(0,0,0,0.05)';
+            ctx.fillRect(0,0,c.width,c.height);
+            ctx.fillStyle = '#0f8';
+            ctx.font = "15px monospace";
+            drops.forEach((y, i) => {
+                ctx.fillText(String.fromCharCode(Math.random()*128), i*16, y*16);
+                if(y*16 > c.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }, 33);
+        c.onclick = () => { clearInterval(iter); c.style.display = 'none'; };
+        showNotify('MATRIX MODE ENABLED');
+    }
+
+    // --- ИНИЦИАЛИЗАЦИЯ ---
     function tab(name, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById('p-'+name).classList.remove('hidden');
@@ -107,43 +308,19 @@
         el.classList.add('active');
     }
 
-    // TikTok Поиск
     function ttSearch() {
-        const val = document.getElementById('tt-search').value.trim();
-        if(!val) return;
-        let url = val.startsWith('@') ? `https://www.tiktok.com/${val}` : `https://www.tiktok.com/search?q=${encodeURIComponent(val)}`;
-        window.open(url, '_blank');
-    }
-    
-    // Сообщения
-    function sendMsg() {
-        const inp = document.getElementById('msg-val');
-        if(!inp.value.trim()) return;
-        posts.unshift({text: inp.value, date: new Date().toLocaleString()});
-        inp.value = '';
-        localStorage.setItem('os_posts', JSON.stringify(posts));
-        renderPosts();
+        const val = document.getElementById('tt-search').value;
+        if(val) window.open(`https://www.tiktok.com/search?q=${encodeURIComponent(val)}`, '_blank');
     }
 
-    function renderPosts() {
-        const wall = document.getElementById('chat-wall');
-        if(posts.length === 0) { wall.innerHTML = '<div style="color:#666; text-align:center">Лента пуста</div>'; return; }
-        wall.innerHTML = posts.map(p => `<div class="post"><b>${p.date}</b>${p.text}</div>`).join('');
-    }
-
-    // Медиа Поиск
-    function mediaSearch(type) {
-        const m = document.getElementById('m-search').value;
-        const v = document.getElementById('v-search').value;
-        if(type === 'music' && m) window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(m)}`, '_blank');
-        if(type === 'video' && v) window.open(`https://www.google.com/search?q=${encodeURIComponent(v)}+смотреть+онлайн+бесплатно`, '_blank');
-    }
-
-    // Инициализация
     window.onload = () => {
-        renderPosts();
-        fetch('https://wttr.in/?format=%c+%t').then(r => r.text()).then(t => document.getElementById('weather').innerText = t).catch(()=>"📡 CONNECTED");
-    }
+        saveAndRender();
+        renderTodos();
+        const user = localStorage.getItem('os_user');
+        if(user) document.getElementById('os-logo').innerText = `USER: ${user.toUpperCase()}`;
+        document.getElementById('calendar-display').innerText = new Date().toLocaleDateString('ru-RU', {weekday:'long', day:'numeric', month:'long'}).toUpperCase();
+        fetch('https://wttr.in/?format=%c+%t').then(r => r.text()).then(t => document.getElementById('weather').innerText = t).catch(()=> document.getElementById('weather').innerText = "📡 ONLINE");
+    };
 </script>
 </body>
 </html>
