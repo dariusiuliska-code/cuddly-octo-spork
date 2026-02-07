@@ -3,19 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AND GLOBAL OS | VOX ULTIMATE</title>
+    <title>VOX OS v5.6 | FINAL ULTIMATE</title>
     <style>
         :root { --main: #00ff88; --accent: #00d4ff; --tt: #ff0050; --bg: #050505; --card: rgba(20, 20, 20, 0.9); }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', monospace; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        body { 
-            margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', monospace; 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-        }
-
-        /* Эффект сканирующих линий */
+        /* Эффект ретро-линий */
         body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 4px; z-index: 10000; pointer-events: none; opacity: 0.3; }
-
-        #traffic-loader { height: 2px; width: 0%; background: var(--main); position: fixed; top: 0; left: 0; z-index: 10001; transition: 0.4s; box-shadow: 0 0 10px var(--main); }
 
         .top-bar { display: flex; justify-content: space-between; padding: 12px 20px; background: #000; border-bottom: 1px solid #333; z-index: 10; align-items: center; }
         .logo { font-weight: bold; color: var(--main); text-shadow: 0 0 10px var(--main); letter-spacing: 2px; font-size: 14px; }
@@ -30,95 +24,78 @@
         .label { font-size: 9px; color: var(--main); text-transform: uppercase; margin-bottom: 10px; display: block; opacity: 0.7; }
 
         input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
-        .btn { background: var(--main); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 10px; margin-bottom: 5px; transition: 0.2s; }
-        .btn:active { transform: scale(0.97); }
+        .btn { background: var(--main); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 10px; margin-bottom: 5px; }
 
-        /* Плееры и Осциллограф */
-        #oscilloscope { width: 100%; height: 60px; background: #000; border-radius: 8px; margin-bottom: 10px; display: none; border: 1px solid var(--main); }
+        /* Оциллограф */
+        #oscilloscope { width: 100%; height: 80px; background: #000; border: 1px solid var(--main); border-radius: 8px; display: none; margin-bottom: 10px; }
+
         #video-viewport { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #444; }
-
-        /* Органайзер */
-        .task-item { background: rgba(255,255,255,0.03); border-left: 2px solid var(--accent); padding: 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-        .task-item.completed { opacity: 0.4; text-decoration: line-through; border-left-color: #444; }
+        
+        .task-item { background: rgba(255,255,255,0.03); border-left: 2px solid var(--accent); padding: 10px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 11px; }
+        .task-item.completed { opacity: 0.3; text-decoration: line-through; }
 
         #system-logs { background: rgba(0,0,0,0.8); border: 1px dashed #333; height: 60px; overflow-y: auto; font-family: monospace; font-size: 9px; color: #666; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-        
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
-        .toast { background: var(--main); color: #000; padding: 8px 15px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-top: 5px; animation: slide 0.3s; }
-        @keyframes slide { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="traffic-loader"></div>
-<div id="toast-container"></div>
-
 <div id="lock-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:20000; display:flex; align-items:center; justify-content:center; flex-direction:column;">
     <div class="logo" style="font-size: 24px; margin-bottom: 20px;">VOX ACCESS PANEL</div>
     <div class="box" style="width: 260px;">
         <input type="password" id="access-code" style="text-align:center" placeholder="ENTER CODE">
-        <button class="btn" onclick="checkAccess()">UNLOCK SYSTEM</button>
-        <div id="lock-error" style="color:var(--tt); font-size:9px; margin-top:10px; text-align:center"></div>
+        <button class="btn" onclick="checkAccess()">UNLOCK</button>
     </div>
 </div>
 
 <div class="top-bar">
-    <div class="logo">VOX OS v5.5</div>
+    <div class="logo">VOX OS v5.6</div>
     <div id="clock">00:00:00</div>
 </div>
 
 <div class="nav">
-    <div class="nav-btn active" onclick="tab('music', this)">AUDIO 🎵</div>
-    <div class="nav-btn" onclick="tab('cinema', this)">CINEMA 🎬</div>
-    <div class="nav-btn" onclick="tab('tasks', this)">TASKS 📑</div>
-    <div class="nav-btn" onclick="tab('comm', this)">VIDEO 🎥</div>
-    <div class="nav-btn" id="admin-nav" onclick="tab('admin', this)" style="color:var(--tt); display:none;">ADM 🛠️</div>
+    <div class="nav-btn active" onclick="tab('music', this)">AUDIO</div>
+    <div class="nav-btn" onclick="tab('cinema', this)">CINEMA</div>
+    <div class="nav-btn" onclick="tab('tasks', this)">TASKS</div>
+    <div class="nav-btn" onclick="tab('comm', this)">VIDEO</div>
+    <div class="nav-btn" id="admin-nav" onclick="tab('admin', this)" style="color:var(--tt); display:none;">ADM</div>
 </div>
 
 <div class="container">
-    <div id="system-logs"><div>[ SYSTEM ENCRYPTED - STANDBY ]</div></div>
+    <div id="system-logs"><div>[ READY ]</div></div>
 
     <div id="p-music" class="page">
         <div class="box">
-            <span class="label">Sonar / Shazam Mode</span>
+            <span class="label">Sonar Oscillator</span>
             <canvas id="oscilloscope"></canvas>
             <button class="btn" id="shazam-btn" style="background:var(--accent)" onclick="startShazam()">PUSH TO LISTEN (SHAZAM)</button>
         </div>
         <div class="box">
-            <span class="label">Vox-Amp Player</span>
+            <span class="label">Vox Player</span>
             <div id="wa-track" style="font-size:11px; color:var(--main); margin-bottom:10px;">IDLE</div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-                <button class="btn" onclick="playStream('https://lofi.stream.laut.fm/lofi', 'LO-FI')">LO-FI</button>
-                <button class="btn" onclick="playStream('http://stream.nightride.fm/nightride.mp3', 'SYNTH')">SYNTH</button>
-            </div>
-            <button class="btn" style="background:var(--tt); color:#fff; margin-top:5px;" onclick="stopAudio()">STOP AUDIO</button>
+            <button class="btn" onclick="playStream('https://lofi.stream.laut.fm/lofi', 'CHILL LO-FI')">PLAY LO-FI</button>
+            <button class="btn" style="background:var(--tt); color:#fff; margin-top:5px;" onclick="stopAudio()">STOP</button>
         </div>
         <div class="box">
-            <span class="label">Search</span>
-            <input type="text" id="music-q" placeholder="Трек или артист...">
-            <button class="btn" onclick="searchMusic()">SEARCH SOUNDCLOUD</button>
+            <input type="text" id="music-q" placeholder="Search track...">
+            <button class="btn" onclick="window.open('https://soundcloud.com/search?q='+document.getElementById('music-q').value)">SEARCH</button>
         </div>
     </div>
 
     <div id="p-cinema" class="page hidden">
         <div class="box">
-            <span class="label">Cinema Viewport</span>
-            <div id="video-viewport">WAITING FOR SIGNAL...</div>
+            <div id="video-viewport">WAITING...</div>
         </div>
         <div class="box">
-            <span class="label">Find Movie</span>
-            <input type="text" id="movie-q" placeholder="Название фильма...">
-            <button class="btn" style="background:#E50914; color:white" onclick="searchMovie()">PLAY STREAM</button>
+            <input type="text" id="movie-q" placeholder="Фильм...">
+            <button class="btn" style="background:#E50914; color:white" onclick="searchMovie()">PLAY NOW</button>
         </div>
     </div>
 
     <div id="p-tasks" class="page hidden">
         <div class="box">
-            <span class="label">New Mission</span>
             <div style="display:flex; gap:10px;">
-                <input type="text" id="task-in" placeholder="Цель..." style="margin:0">
+                <input type="text" id="task-in" placeholder="New Task..." style="margin:0">
                 <button class="btn" style="width:50px; margin:0" onclick="addTask()">+</button>
             </div>
         </div>
@@ -127,19 +104,17 @@
 
     <div id="p-comm" class="page hidden">
         <div class="box">
-            <span class="label">Encrypted Meeting</span>
             <input type="text" id="room-id" placeholder="ROOM CODE">
-            <button class="btn" style="background:var(--accent); color:#000" onclick="joinMeet()">JOIN JITSI</button>
-            <button class="btn" onclick="genMeet()">GENERATE CODE</button>
+            <button class="btn" onclick="joinMeet()">JOIN JITSI</button>
+            <button class="btn" onclick="document.getElementById('room-id').value='VOX-'+Math.random().toString(36).substr(7).toUpperCase()">GENERATE</button>
         </div>
     </div>
 
     <div id="p-admin" class="page hidden">
         <div class="box">
-            <span class="label">Admin Panel</span>
-            <p style="font-size:10px;">MASTER KEY: <span id="m-key-display" style="color:var(--main)"></span></p>
-            <button class="btn" onclick="regenKey()">REGENERATE KEY</button>
-            <button class="btn" style="background:var(--tt); color:#fff; margin-top:10px;" onclick="location.reload()">LOCK SYSTEM</button>
+            <span class="label">Master Key</span>
+            <div id="m-key-display" style="color:var(--main); margin-bottom:10px;"></div>
+            <button class="btn" onclick="regenKey()">REGENERATE</button>
         </div>
     </div>
 </div>
@@ -149,69 +124,51 @@
     let tasks = JSON.parse(localStorage.getItem('v_tasks')) || [];
     let audio = null;
     let micStream = null;
+    let audioCtx = null;
 
-    // --- БЕЗОПАСНОСТЬ ---
-    function checkAccess() {
-        const code = document.getElementById('access-code').value;
-        if(code === master) {
-            document.getElementById('lock-screen').classList.add('hidden');
-            document.getElementById('admin-nav').style.display = 'block';
-            document.getElementById('m-key-display').innerText = master;
-            log("ACCESS GRANTED. VOX OS INITIALIZED.");
-            renderTasks();
-        } else {
-            document.getElementById('lock-error').innerText = "INVALID ACCESS CODE.";
-        }
-    }
-
-    function regenKey() {
-        master = "VOX-" + Math.floor(1000 + Math.random() * 8999);
-        localStorage.setItem('v_master', master);
-        document.getElementById('m-key-display').innerText = master;
-        log("NEW MASTER KEY GENERATED: " + master);
-    }
-
-    // --- ЛОГИКА И СИСТЕМА ---
     function log(t) {
         const l = document.getElementById('system-logs');
         l.innerHTML += `<div>> ${t}</div>`;
         l.scrollTop = l.scrollHeight;
-        showToast(t);
     }
 
-    function showToast(t) {
-        const c = document.getElementById('toast-container');
-        const b = document.createElement('div');
-        b.className = 'toast'; b.innerText = t;
-        c.appendChild(b);
-        setTimeout(() => b.remove(), 3000);
+    function checkAccess() {
+        if(document.getElementById('access-code').value === master) {
+            document.getElementById('lock-screen').classList.add('hidden');
+            document.getElementById('admin-nav').style.display = 'block';
+            document.getElementById('m-key-display').innerText = master;
+            log("WELCOME OPERATOR.");
+            renderTasks();
+            // Инициализация аудио-контекста после клика
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
     }
 
     function tab(name, el) {
-        document.getElementById('traffic-loader').style.width = '100%';
-        setTimeout(() => document.getElementById('traffic-loader').style.width = '0%', 400);
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById('p-'+name).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
     }
 
-    // --- AUDIO & SHAZAM (ОСЦИЛЛОГРАФ) ---
+    // --- ИСПРАВЛЕННЫЙ SHAZAM ---
     async function startShazam() {
         const btn = document.getElementById('shazam-btn');
         const cvs = document.getElementById('oscilloscope');
         const ctx = cvs.getContext('2d');
         
         try {
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+            
             micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
             cvs.style.display = 'block';
+            cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
             btn.innerText = "LISTENING...";
-            log("SONAR ACTIVE: CAPTURING AUDIO...");
+            log("OSCILLATOR SYNCED.");
 
-            const aCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const src = aCtx.createMediaStreamSource(micStream);
-            const ans = aCtx.createAnalyser();
-            ans.fftSize = 2048;
+            const src = audioCtx.createMediaStreamSource(micStream);
+            const ans = audioCtx.createAnalyser();
+            ans.fftSize = 1024;
             src.connect(ans);
             
             const buf = new Uint8Array(ans.fftSize);
@@ -219,9 +176,10 @@
                 if(!micStream) return;
                 requestAnimationFrame(draw);
                 ans.getByteTimeDomainData(buf);
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(0,0,cvs.width, cvs.height);
                 ctx.lineWidth = 2; ctx.strokeStyle = '#00ff88'; ctx.beginPath();
-                let sw = cvs.width / buf.length, x = 0;
+                let x = 0, sw = cvs.width/buf.length;
                 for(let i=0; i<buf.length; i++) {
                     let y = (buf[i]/128.0) * cvs.height/2;
                     i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
@@ -236,72 +194,56 @@
                 micStream = null;
                 btn.innerText = "PUSH TO LISTEN (SHAZAM)";
                 cvs.style.display = 'none';
-                log("ANALYSIS COMPLETE. OPENING AHA-MUSIC...");
                 window.open('https://www.aha-music.com/identify-songs-music-recognition-online', '_blank');
             }, 5000);
-        } catch(e) { log("ERROR: MIC DENIED"); }
+        } catch(e) { log("MIC ERROR: ACCESS DENIED"); }
     }
 
     function playStream(url, n) {
         if(audio) audio.pause();
-        audio = new Audio(url); audio.play();
-        document.getElementById('wa-track').innerText = "PLAYING: " + n;
-        log("STREAM STARTED: " + n);
+        audio = new Audio(url);
+        audio.play().then(() => {
+            document.getElementById('wa-track').innerText = "PLAYING: " + n;
+            log("AUDIO ONLINE.");
+        }).catch(() => log("ERROR: CLICK REQUIRED"));
     }
 
-    function stopAudio() {
-        if(audio) { audio.pause(); audio = null; }
-        document.getElementById('wa-track').innerText = "IDLE";
-        log("AUDIO TERMINATED.");
-    }
+    function stopAudio() { if(audio){audio.pause(); audio=null;} document.getElementById('wa-track').innerText="IDLE"; }
 
-    function searchMusic() {
-        const q = document.getElementById('music-q').value;
-        window.open(`https://soundcloud.com/search?q=${q}`, '_blank');
-    }
-
-    // --- КИНО ---
     function searchMovie() {
         const q = document.getElementById('movie-q').value;
         document.getElementById('video-viewport').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed?listType=search&list=${q}" frameborder="0" allowfullscreen></iframe>`;
-        log("CINEMA SIGNAL LOADED: " + q);
     }
 
-    // --- ОРГАНАЙЗЕР ---
     function addTask() {
-        const i = document.getElementById('task-in');
-        if(!i.value) return;
-        tasks.push({text: i.value.toUpperCase(), done: false});
-        i.value = ''; renderTasks();
-        log("MISSION ADDED.");
+        const val = document.getElementById('task-in').value;
+        if(val) { tasks.push({text: val.toUpperCase(), done: false}); renderTasks(); document.getElementById('task-in').value=''; }
     }
 
     function renderTasks() {
-        const l = document.getElementById('task-list');
-        l.innerHTML = '';
+        const l = document.getElementById('task-list'); l.innerHTML = '';
         tasks.forEach((t, i) => {
             l.innerHTML += `<div class="task-item ${t.done?'completed':''}">
-                <span onclick="toggleTask(${i})">${t.done?'[EXE]':'[RUN]'} ${t.text}</span>
-                <span style="color:red" onclick="delTask(${i})">DEL</span>
+                <span onclick="tasks[${i}].done=!tasks[${i}].done;renderTasks()">${t.done?'[X]':'[ ]'} ${t.text}</span>
+                <span style="color:red" onclick="tasks.splice(${i},1);renderTasks()">DEL</span>
             </div>`;
         });
         localStorage.setItem('v_tasks', JSON.stringify(tasks));
     }
-    function toggleTask(i) { tasks[i].done = !tasks[i].done; renderTasks(); }
-    function delTask(i) { tasks.splice(i,1); renderTasks(); }
 
-    // --- СВЯЗЬ ---
-    function genMeet() {
-        const c = "VOX-" + Math.random().toString(36).substring(7).toUpperCase();
-        document.getElementById('room-id').value = c;
-    }
-    function joinMeet() {
+    function joinMeet() { 
         const c = document.getElementById('room-id').value;
-        if(c) window.open(`https://meet.jit.si/${c}`, '_blank');
+        if(c) window.open('https://meet.jit.si/' + c, '_blank');
+    }
+
+    function regenKey() {
+        master = "VOX-" + Math.floor(1000 + Math.random() * 8999);
+        localStorage.setItem('v_master', master);
+        document.getElementById('m-key-display').innerText = master;
+        log("NEW KEY: " + master);
     }
 
     setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString('ru-RU'), 1000);
-    document.addEventListener('keypress', (e) => { if(e.key === 'Enter') checkAccess(); });
 </script>
 </body>
 </html>
