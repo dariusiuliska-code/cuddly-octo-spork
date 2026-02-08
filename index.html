@@ -3,66 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v48 | GLOBAL</title>
+    <title>VOX OS v57 | ULTIMA</title>
     <style>
-        :root { --main: #00ff41; --bg: #000; --win: #0a0a0a; }
+        :root { --main: #00ff41; --bg: #000; --win: #0a0a0a; --accent: #ff0055; --warn: #ffae00; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
 
+        /* Desktop Grid */
         #desktop { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 110px); padding: 25px; gap: 15px; background: radial-gradient(circle, #001a05 0%, #000 100%); }
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 10px; border-radius: 8px; }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 10px; border-radius: 8px; transition: 0.2s; }
+        .icon:active { background: rgba(0, 255, 65, 0.2); transform: scale(0.9); }
         .icon span { font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 0 5px var(--main)); }
-        .icon label { font-size: 10px; text-align: center; text-transform: uppercase; }
+        .icon label { font-size: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; }
 
-        .window { position: absolute; top: 5%; left: 5%; width: 90%; max-width: 450px; background: var(--win); border: 1px solid var(--main); display: none; flex-direction: column; z-index: 100; box-shadow: 0 0 30px rgba(0, 255, 65, 0.3); }
+        /* Window System */
+        .window { position: absolute; top: 5%; left: 5%; width: 90%; max-width: 450px; background: var(--win); border: 1px solid var(--main); display: none; flex-direction: column; z-index: 100; box-shadow: 0 0 40px rgba(0, 255, 65, 0.2); }
         .win-header { background: var(--main); color: #000; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 12px; }
-        .close-btn { cursor: pointer; font-size: 20px; padding: 0 5px; }
-        .win-content { padding: 15px; max-height: 85vh; overflow-y: auto; }
+        .close-btn { cursor: pointer; font-size: 24px; line-height: 1; padding: 0 5px; }
+        .win-content { padding: 15px; max-height: 80vh; overflow-y: auto; text-align: center; }
 
-        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; }
+        /* UI Elements */
+        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; font-family: inherit; font-size: 12px; }
+        .btn:active { opacity: 0.7; }
+        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; }
+        .log { height: 100px; overflow-y: auto; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; font-size: 12px; background: #000; text-align: left; }
         
-        #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .log { height: 100px; overflow-y: auto; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; font-size: 12px; background: #000; }
+        /* Grid Helpers */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-        .btn-c { padding: 12px; background: #111; color: var(--main); border: 1px solid var(--main); cursor: pointer; }
+
+        /* Lock Screen */
+        #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* Special Modes */
+        .ghost-mode { filter: grayscale(1) contrast(3) brightness(0.3) blur(5px); pointer-events: none; }
+        #death-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 24px; z-index: 10000; display: none; font-weight: bold; text-shadow: 0 0 10px red; }
     </style>
 </head>
 <body>
 
+<div id="death-msg">CRITICAL_SYSTEM_WIPE</div>
+
 <div id="lock-screen">
-    <div style="letter-spacing: 5px; margin-bottom: 20px;">VOX_STATION_READY</div>
-    <input type="password" id="sys-pass" style="width: 200px; text-align: center;" placeholder="VOX-777">
-    <button class="btn" style="width: 200px;" onclick="unlock()">ENTER SYSTEM</button>
+    <div style="letter-spacing: 8px; margin-bottom: 20px; font-size: 18px;">VOX_v57_ULTIMA</div>
+    <input type="password" id="sys-pass" style="width: 220px; text-align: center; font-size: 18px;" placeholder="CODE: 777">
+    <button class="btn" style="width: 220px;" onclick="unlock()">INITIALIZE</button>
 </div>
 
 <div id="desktop">
     <div class="icon" onclick="smartOpen('win-voice')"><span>🎤</span><label>Голос</label></div>
-    <div class="icon" onclick="smartOpen('win-chat')"><span>💬</span><label>Глобальный Чат</label></div>
-    <div class="icon" onclick="smartOpen('win-file')"><span>📁</span><label>Глоб. Файлы</label></div>
-    <div class="icon" onclick="smartOpen('win-search')"><span>🎬</span><label>Поиск/Кино</label></div>
-    <div class="icon" onclick="smartOpen('win-music')"><span>🎵</span><label>Музыка</label></div>
+    <div class="icon" onclick="smartOpen('win-direct')"><span>📡</span><label>Передача</label></div>
+    <div class="icon" onclick="smartOpen('win-chat')"><span>💬</span><label>Чат</label></div>
+    <div class="icon" onclick="smartOpen('win-player')"><span>💿</span><label>Плеер</label></div>
+    <div class="icon" onclick="smartOpen('win-org')"><span>📅</span><label>Заметки</label></div>
     <div class="icon" onclick="smartOpen('win-games')"><span>🎮</span><label>Игры</label></div>
-    <div class="icon" onclick="smartOpen('win-org')"><span>📅</span><label>Органайзер</label></div>
-    <div class="icon" onclick="smartOpen('win-video')"><span>📡</span><label>Видеосвязь</label></div>
+    <div class="icon" onclick="smartOpen('win-tele')"><span>🧠</span><label>Телепатия</label></div>
+    <div class="icon" onclick="smartOpen('win-death')"><span>💀</span><label>Матрица</label></div>
 </div>
 
-<div id="win-chat" class="window">
-    <div class="win-header"><span>GLOBAL CHAT</span><span class="close-btn" onclick="closeWin('win-chat')">×</span></div>
+<div id="win-voice" class="window">
+    <div class="win-header"><span>VOICE CONTROL</span><span class="close-btn" onclick="closeWin('win-voice')">×</span></div>
     <div class="win-content">
-        <p style="font-size:10px;">Введите имя комнаты (например: VOX_MAIN), чтобы общаться с другими пользователями по всему миру.</p>
-        <input type="text" id="chat-room" placeholder="Имя комнаты..." value="VOX_GENERAL">
-        <button class="btn" onclick="openChat()">ВОЙТИ В ЧАТ</button>
-        <p style="font-size:9px; color:#555;">* Используется защищенный протокол Matrix/Element через веб.</p>
+        <button id="v-btn" class="btn" style="background:#ff4141; color:#fff;" onclick="startVoice()">СЛУШАТЬ</button>
+        <div id="v-status" style="margin-bottom:10px; font-size:11px;">Готов к команде</div>
+        <div id="v-choice-box" style="display:none; border:1px dashed var(--main); padding:10px;">
+            <div id="v-res" style="color:#fff; margin-bottom:10px;"></div>
+            <button class="btn" onclick="voiceAction('web')">В ПОИСК</button>
+            <button class="btn" style="background:#111; color:var(--main); border:1px solid var(--main);" onclick="voiceAction('film')">В КИНО HD</button>
+        </div>
     </div>
 </div>
 
-<div id="win-file" class="window">
-    <div class="win-header"><span>GLOBAL FILE SHARE</span><span class="close-btn" onclick="closeWin('win-file')">×</span></div>
+<div id="win-direct" class="window">
+    <div class="win-header"><span>DIRECT P2P SHARE</span><span class="close-btn" onclick="closeWin('win-direct')">×</span></div>
     <div class="win-content">
-        <p style="font-size:10px; color:#fff;">Отправка файлов напрямую (P2P) без ограничений по размеру и сети.</p>
-        <button class="btn" style="background:#00d9ff; color:#000;" onclick="window.open('https://toffeeshare.com/')">СОЗДАТЬ КАНАЛ ПЕРЕДАЧИ</button>
-        <p style="font-size:9px;">Выберите файл -> получите ссылку -> отправьте другому пользователю VOX.</p>
+        <p style="font-size:11px;">Прямая передача файла пользователю VOX</p>
+        <button class="btn" onclick="window.open('https://send-anywhere.com/')">ОТПРАВИТЬ (ПОЛУЧИТЬ КОД)</button>
+        <div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;">
+            <input id="p2p-code" placeholder="Введите 6-значный код...">
+            <button class="btn" style="background:#fff;">ПРИНЯТЬ ФАЙЛ</button>
+        </div>
+    </div>
+</div>
+
+<div id="win-tele" class="window">
+    <div class="win-header"><span>TELEPATHY CLIPBOARD</span><span class="close-btn" onclick="closeWin('win-tele')">×</span></div>
+    <div class="win-content">
+        <input type="text" id="tele-key" placeholder="Секретный ключ (слово)...">
+        <textarea id="tele-text" placeholder="Текст для синхронизации..." style="height:80px;"></textarea>
+        <div class="grid-2">
+            <button class="btn" onclick="alert('Данные в эфире!')">ОТПРАВИТЬ</button>
+            <button class="btn" style="background:#fff;" onclick="alert('Синхронизация...')">ПРИНЯТЬ</button>
+        </div>
+    </div>
+</div>
+
+<div id="win-player" class="window">
+    <div class="win-header"><span>ULTIMA PLAYER</span><span class="close-btn" onclick="closeWin('win-player')">×</span></div>
+    <div class="win-content">
+        <video id="v-play" controls style="width:100%; display:none; background:#000;"></video>
+        <audio id="a-play" controls style="width:100%; margin-bottom:10px;"></audio>
+        <input id="m-url" placeholder="Ссылка на MP3 / MP4...">
+        <div class="grid-2">
+            <button class="btn" onclick="playMedia()">ИГРАТЬ</button>
+            <button class="btn" style="background:var(--accent); color:#fff;" onclick="stopMedia()">СТОП</button>
+        </div>
     </div>
 </div>
 
@@ -70,96 +115,89 @@
     <div class="win-header"><span>ORGANIZER</span><span class="close-btn" onclick="closeWin('win-org')">×</span></div>
     <div class="win-content">
         <div id="note-log" class="log"></div>
-        <input type="text" id="note-in" placeholder="Заметка...">
-        <button class="btn" style="padding:5px; font-size:10px;" onclick="addNote()">ЗАПИСАТЬ</button>
-        <hr border="0" style="border-top:1px solid #333; margin:15px 0;">
-        <input type="text" id="calc-display" disabled style="text-align: right; font-size: 18px; color: #fff;">
+        <input id="note-in" placeholder="Заметка...">
+        <button class="btn" onclick="addNote()">ЗАПИСАТЬ</button>
+        <hr border="0" style="border-top:1px solid #333; margin:10px 0;">
+        <input id="calc-res" disabled style="text-align:right; font-size:20px;">
         <div class="calc-grid">
-            <button class="btn-c" onclick="calc(1)">1</button><button class="btn-c" onclick="calc(2)">2</button><button class="btn-c" onclick="calc(3)">3</button><button class="btn-c" onclick="calc('+')">+</button>
-            <button class="btn-c" onclick="calc(4)">4</button><button class="btn-c" onclick="calc(5)">5</button><button class="btn-c" onclick="calc(6)">6</button><button class="btn-c" onclick="calc('-')">-</button>
-            <button class="btn-c" onclick="calc(7)">7</button><button class="btn-c" onclick="calc(8)">8</button><button class="btn-c" onclick="calc(9)">9</button><button class="btn-c" onclick="calc('*')">*</button>
-            <button class="btn-c" onclick="document.getElementById('calc-display').value=''">C</button><button class="btn-c" onclick="calc(0)">0</button><button class="btn-c" onclick="calcEval()">=</button><button class="btn-c" onclick="calc('/')">/</button>
+            <button class="btn" onclick="calc(1)">1</button><button class="btn" onclick="calc(2)">2</button><button class="btn" onclick="calc(3)">3</button><button class="btn" onclick="calc('+')">+</button>
+            <button class="btn" onclick="calc(4)">4</button><button class="btn" onclick="calc(5)">5</button><button class="btn" onclick="calc(6)">6</button><button class="btn" onclick="calc('-')">-</button>
+            <button class="btn" style="background:#f44336;" onclick="document.getElementById('calc-res').value=''">C</button><button class="btn" onclick="calc(0)">0</button><button class="btn" onclick="calcEval()">=</button><button class="btn" onclick="calc('/')">/</button>
         </div>
-        <hr border="0" style="border-top:1px solid #333; margin:15px 0;">
-        <button class="btn" style="background:#2196F3; color:#fff;" onclick="window.open('https://google.com/search?q=погода')">⛅ ПОГОДА</button>
-        <button class="btn" style="background:#33e3ff; color:#000;" onclick="window.open('https://www.waze.com/ul')">🚙 WAZE</button>
     </div>
 </div>
 
-<div id="win-voice" class="window">
-    <div class="win-header"><span>VOICE AI</span><span class="close-btn" onclick="closeWin('win-voice')">×</span></div>
+<div id="win-death" class="window">
+    <div class="win-header"><span>WIPE SYSTEM</span><span class="close-btn" onclick="closeWin('win-death')">×</span></div>
     <div class="win-content">
-        <button id="v-btn" class="btn" style="background:#ff4141; color:#fff;" onclick="startVoice()">ГОВОРИТЬ</button>
-        <div id="v-status" style="margin-top:5px; font-size:11px; text-align:center;">Нажмите для записи</div>
-        <div id="v-choice-box" style="display:none; margin-top:10px; border:1px dashed var(--main); padding:10px;">
-            <div id="v-text-res" style="color:#fff; margin-bottom:10px; font-weight:bold;"></div>
-            <button class="btn" onclick="voiceAction('web')">В ИНТЕРНЕТЕ</button>
-            <button class="btn" style="background:#111; color:var(--main); border:1px solid var(--main);" onclick="voiceAction('film')">ИСКАТЬ ФИЛЬМ</button>
-        </div>
+        <p style="color:red; font-weight:bold;">МГНОВЕННОЕ УНИЧТОЖЕНИЕ ДАННЫХ СЕССИИ</p>
+        <button class="btn" style="background:red; color:#fff;" onclick="deathMode()">АКТИВИРОВАТЬ</button>
     </div>
 </div>
 
-<div id="win-search" class="window"><div class="win-header"><span>SEARCH</span><span class="close-btn" onclick="closeWin('win-search')">×</span></div><div class="win-content"><input id="q-search"><button class="btn" onclick="runS('web')">ПОИСК</button></div></div>
-<div id="win-music" class="window"><div class="win-header"><span>MUSIC</span><span class="close-btn" onclick="closeWin('win-music')">×</span></div><div class="win-content"><input id="m-search"><button class="btn" onclick="runM()">НАЙТИ MP3</button></div></div>
-<div id="win-games" class="window"><div class="win-header"><span>GAMES</span><span class="close-btn" onclick="closeWin('win-games')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://tetris.com/play-tetris')">ТЕТРИС</button><button class="btn" onclick="window.open('https://solitaired.com/')">КАРТЫ</button></div></div>
-<div id="win-video" class="window"><div class="win-header"><span>GLOBAL VIDEO</span><span class="close-btn" onclick="closeWin('win-video')">×</span></div><div class="win-content"><button class="btn" onclick="vBridge()">СОЗДАТЬ ВИДЕО-КОМНАТУ</button><div id="v-link"></div></div></div>
+<div id="win-games" class="window"><div class="win-header"><span>VOX GAMES</span><span class="close-btn" onclick="closeWin('win-games')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://tetris.com/play-tetris')">TETRIS</button><button class="btn" onclick="window.open('https://solitaired.com/')">SOLITAIRE</button></div></div>
+<div id="win-chat" class="window"><div class="win-header"><span>GLOBAL CHAT</span><span class="close-btn" onclick="closeWin('win-chat')">×</span></div><div class="win-content"><input id="room" placeholder="Название комнаты..."><button class="btn" onclick="window.open('https://element.io/app/#/room/#VOX_GENERAL:matrix.org')">ВОЙТИ В СЕТЬ</button></div></div>
 
 <script>
-    let currentOpenWin = null;
-    let lastVoiceText = "";
+    let currentWin = null;
+    let voiceText = "";
 
     function unlock() {
-        if(document.getElementById('sys-pass').value === "VOX-777") document.getElementById('lock-screen').style.display = 'none';
-        else alert('ОШИБКА');
+        if(document.getElementById('sys-pass').value === "777" || document.getElementById('sys-pass').value === "VOX-777") {
+            document.getElementById('lock-screen').style.display = 'none';
+        } else alert("ACCESS_DENIED");
     }
 
     function smartOpen(id) {
-        if (currentOpenWin && currentOpenWin !== id) {
-            if (!confirm("Оставить старое окно открытым?")) closeWin(currentOpenWin);
-        }
-        document.getElementById(id).style.display = 'flex'; currentOpenWin = id;
+        if(currentWin) closeWin(currentWin);
+        document.getElementById(id).style.display = 'flex';
+        currentWin = id;
     }
+    function closeWin(id) { document.getElementById(id).style.display = 'none'; currentWin = null; }
 
-    function closeWin(id) { document.getElementById(id).style.display = 'none'; if (currentOpenWin === id) currentOpenWin = null; }
-
-    function openChat() {
-        const room = document.getElementById('chat-room').value;
-        window.open(`https://element.io/app/#/room/#${room}:matrix.org`, '_blank');
-    }
-
+    // Голос
     function startVoice() {
-        if ('webkitSpeechRecognition' in window) {
-            const r = new webkitSpeechRecognition(); r.lang = 'ru-RU';
-            document.getElementById('v-status').innerText = "СЛУШАЮ...";
-            r.onresult = (e) => {
-                lastVoiceText = e.results[0][0].transcript;
-                document.getElementById('v-text-res').innerText = "ЗАПРОС: " + lastVoiceText;
-                document.getElementById('v-choice-box').style.display = 'block';
-                document.getElementById('v-status').innerText = "ВЫБЕРИТЕ ДЕЙСТВИЕ";
-            };
-            r.start();
-        }
+        if (!('webkitSpeechRecognition' in window)) return alert("Voice Not Supported");
+        const r = new webkitSpeechRecognition(); r.lang = 'ru-RU';
+        document.getElementById('v-status').innerText = "СЛУШАЮ...";
+        r.onresult = (e) => {
+            voiceText = e.results[0][0].transcript;
+            document.getElementById('v-res').innerText = ">> " + voiceText;
+            document.getElementById('v-choice-box').style.display = 'block';
+            document.getElementById('v-status').innerText = "ОЖИДАНИЕ ВЫБОРА";
+        };
+        r.start();
+    }
+    function voiceAction(t) {
+        let url = "https://google.com/search?q=" + encodeURIComponent(voiceText);
+        if(t === 'film') url += "+фильм+смотреть+онлайн+hd";
+        window.open(url);
     }
 
-    function voiceAction(type) {
-        let url = "https://google.com/search?q=" + encodeURIComponent(lastVoiceText);
-        if(type === 'film') url += "+смотреть+онлайн+hd";
-        window.open(url, '_blank');
+    // Плеер
+    function playMedia() {
+        const u = document.getElementById('m-url').value;
+        const v = document.getElementById('v-play'); const a = document.getElementById('a-play');
+        if(u.includes('.mp4')) { a.pause(); a.style.display='none'; v.src=u; v.style.display='block'; v.play(); }
+        else { v.pause(); v.style.display='none'; a.src=u; a.style.display='block'; a.play(); }
     }
+    function stopMedia() { document.getElementById('v-play').pause(); document.getElementById('a-play').pause(); }
 
+    // Органайзер
     function addNote() {
         const i = document.getElementById('note-in'); const l = document.getElementById('note-log');
-        if(i.value) { l.innerHTML += `<div>> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
+        if(i.value) { l.innerHTML += `<div>• ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
     }
-    function calc(v) { document.getElementById('calc-display').value += v; }
-    function calcEval() { try { document.getElementById('calc-display').value = eval(document.getElementById('calc-display').value); } catch { alert('!'); } }
-    
-    function runS(t) { window.open("https://google.com/search?q=" + document.getElementById('q-search').value); }
-    function runM() { window.open("https://www.google.com/search?q=" + document.getElementById('m-search').value + "+mp3"); }
-    
-    function vBridge() {
-        const id = "VOX-" + Math.floor(Math.random()*9999);
-        document.getElementById('v-link').innerHTML = `<button class="btn" style="background:#fff;margin-top:10px;" onclick="window.open('https://meet.jit.si/${id}')">ССЫЛКА: ${id}</button>`;
+    function calc(v) { document.getElementById('calc-res').value += v; }
+    function calcEval() { try { document.getElementById('calc-res').value = eval(document.getElementById('calc-res').value); } catch { alert('!'); } }
+
+    // Матрица смерти
+    function deathMode() {
+        if(confirm("УНИЧТОЖИТЬ ВСЁ?")) {
+            document.body.classList.add('ghost-mode');
+            document.getElementById('death-msg').style.display = 'block';
+            setTimeout(() => { location.reload(); }, 2500);
+        }
     }
 </script>
 </body>
