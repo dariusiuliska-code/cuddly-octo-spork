@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v113 | MARKET RESTORED</title>
+    <title>VOX GENESIS | v116</title>
     <style>
         :root { --neon: #00f2ff; --accent: #7000ff; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(0, 242, 255, 0.3); }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         #matrix-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.15; pointer-events: none; }
         
-        #status-bar { position: fixed; top: 0; width: 100%; padding: 15px 25px; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
-        #ai-btn { background: linear-gradient(45deg, var(--neon), var(--accent)); border: none; color: #fff; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
-        #ai-btn.active { filter: hue-rotate(90deg); transform: scale(1.05); }
+        #status-bar { position: fixed; top: 0; width: 100%; padding: 15px 25px; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); align-items: center;}
+        #ai-btn { background: linear-gradient(45deg, var(--neon), var(--accent)); border: none; color: #fff; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        #ai-btn.active { box-shadow: 0 0 20px var(--neon); }
 
-        #desktop { position: relative; z-index: 10; display: none; padding: 90px 20px; height: 100%; overflow-y: auto; }
+        #desktop { position: relative; z-index: 10; display: none; padding: 80px 20px; height: 100%; overflow-y: auto; }
         .main-hub { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(15px); }
         
-        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); color: var(--neon); border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 16px; }
-        .btn { width: 100%; padding: 14px; background: var(--glass); color: var(--neon); border: 1px solid var(--neon); font-weight: bold; border-radius: 12px; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; transition: 0.3s; }
-        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
+        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.7); border: 1px solid var(--border); color: var(--neon); border-radius: 12px; margin-bottom: 10px; text-align: center; }
+        .btn { width: 100%; padding: 14px; background: var(--glass); color: var(--neon); border: 1px solid var(--neon); font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.3s; margin-bottom: 5px; }
+        .btn:active { background: var(--neon); color: #000; }
 
-        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 20px; }
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
-        .icon span { font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 0 10px var(--neon)); }
-        .icon label { font-size: 10px; text-transform: uppercase; color: rgba(255,255,255,0.7); text-align: center; font-weight: bold; }
+        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 15px; }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .icon span { font-size: 35px; margin-bottom: 5px; filter: drop-shadow(0 0 8px var(--neon)); }
+        .icon label { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: bold; text-align: center; }
 
-        .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 10, 15, 0.98); border: 1px solid var(--neon); display: none; flex-direction: column; z-index: 2000; width: 90%; max-width: 400px; border-radius: 20px; box-shadow: 0 0 50px rgba(0, 242, 255, 0.3); overflow: hidden;}
-        .win-header { background: linear-gradient(90deg, var(--neon), var(--accent)); color: #000; padding: 15px; display: flex; justify-content: space-between; font-weight: bold; }
-        .win-content { padding: 20px; text-align: center; }
+        .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5, 5, 10, 0.95); border: 1px solid var(--neon); display: none; flex-direction: column; z-index: 2000; width: 85%; max-width: 380px; border-radius: 15px; box-shadow: 0 0 40px rgba(0, 242, 255, 0.2); }
+        .win-header { background: linear-gradient(90deg, var(--neon), var(--accent)); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; font-size: 13px; }
+        .win-content { padding: 15px; }
 
         #lock { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; }
     </style>
@@ -38,23 +38,24 @@
 <canvas id="matrix-bg"></canvas>
 
 <div id="status-bar">
-    <div id="sys-title" style="color:var(--neon); font-weight:bold;">VOX OS v113</div>
-    <button id="ai-btn" onclick="globalVox()">🎤 VOX CONTROL</button>
-    <div id="clock">00:00</div>
+    <div style="color:var(--neon); font-weight:bold; font-size: 14px;">VOX GENESIS</div>
+    <button id="ai-btn" onclick="globalVox()">🎤 GENESIS</button>
+    <div id="clock" style="font-size: 12px;">00:00</div>
 </div>
 
 <div id="lock">
-    <div style="text-align:center; padding:40px; border:1px solid var(--border); border-radius:30px; background:rgba(10,10,15,0.9);">
-        <h1 style="color:var(--neon); letter-spacing:10px;">VOX OS</h1>
-        <input type="password" id="pin" placeholder="ВВЕДИТЕ КОД">
-        <button class="btn" onclick="auth()">ВХОД</button>
+    <div style="text-align:center; width: 80%;">
+        <div style="font-size: 40px; margin-bottom: 10px;">🛡️</div>
+        <h2 style="color:var(--neon); letter-spacing:5px;">SECURE LOG</h2>
+        <input type="password" id="pin" placeholder="KEY CODE">
+        <button class="btn" onclick="auth()">OPEN SYSTEM</button>
     </div>
 </div>
 
 <div id="desktop">
     <div class="main-hub">
-        <input id="global-search" placeholder="Поиск или команда...">
-        <button class="btn" onclick="handleSearch()">ПОИСК GOOGLE</button>
+        <input id="global-search" placeholder="Search or Voice Command...">
+        <button class="btn" onclick="handleSearch()">🌐 GLOBAL SEARCH</button>
     </div>
     <div id="apps-grid">
         <div class="icon" onclick="window.open('https://google.com')"><span>🔍</span><label>Google</label></div>
@@ -63,78 +64,88 @@
         <div class="icon" onclick="showW('w-met')"><span>📡</span><label>Meet AI</label></div>
         <div class="icon" onclick="showW('w-org')"><span>💾</span><label>Notes</label></div>
         <div id="custom-apps" style="display: contents;"></div>
-        <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>☣️</span><label style="color:red">Root</label></div>
-        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Выход</label></div>
+        <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>☣️</span><label style="color:red">ROOT</label></div>
+        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Exit</label></div>
     </div>
 </div>
 
-<div id="w-store-manual" class="window"><div class="win-header"><span>МАРКЕТ</span><span onclick="hideW('w-store-manual')" style="cursor:pointer">×</span></div><div class="win-content">
-    <input id="manual-app-input" placeholder="Название приложения">
-    <button class="btn" onclick="let n = document.getElementById('manual-app-input').value; if(n) askToInstall(n); hideW('w-store-manual');">УСТАНОВИТЬ</button>
-</div></div>
-
-<div id="w-choice" class="window"><div class="win-header"><span>INSTALLER</span><span onclick="hideW('w-choice')">×</span></div><div class="win-content">
-    <p id="choice-text" style="color:var(--neon); font-weight:bold;"></p>
-    <button class="btn" onclick="installConfirmed('store')">ОТКРЫТЬ В STORE</button>
-    <button class="btn" onclick="installConfirmed('local')">ДОБАВИТЬ НА СТОЛ</button>
-</div></div>
-
-<div id="w-play" class="window"><div class="win-header"><span>VOX PLAYER</span><span onclick="hideW('w-play')" style="cursor:pointer">×</span></div><div class="win-content">
-    <input id="media-url" placeholder="Ссылка на музыку или YouTube">
-    <button class="btn" onclick="playMedia()">ИГРАТЬ</button>
-    <iframe id="v-frame" style="width:100%; height:0; border:none; margin-top:10px;"></iframe>
+<div id="w-adm" class="window" style="border-color: red;"><div class="win-header" style="background: red;"><span>GENESIS KERNEL</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content">
+    <div style="font-size: 10px; color: red; background: #000; padding: 10px; height: 80px; overflow: auto; border: 1px solid red; margin-bottom: 10px;">
+        > Root authorized.<br>
+        > System encryption: Active.<br>
+        > Waiting for kernel command...
+    </div>
+    <button class="btn" style="border-color:red; color:red;" onclick="alert('NEW KEY: '+Math.floor(1000+Math.random()*9000))">GENERATE SYSTEM KEY</button>
+    <button class="btn" style="border-color:red; color:red;" onclick="wipeSystem()">PURGE ALL DATA</button>
 </div></div>
 
 <div id="w-met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
-    <input id="me-in" placeholder="ID Встречи">
-    <button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">ГЕНЕРИРОВАТЬ</button>
-    <button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">ВОЙТИ</button>
+    <input id="me-in" placeholder="Room Name">
+    <button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">GENERATE ROOM ID</button>
+    <button class="btn" onclick="if(document.getElementById('me-in').value) window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">JOIN MEET</button>
 </div></div>
 
-<div id="w-org" class="window"><div class="win-header"><span>ЗАМЕТКИ</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
-    <textarea id="note-pad" style="width:100%; height:150px; background:#000; color:var(--neon); border:1px solid var(--border); padding:10px;"></textarea>
-    <button class="btn" onclick="localStorage.setItem('vox_note', document.getElementById('note-pad').value); alert('СОХРАНЕНО')">СОХРАНИТЬ</button>
+<div id="w-store-manual" class="window"><div class="win-header"><span>MARKET</span><span onclick="hideW('w-store-manual')">×</span></div><div class="win-content">
+    <input id="manual-app-input" placeholder="App Name">
+    <button class="btn" onclick="let n = document.getElementById('manual-app-input').value; if(n) askToInstall(n); hideW('w-store-manual');">FIND</button>
+</div></div>
+
+<div id="w-choice" class="window"><div class="win-header"><span>INSTALLER</span><span onclick="hideW('w-choice')">×</span></div><div class="win-content">
+    <p id="choice-text" style="color:var(--neon); font-size: 14px;"></p>
+    <button class="btn" onclick="installConfirmed('store')">OPEN IN STORE</button>
+    <button class="btn" onclick="installConfirmed('local')">ADD TO DESKTOP</button>
+</div></div>
+
+<div id="w-play" class="window"><div class="win-header"><span>PLAYER</span><span onclick="hideW('w-play')">×</span></div><div class="win-content">
+    <input id="media-url" placeholder="YouTube/File URL">
+    <button class="btn" onclick="playMedia()">PLAY</button>
+    <iframe id="v-frame" style="width:100%; height:0; border:none;"></iframe>
+</div></div>
+
+<div id="w-org" class="window"><div class="win-header"><span>SECURE NOTES</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
+    <textarea id="note-pad" style="width:100%; height:120px; background:#000; color:var(--neon); border:1px solid var(--border); padding:10px;"></textarea>
+    <button class="btn" onclick="localStorage.setItem('vox_note', document.getElementById('note-pad').value); alert('SAVED')">SAVE DATA</button>
 </div></div>
 
 <script>
+    let isRoot = false;
     let currentPendingApp = "";
 
     function auth() {
         let p = document.getElementById('pin').value;
-        if(p === '111' || p === '777') {
-            document.getElementById('adm-ico').style.display = (p === '777') ? 'flex' : 'none';
-            document.getElementById('lock').style.display='none';
-            document.getElementById('desktop').style.display='block';
-            renderApps();
-        } else { alert('ОШИБКА КОДА'); }
+        if(p === '777') { isRoot = true; document.getElementById('adm-ico').style.display = 'flex'; enterSystem(); }
+        else if(p === '111') { isRoot = false; document.getElementById('adm-ico').style.display = 'none'; enterSystem(); }
+        else { alert('ACCESS DENIED'); }
     }
 
-    function showW(id) { document.getElementById(id).style.display='flex'; }
-    function hideW(id) { document.getElementById(id).style.display='none'; }
-
-    function playMedia() {
-        let url = document.getElementById('media-url').value;
-        if(!url) return;
-        let frame = document.getElementById('v-frame');
-        if(url.includes('youtube.com') || url.includes('youtu.be')) {
-            let id = url.split('v=')[1] || url.split('/').pop();
-            frame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-            frame.style.height = "200px";
-        } else { window.open(url); }
+    function enterSystem() {
+        document.getElementById('lock').style.display = 'none';
+        document.getElementById('desktop').style.display = 'block';
+        renderApps();
     }
+
+    function wipeSystem() {
+        if(confirm("WIPE SYSTEM?")) { localStorage.clear(); location.reload(); }
+    }
+
+    function showW(id) { 
+        if(id === 'w-adm' && !isRoot) return;
+        document.getElementById(id).style.display = 'flex'; 
+    }
+    
+    function hideW(id) { document.getElementById(id).style.display = 'none'; }
 
     function askToInstall(name) {
         currentPendingApp = name;
-        document.getElementById('choice-text').innerText = `ПРИЛОЖЕНИЕ: ${name.toUpperCase()}`;
+        document.getElementById('choice-text').innerText = `GENESIS INSTALLER: ${name.toUpperCase()}`;
         showW('w-choice');
     }
 
     function installConfirmed(type) {
-        if(type === 'store') {
-            window.open(`https://play.google.com/store/search?q=${currentPendingApp}&c=apps`);
-        } else {
-            let apps = JSON.parse(localStorage.getItem('vox_apps_v113') || '[]');
-            if(!apps.includes(currentPendingApp)) { apps.push(currentPendingApp); localStorage.setItem('vox_apps_v113', JSON.stringify(apps)); }
+        if(type === 'store') { window.open(`https://play.google.com/store/search?q=${currentPendingApp}`); } 
+        else {
+            let apps = JSON.parse(localStorage.getItem('vox_genesis_v116') || '[]');
+            if(!apps.includes(currentPendingApp)) { apps.push(currentPendingApp); localStorage.setItem('vox_genesis_v116', JSON.stringify(apps)); }
             renderApps();
         }
         hideW('w-choice');
@@ -143,13 +154,22 @@
     function renderApps() {
         const container = document.getElementById('custom-apps');
         container.innerHTML = '';
-        let apps = JSON.parse(localStorage.getItem('vox_apps_v113') || '[]');
+        let apps = JSON.parse(localStorage.getItem('vox_genesis_v116') || '[]');
         apps.forEach(name => {
             const div = document.createElement('div'); div.className = 'icon';
             div.innerHTML = `<span>📱</span><label>${name}</label>`;
-            div.onclick = () => window.open(`https://play.google.com/store/search?q=${name}&c=apps`);
+            div.onclick = () => window.open(`https://play.google.com/store/search?q=${name}`);
             container.appendChild(div);
         });
+    }
+
+    function playMedia() {
+        let url = document.getElementById('media-url').value;
+        let frame = document.getElementById('v-frame');
+        if(url.includes('youtube')) {
+            frame.src = `https://www.youtube.com/embed/${url.split('v=')[1]}`;
+            frame.style.height = "180px";
+        } else { window.open(url); }
     }
 
     function handleSearch() {
@@ -165,16 +185,12 @@
         b.classList.add('active');
         r.onresult = (e) => {
             const cmd = e.results[0][0].transcript.toLowerCase();
-            document.getElementById('global-search').value = cmd;
-            if(cmd.includes("маркет") || cmd.includes("магазин")) showW('w-store-manual');
-            else if(cmd.includes("музык") || cmd.includes("плеер")) showW('w-play');
+            if(cmd.includes("админ") || cmd.includes("рут")) showW('w-adm');
             else if(cmd.includes("скачай") || cmd.includes("установи")) {
-                let appName = cmd.replace(/скачай|установи|программу/g, "").trim();
+                let appName = cmd.replace(/скачай|установи/g, "").trim();
                 if(appName) askToInstall(appName);
             } 
-            else if(cmd.includes("гугл")) window.open('https://google.com');
-            else if(cmd.includes("заметк")) showW('w-org');
-            else handleSearch();
+            else { document.getElementById('global-search').value = cmd; handleSearch(); }
         };
         r.onend = () => b.classList.remove('active');
         r.start();
