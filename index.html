@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v81 | FINAL STABLE</title>
+    <title>VOX OS v82 | TOTAL FIX</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: #0a0a0a; 
@@ -12,24 +12,20 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: var(--main); font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        /* ЭКРАН ВХОДА */
         #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .login-card { border: 2px solid var(--main); padding: 40px; border-radius: 20px; text-align: center; background: #050505; }
 
-        /* РАБОЧИЙ СТОЛ */
-        #desktop { display: none; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); padding: 80px 15px; gap: 20px; width: 100%; height: 100%; background: radial-gradient(circle, #001a00 0%, #000 100%); overflow-y: auto; position: relative; z-index: 1; }
+        #desktop { display: none; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); padding: 80px 15px; gap: 20px; width: 100%; height: 100%; background: radial-gradient(circle, #001a00 0%, #000 100%); overflow-y: auto; }
         
         .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; }
         .icon span { font-size: 45px; margin-bottom: 5px; filter: drop-shadow(0 0 10px var(--main)); }
         .icon label { font-size: 11px; color: #fff; font-weight: bold; text-transform: uppercase; }
 
-        /* ОКНА */
         .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--win); border: 2px solid var(--main); display: none; flex-direction: column; z-index: 2000; width: 92%; max-width: 450px; border-radius: 15px; box-shadow: 0 0 30px rgba(0,255,0,0.3); }
         .win-header { background: var(--main); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; border-radius: 13px 13px 0 0; }
         .win-content { padding: 20px; text-align: center; }
 
-        /* ИНТЕРФЕЙС */
-        .btn { width: 100%; padding: 15px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 10px; margin-top: 10px; text-transform: uppercase; }
+        .btn { width: 100%; padding: 15px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 10px; margin-top: 10px; text-transform: uppercase; font-size: 12px; }
         .btn-vox { background: var(--accent); color: #fff; }
         input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; border-radius: 10px; text-align: center; font-size: 18px; }
 
@@ -64,77 +60,78 @@
     <div class="icon" onclick="location.reload()"><span>🔐</span><label>Exit</label></div>
 </div>
 
-<div id="w-wa" class="window"><div class="win-header"><span>WINAMP + YT/SC</span><span onclick="hideW('w-wa')">×</span></div><div class="win-content">
-    <audio id="player" controls style="width:100%"></audio>
-    <input id="wa-in" placeholder="Песня или плейлист">
-    <button class="btn btn-vox" onclick="vox('wa-in','music')">🎤 ГОЛОСОВОЙ ПОИСК</button>
-    <button class="btn" style="background:var(--yt);color:#fff" onclick="go('yt')">YOUTUBE MUSIC</button>
-    <button class="btn" style="background:var(--sc);color:#fff" onclick="go('sc')">SOUNDCLOUD</button>
-    <button class="btn" onclick="document.getElementById('f').click()">📂 MP3 С ТЕЛЕФОНА</button>
-    <input type="file" id="f" style="display:none" onchange="play(this.files)">
+<div id="w-goo" class="window"><div class="win-header"><span>GOOGLE SEARCH</span><span onclick="hideW('w-goo')">×</span></div><div class="win-content">
+    <input id="g-in" placeholder="Введите запрос...">
+    <button class="btn btn-vox" onclick="vox('g-in','google')">🎤 ГОЛОСОВОЙ ПОИСК</button>
+    <button class="btn" onclick="goSearch('google')">НАЙТИ В GOOGLE</button>
 </div></div>
 
-<div id="w-met" class="window" style="border-color:#00c853"><div class="win-header" style="background:#00c853;color:#fff"><span>MEET AI PRO</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
-    <input id="m-in" placeholder="Имя комнаты">
-    <button class="btn btn-vox" onclick="vox('m-in','none')">🎤 СКАЗАТЬ НАЗВАНИЕ</button>
-    <button class="btn" style="background:#00c853;color:#fff" onclick="meet()">🚀 НАЧАТЬ ВСТРЕЧУ</button>
-    <button class="btn" onclick="copyM()">🔗 КОПИРОВАТЬ ССЫЛКУ</button>
+<div id="w-yan" class="window" style="border-color:red"><div class="win-header" style="background:red;color:#fff"><span>YANDEX SEARCH</span><span onclick="hideW('w-yan')">×</span></div><div class="win-content">
+    <input id="y-in" placeholder="Что ищем в Яндексе?">
+    <button class="btn btn-vox" onclick="vox('y-in','yandex')">🎤 ГОЛОСОВОЙ ПОИСК</button>
+    <button class="btn" style="background:red;color:#fff" onclick="goSearch('yandex')">НАЙТИ В ЯНДЕКСЕ</button>
 </div></div>
 
-<div id="w-vib" class="window" style="border-color:var(--viber)"><div class="win-header" style="background:var(--viber);color:#fff"><span>VIBER</span><span onclick="hideW('w-vib')">×</span></div><div class="win-content">
-    <input id="v-in" placeholder="Номер 7900...">
-    <button class="btn btn-vox" onclick="vox('v-in','none')">🎤 СКАЗАТЬ НОМЕР</button>
-    <button class="btn" style="background:var(--viber);color:#fff" onclick="window.open('viber://chat?number='+document.getElementById('v-in').value)">ОТКРЫТЬ ЧАТ</button>
+<div id="w-cal" class="window"><div class="win-header"><span>CALCULATOR</span><span onclick="hideW('w-cal')">×</span></div><div class="win-content">
+    <input id="ca-in" placeholder="Напр: 2500 * 1.2">
+    <button class="btn btn-vox" onclick="vox('ca-in','none')">🎤 ПРОДИКТОВАТЬ ЦИФРЫ</button>
+    <button class="btn" onclick="doCalc()">= ПОСЧИТАТЬ</button>
+    <h2 id="ca-res" style="margin-top:20px; color:var(--main)">0</h2>
 </div></div>
 
-<div id="w-cin" class="window"><div class="win-header"><span>CINEMA</span><span onclick="hideW('w-cin')">×</span></div><div class="win-content">
-    <input id="c-in" placeholder="Фильм...">
-    <button class="btn btn-vox" onclick="vox('c-in','movie')">🎤 НАЙТИ ГОЛОСОМ</button>
-    <button class="btn" style="background:var(--yt);color:#fff" onclick="go('yt-v')">YOUTUBE VIDEO</button>
-</div></div>
-
+<div id="w-wa" class="window"><div class="win-header"><span>WINAMP</span><span onclick="hideW('w-wa')">×</span></div><div class="win-content"><audio id="player" controls style="width:100%"></audio><input id="wa-in" placeholder="Песня..."><button class="btn btn-vox" onclick="vox('wa-in','music')">🎤 ПОИСК</button><button class="btn" style="background:var(--yt);color:#fff" onclick="goSearch('ytm')">YT MUSIC</button></div></div>
+<div id="w-met" class="window" style="border-color:#00c853"><div class="win-header" style="background:#00c853;color:#fff"><span>MEET AI PRO</span><span onclick="hideW('w-met')">×</span></div><div class="win-content"><input id="m-in" placeholder="Комната"><button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('m-in').value)">🚀 ВОЙТИ</button></div></div>
+<div id="w-vib" class="window" style="border-color:var(--viber)"><div class="win-header" style="background:var(--viber);color:#fff"><span>VIBER</span><span onclick="hideW('w-vib')">×</span></div><div class="win-content"><input id="v-in" placeholder="7900..."><button class="btn" onclick="window.open('viber://chat?number='+document.getElementById('v-in').value)">ЧАТ</button></div></div>
 <div id="w-wea" class="window"><div class="win-header"><span>WEATHER</span><span onclick="hideW('w-wea')">×</span></div><div class="win-content"><input id="we-in" placeholder="Город"><button class="btn btn-vox" onclick="vox('we-in','weather')">🎤 ГОЛОС</button></div></div>
-<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red;color:#fff"><span>ADMIN</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content"><button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='<h1>SYSTEM PURGED</h1>'">💀 УНИЧТОЖИТЬ</button></div></div>
+<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red;color:#fff"><span>ADMIN</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content"><button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='<h1>SYSTEM PURGED</h1>'">💀 KILL</button></div></div>
 
 <script>
     function auth() {
         const val = document.getElementById('pin').value;
         if(val === "777") { login("ADMIN"); document.getElementById('adm-btn').style.display='flex'; }
         else if(val === "111") { login("USER"); }
-        else { alert("WRONG PIN"); document.getElementById('pin').value=''; }
+        else { alert("WRONG PIN"); }
     }
-    function login(role) { document.getElementById('lock-screen').style.display='none'; document.getElementById('desktop').style.display='grid'; document.getElementById('role').innerText = role; }
-    
+    function login(r) { document.getElementById('lock-screen').style.display='none'; document.getElementById('desktop').style.display='grid'; document.getElementById('role').innerText = r; }
     function showW(id) { document.querySelectorAll('.window').forEach(w=>w.style.display='none'); document.getElementById(id).style.display='flex'; }
     function hideW(id) { document.getElementById(id).style.display='none'; }
 
-    function play(f) { if(f[0]) { document.getElementById('player').src = URL.createObjectURL(f[0]); document.getElementById('player').play(); } }
+    function goSearch(engine) {
+        let q = "";
+        if(engine==='google') q = document.getElementById('g-in').value;
+        if(engine==='yandex') q = document.getElementById('y-in').value;
+        if(engine==='ytm') q = document.getElementById('wa-in').value;
+        
+        if(!q) return alert("Введите запрос");
+        
+        let url = "";
+        if(engine==='google') url = "https://www.google.com/search?q=" + encodeURIComponent(q);
+        if(engine==='yandex') url = "https://yandex.ru/search/?text=" + encodeURIComponent(q);
+        if(engine==='ytm') url = "https://music.youtube.com/search?q=" + encodeURIComponent(q);
+        
+        window.open(url, '_blank');
+    }
+
+    function doCalc() {
+        try {
+            let res = eval(document.getElementById('ca-in').value.replace(',', '.'));
+            document.getElementById('ca-res').innerText = res;
+        } catch(e) { alert("Ошибка в примере"); }
+    }
 
     function vox(id, type) {
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Speech) return alert("Браузер не поддерживает голос");
+        if(!Speech) return alert("Голос не поддерживается");
         const rec = new Speech(); rec.lang = 'ru-RU';
         const btn = event.currentTarget; btn.classList.add('listening');
         rec.onresult = (e) => {
-            const res = e.results[0][0].transcript; document.getElementById(id).value = res;
-            if(type === 'music') window.open('https://music.youtube.com/search?q=' + encodeURIComponent(res));
-            if(type === 'weather') window.open('https://google.com/search?q=weather+' + encodeURIComponent(res));
-            if(type === 'movie') window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(res));
+            const res = e.results[0][0].transcript; 
+            document.getElementById(id).value = res;
+            if(type !== 'none') setTimeout(() => goSearch(type==='music'?'ytm':type), 500);
         };
         rec.onend = () => btn.classList.remove('listening');
         rec.start();
     }
-
-    function go(m) {
-        const qMusic = encodeURIComponent(document.getElementById('wa-in').value);
-        const qCin = encodeURIComponent(document.getElementById('c-in').value);
-        if(m === 'yt') window.open('https://music.youtube.com/search?q=' + qMusic);
-        if(m === 'sc') window.open('https://soundcloud.com/search?q=' + qMusic);
-        if(m === 'yt-v') window.open('https://www.youtube.com/results?search_query=' + qCin);
-    }
-
-    function meet() { let r = document.getElementById('m-in').value || "Room-"+Math.floor(Math.random()*999); window.open("https://meet.jit.si/"+r.replace(/\s+/g, '-')); }
-    function copyM() { let r = document.getElementById('m-in').value; if(!r) return alert("Введите имя"); navigator.clipboard.writeText("https://meet.jit.si/"+r.replace(/\s+/g, '-')).then(()=>alert("Скопировано")); }
 
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
