@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v61 | ADMIN 777 - USER 111</title>
+    <title>VOX OS v61 | TOTAL EDITION</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: rgba(12, 12, 12, 0.98); 
-            --accent: #00bbff; --gen: #f0f;
+            --accent: #00bbff; --gen: #f0f; --viber: #7360f2;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
+
+        /* Эффект ЭЛТ-монитора */
+        body::after {
+            content: " "; position: fixed; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 10000; background-size: 100% 3px, 3px 100%; pointer-events: none; opacity: 0.4;
+        }
 
         #desktop { 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); 
@@ -32,11 +40,12 @@
         }
 
         .win-header { background: var(--main); color: #000; padding: 12px 20px; display: flex; justify-content: space-between; font-weight: bold; align-items: center; border-radius: 18px 18px 0 0; }
-        .win-content { padding: 25px; text-align: center; }
+        .win-content { padding: 20px; text-align: center; max-height: 80vh; overflow-y: auto; }
 
         .btn { width: 100%; padding: 15px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; border-radius: 12px; font-family: inherit; font-size: 11px; }
         .btn-voice { background: var(--accent); color: #fff; }
-        .btn-gen { background: var(--gen); color: #fff; display: none; } 
+        .btn-gen { background: var(--gen); color: #fff; } 
+        .btn-viber { background: var(--viber); color: #fff; }
         
         input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 15px; text-align: center; font-size: 16px; border-radius: 12px; font-family: inherit; }
 
@@ -45,6 +54,7 @@
         #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 20px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; border-bottom: 1px solid #1a1a1a; }
         
         .admin-only { display: none; }
+        .term-out { text-align: left; height: 120px; overflow-y: auto; background: #000; padding: 10px; font-size: 11px; border: 1px solid #333; margin-bottom: 10px; color: var(--main); }
     </style>
 </head>
 <body>
@@ -52,6 +62,7 @@
 <div id="status-bar">
     <div id="user-role">WAITING...</div>
     <div id="live-clock">VOX OS v61</div>
+    <div id="admin-stats" class="admin-only" style="color: var(--gen)">USERS: 0 ONLINE</div>
 </div>
 
 <div id="lock-screen">
@@ -68,6 +79,11 @@
     <div class="icon" onclick="openApp('win-cinema')"><span>🎬</span><label>Кино</label></div>
     <div class="icon" onclick="openApp('win-weather')"><span>☁️</span><label>Погода</label></div>
     <div class="icon" onclick="openApp('win-tools')"><span>🧮</span><label>Счет</label></div>
+    
+    <div class="icon" onclick="openApp('win-viber')"><span>💜</span><label>Viber</label></div>
+    <div class="icon" onclick="openApp('win-term')"><span>📟</span><label>Terminal</label></div>
+    
+    <div class="icon admin-only" onclick="openApp('win-admin')"><span>🔑</span><label style="color:var(--gen)">VOX ACCESS</label></div>
     <div class="icon admin-only" onclick="openApp('win-wipe')"><span>💀</span><label style="color:red">WIPE</label></div>
 </div>
 
@@ -92,13 +108,12 @@
     </div>
 </div>
 
-<div id="win-meet" class="window">
-    <div class="win-header"><span>VIDEO MEET</span><span onclick="closeApp('win-meet')">×</span></div>
+<div id="win-viber" class="window">
+    <div class="win-header"><span>VIBER</span><span onclick="closeApp('win-viber')">×</span></div>
     <div class="win-content">
-        <button class="btn btn-gen admin-only" onclick="gen('mt-c')">🎲 CREATE ID</button>
-        <button class="btn btn-voice" onclick="voxVoice('mt-c', 'meet')">🎤 VOICE ID</button>
-        <input id="mt-c" placeholder="Meet ID...">
-        <button class="btn" onclick="run('meet')">START</button>
+        <button class="btn btn-viber" onclick="voxVoice('vib-c', 'viber')">🎤 ГОЛОСОВОЙ ВВОД</button>
+        <input id="vib-c" placeholder="Номер или ID...">
+        <button class="btn btn-viber" onclick="run('viber')">ОТКРЫТЬ VIBER</button>
     </div>
 </div>
 
@@ -106,20 +121,47 @@
 <div id="win-cinema" class="window"><div class="win-header"><span>КИНО</span><span onclick="closeApp('win-cinema')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('f-in','cinema')">🎤 VOICE</button><input id="f-in" placeholder="Название..."><button class="btn" onclick="run('cinema')">FIND</button></div></div>
 <div id="win-weather" class="window"><div class="win-header"><span>ПОГОДА</span><span onclick="closeApp('win-weather')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('c-in','weather')">🎤 VOICE</button><input id="c-in" placeholder="Город..."><button class="btn" onclick="run('weather')">CHECK</button></div></div>
 <div id="win-tools" class="window"><div class="win-header"><span>СЧЕТ</span><span onclick="closeApp('win-tools')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('calc-in','calc')">🎤 VOICE</button><input id="calc-in" placeholder="Пример..."><button class="btn" onclick="run('calc')">RUN</button></div></div>
+
+<div id="win-term" class="window">
+    <div class="win-header"><span>TERMINAL</span><span onclick="closeApp('win-term')">×</span></div>
+    <div class="win-content">
+        <div class="term-out" id="term-res">VOX Kernel v61... Ready.</div>
+        <input id="term-cmd" placeholder="Команда..." style="font-size: 12px;">
+        <button class="btn" onclick="execCmd()">RUN CMD</button>
+    </div>
+</div>
+
+<div id="win-admin" class="window" style="border-color: var(--gen)">
+    <div class="win-header" style="background: var(--gen)"><span>VOX ACCESS GEN</span><span onclick="closeApp('win-admin')">×</span></div>
+    <div class="win-content">
+        <input id="vox-key-out" readonly placeholder="КЛЮЧ ДОСТУПА">
+        <button class="btn btn-gen" onclick="generateVoxKey()">СГЕНЕРИРОВАТЬ VOX-ДОСТУП</button>
+        <p id="adm-info" style="font-size: 10px;">Статус: Глобальный доступ разрешен</p>
+    </div>
+</div>
+
+<div id="win-meet" class="window"><div class="win-header"><span>MEET</span><span onclick="closeApp('win-meet')">×</span></div><div class="win-content"><button class="btn btn-gen admin-only" onclick="gen('mt-c')">🎲 CREATE ID</button><input id="mt-c" placeholder="Meet ID..."><button class="btn" onclick="run('meet')">START</button></div></div>
 <div id="win-wipe" class="window" style="border-color:red"><div class="win-header" style="background:red"><span>TERMINAL</span><span onclick="closeApp('win-wipe')">×</span></div><div class="win-content"><h1 id="tmr">5</h1><button class="btn" style="background:red; color:#fff" onclick="wipe()">DESTROY DATA</button></div></div>
 
 <script>
     let activeWin = null;
     let isAdmin = false;
 
+    // Часы
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('live-clock').innerText = 'VOX OS | ' + now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+
     function unlockSystem() {
         const pass = document.getElementById('sys-pass').value;
         if(pass === "777") {
             isAdmin = true;
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-            document.querySelectorAll('.btn-gen').forEach(el => el.style.display = 'block');
             document.getElementById('user-role').innerText = "AGENT: ADMIN";
             document.getElementById('lock-screen').remove();
+            startAdminMonitoring();
         } else if (pass === "111") {
             isAdmin = false;
             document.getElementById('user-role').innerText = "AGENT: USER";
@@ -128,6 +170,13 @@
             alert("ACCESS DENIED");
             document.getElementById('sys-pass').value = "";
         }
+    }
+
+    function startAdminMonitoring() {
+        setInterval(() => {
+            const count = Math.floor(Math.random() * (999 - 500) + 500);
+            document.getElementById('admin-stats').innerText = `USERS: ${count} ONLINE`;
+        }, 2000);
     }
 
     function openApp(id) {
@@ -143,16 +192,21 @@
         document.getElementById(id).value = "VOX-" + Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
+    function generateVoxKey() {
+        const key = "ACCESS-" + Math.random().toString(36).substring(2, 12).toUpperCase() + "-VOX";
+        document.getElementById('vox-key-out').value = key;
+    }
+
     function voxVoice(inputId, type) {
         const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!Rec) return alert("Голос не поддерживается");
         const rec = new Rec(); rec.lang = 'ru-RU';
         const btn = event.target;
-        btn.innerText = "• СЛУШАЮ... •";
+        btn.innerText = "• СЛУШАЮ •";
         rec.onresult = (e) => {
             document.getElementById(inputId).value = e.results[0][0].transcript;
-            btn.innerText = "🎤 VOICE INPUT";
-            if(type !== 'msg' && type !== 'meet') run(type);
+            btn.innerText = "🎤 ГОЛОСОВОЙ ВВОД";
+            if(type !== 'msg' && type !== 'meet' && type !== 'viber') run(type);
         };
         rec.start();
     }
@@ -166,6 +220,17 @@
         }
     }
 
+    function execCmd() {
+        const cmd = document.getElementById('term-cmd').value.toLowerCase();
+        const res = document.getElementById('term-res');
+        if(cmd === 'help') res.innerHTML += "<br>> status, netstat, clear";
+        else if(cmd === 'status') res.innerHTML += `<br>> SYS: OK, AUTH: ${isAdmin ? 'ADMIN' : 'USER'}`;
+        else if(cmd === 'netstat') res.innerHTML += "<br>> 8 active nodes found.";
+        else if(cmd === 'clear') res.innerHTML = "Terminal cleared.";
+        else res.innerHTML += `<br>> Unknown command.`;
+        document.getElementById('term-cmd').value = "";
+    }
+
     function run(type) {
         const getV = (id) => document.getElementById(id).value;
         if(type==='search') window.open('https://google.com/search?q='+getV('s-in'));
@@ -174,13 +239,14 @@
         if(type==='calc') window.open('https://google.com/search?q=результат+'+getV('calc-in'));
         if(type==='msg') window.open('https://element.io/app/#/room/'+getV('msg-c'));
         if(type==='meet') window.open('https://meet.jit.si/'+getV('mt-c'));
+        if(type==='viber') window.open('viber://chat?number=' + getV('vib-c'));
     }
 
     function wipe() {
         let c = 5;
-        setInterval(() => {
+        const itv = setInterval(() => {
             c--; document.getElementById('tmr').innerText = c;
-            if(c<=0) { localStorage.clear(); location.reload(); }
+            if(c<=0) { clearInterval(itv); localStorage.clear(); location.reload(); }
         }, 1000);
     }
 </script>
