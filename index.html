@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v61 | VOX & GAMES</title>
+    <title>VOX OS v61 | WINAMP EDITION</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: rgba(12, 12, 12, 0.98); 
-            --accent: #00bbff; --gen: #f0f; --viber: #7360f2; --game: #ffcc00;
+            --accent: #00bbff; --gen: #f0f; --viber: #7360f2;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
@@ -24,13 +24,12 @@
             grid-template-rows: repeat(auto-fill, 110px);
             padding: 75px 15px 20px 15px; gap: 15px; width: 100%; height: 100%;
             background: radial-gradient(circle, #001a05 0%, #000 100%);
-            position: absolute; inset: 0; z-index: 1; overflow-y: auto;
+            position: absolute; inset: 0; z-index: 1;
         }
 
-        .icon { display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; text-decoration: none; }
+        .icon { display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; }
         .icon span { font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 0 8px var(--main)); }
         .icon label { font-size: 9px; text-transform: uppercase; color: #fff; text-align: center; font-weight: bold; }
-        .icon.game-icon span { filter: drop-shadow(0 0 8px var(--game)); }
 
         .window { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -40,7 +39,7 @@
         }
 
         .win-header { background: var(--main); color: #000; padding: 12px 20px; display: flex; justify-content: space-between; font-weight: bold; align-items: center; border-radius: 18px 18px 0 0; }
-        .win-content { padding: 20px; text-align: center; }
+        .win-content { padding: 25px; text-align: center; }
 
         .btn { width: 100%; padding: 15px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; border-radius: 12px; font-family: inherit; font-size: 11px; }
         .btn-voice { background: var(--accent); color: #fff; }
@@ -58,7 +57,7 @@
 <body>
 
 <div id="status-bar">
-    <div id="user-role">WAITING...</div>
+    <div id="user-role">SYSTEM LOCKED</div>
     <div id="live-clock">VOX OS v61</div>
     <div id="admin-stats" class="admin-only" style="color: var(--gen)">USERS: 742 ONLINE</div>
 </div>
@@ -70,31 +69,44 @@
 </div>
 
 <div id="desktop">
-    <div class="icon" onclick="openApp('win-wa')"><span>📻</span><label>Winamp</label></div>
+    <div class="icon" onclick="openApp('win-wa')"><span>⚡</span><label>Winamp</label></div>
     <div class="icon" onclick="openApp('win-viber')"><span>💜</span><label>Viber</label></div>
     <div class="icon" onclick="openApp('win-meet')"><span>📹</span><label>Meet</label></div>
     <div class="icon" onclick="openApp('win-search')"><span>🔍</span><label>Поиск</label></div>
     <div class="icon" onclick="openApp('win-cinema')"><span>🎬</span><label>Кино</label></div>
     <div class="icon" onclick="openApp('win-weather')"><span>☁️</span><label>Погода</label></div>
     <div class="icon" onclick="openApp('win-tools')"><span>🧮</span><label>Счет</label></div>
-
-    <div class="icon game-icon" onclick="alert('Запуск Vegas 777...')"><span>🎰</span><label>Vegas 777</label></div>
-    <div class="icon game-icon" onclick="alert('Запуск Township...')"><span>🚜</span><label>Township</label></div>
-    <div class="icon game-icon" onclick="alert('Запуск Gardenscapes...')"><span>🌳</span><label>Gardenscapes</label></div>
-    <div class="icon game-icon" onclick="alert('Запуск Toon Blast...')"><span>💥</span><label>Toon Blast</label></div>
-
     <div class="icon admin-only" onclick="openApp('win-admin')"><span>🔑</span><label style="color:var(--gen)">VOX ACCESS</label></div>
     <div class="icon admin-only" onclick="openApp('win-wipe')"><span>💀</span><label style="color:red">WIPE</label></div>
 </div>
 
-<div id="win-wa" class="window"><div class="win-header"><span>WINAMP</span><span onclick="closeApp('win-wa')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('wa-url', 'music')">🎤 ГОВОРЮ URL / ФАЙЛ</button><input id="wa-url" placeholder="http://..."><audio id="vox-audio" controls></audio></div></div>
-<div id="win-viber" class="window"><div class="win-header"><span>VIBER</span><span onclick="closeApp('win-viber')">×</span></div><div class="win-content"><button class="btn btn-viber" onclick="voxVoice('vib-c', 'viber')">🎤 ГОВОРЮ НОМЕР</button><input id="vib-c" placeholder="Номер..."><button class="btn btn-viber" onclick="run('viber')">ОТКРЫТЬ</button></div></div>
-<div id="win-search" class="window"><div class="win-header"><span>SEARCH</span><span onclick="closeApp('win-search')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('s-in','search')">🎤 ГОВОРЮ ЗАПРОС</button><input id="s-in" placeholder="Искать..."><button class="btn" onclick="run('search')">GO</button></div></div>
-<div id="win-cinema" class="window"><div class="win-header"><span>КИНО</span><span onclick="closeApp('win-cinema')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('f-in','cinema')">🎤 ГОВОРЮ ФИЛЬМ</button><input id="f-in" placeholder="Название..."><button class="btn" onclick="run('cinema')">FIND</button></div></div>
-<div id="win-weather" class="window"><div class="win-header"><span>ПОГОДА</span><span onclick="closeApp('win-weather')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('c-in','weather')">🎤 ГОВОРЮ ГОРОД</button><input id="c-in" placeholder="Город..."><button class="btn" onclick="run('weather')">CHECK</button></div></div>
-<div id="win-tools" class="window"><div class="win-header"><span>СЧЕТ</span><span onclick="closeApp('win-tools')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('calc-in','calc')">🎤 ГОВОРЮ ПРИМЕР</button><input id="calc-in" placeholder="Пример..."><button class="btn" onclick="run('calc')">RUN</button></div></div>
+<div id="win-wa" class="window">
+    <div class="win-header"><span>WINAMP</span><span onclick="closeApp('win-wa')">×</span></div>
+    <div class="win-content">
+        <button class="btn btn-voice" onclick="document.getElementById('file-up').click()">📂 ФАЙЛ MP3</button>
+        <input type="file" id="file-up" accept="audio/*" style="display:none" onchange="loadFile(event)">
+        <button class="btn btn-voice" onclick="voxVoice('wa-url', 'music')">🎤 URL ГОЛОСОМ</button>
+        <input type="text" id="wa-url" placeholder="http://...mp3">
+        <audio id="vox-audio" controls></audio>
+    </div>
+</div>
 
-<div id="win-admin" class="window" style="border-color: var(--gen)"><div class="win-header" style="background: var(--gen)"><span>VOX GEN</span><span onclick="closeApp('win-admin')">×</span></div><div class="win-content"><input id="vox-key-out" readonly placeholder="KEY"><button class="btn btn-gen" onclick="generateVoxKey()">GENERATE ACCESS</button></div></div>
+<div id="win-viber" class="window">
+    <div class="win-header"><span>VIBER</span><span onclick="closeApp('win-viber')">×</span></div>
+    <div class="win-content">
+        <button class="btn btn-viber" onclick="voxVoice('vib-c', 'viber')">🎤 ГОЛОСОВОЙ НОМЕР</button>
+        <input id="vib-c" placeholder="Номер...">
+        <button class="btn btn-viber" onclick="run('viber')">OPEN VIBER</button>
+    </div>
+</div>
+
+<div id="win-search" class="window"><div class="win-header"><span>SEARCH</span><span onclick="closeApp('win-search')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('s-in','search')">🎤 VOICE</button><input id="s-in" placeholder="Искать..."><button class="btn" onclick="run('search')">GO</button></div></div>
+<div id="win-cinema" class="window"><div class="win-header"><span>КИНО</span><span onclick="closeApp('win-cinema')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('f-in','cinema')">🎤 VOICE</button><input id="f-in" placeholder="Фильм..."><button class="btn" onclick="run('cinema')">FIND</button></div></div>
+<div id="win-weather" class="window"><div class="win-header"><span>ПОГОДА</span><span onclick="closeApp('win-weather')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('c-in','weather')">🎤 VOICE</button><input id="c-in" placeholder="Город..."><button class="btn" onclick="run('weather')">CHECK</button></div></div>
+<div id="win-tools" class="window"><div class="win-header"><span>СЧЕТ</span><span onclick="closeApp('win-tools')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('calc-in','calc')">🎤 VOICE</button><input id="calc-in" placeholder="Пример..."><button class="btn" onclick="run('calc')">RUN</button></div></div>
+
+<div id="win-admin" class="window" style="border-color: var(--gen)"><div class="win-header" style="background: var(--gen)"><span>VOX ACCESS</span><span onclick="closeApp('win-admin')">×</span></div><div class="win-content"><input id="vox-key-out" readonly placeholder="KEY"><button class="btn btn-gen" onclick="generateVoxKey()">GENERATE</button></div></div>
+<div id="win-meet" class="window"><div class="win-header"><span>MEET</span><span onclick="closeApp('win-meet')">×</span></div><div class="win-content"><input id="mt-c" placeholder="Meet ID..."><button class="btn" onclick="run('meet')">START</button></div></div>
 <div id="win-wipe" class="window" style="border-color:red"><div class="win-header" style="background:red"><span>WIPE</span><span onclick="closeApp('win-wipe')">×</span></div><div class="win-content"><h1 id="tmr">5</h1><button class="btn" style="background:red; color:#fff" onclick="wipe()">DESTROY</button></div></div>
 
 <script>
@@ -102,7 +114,7 @@
     let isAdmin = false;
 
     function updateClock() {
-        document.getElementById('live-clock').innerText = 'VOX | ' + new Date().toLocaleTimeString();
+        document.getElementById('live-clock').innerText = 'VOX OS | ' + new Date().toLocaleTimeString();
     }
     setInterval(updateClock, 1000);
 
@@ -112,11 +124,11 @@
             isAdmin = (p === "777");
             if(isAdmin) {
                 document.querySelectorAll('.admin-only').forEach(e => e.style.display = 'flex');
-                setInterval(() => { document.getElementById('admin-stats').innerText = `USERS: ${Math.floor(Math.random()*200+500)} ONLINE`; }, 2000);
+                setInterval(() => { document.getElementById('admin-stats').innerText = `USERS: ${Math.floor(Math.random()*100+600)} ONLINE`; }, 3000);
             }
             document.getElementById('user-role').innerText = isAdmin ? "AGENT: ADMIN" : "AGENT: USER";
             document.getElementById('lock-screen').remove();
-        } else { alert("DENIED"); }
+        } else { alert("ACCESS DENIED"); }
     }
 
     function openApp(id) { if(activeWin) closeApp(activeWin); document.getElementById(id).style.display = 'flex'; activeWin = id; }
@@ -124,7 +136,7 @@
 
     function voxVoice(id, type) {
         const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Rec) return alert("Голос недоступен");
+        if(!Rec) return alert("Голос не поддерживается");
         const rec = new Rec(); rec.lang = 'ru-RU';
         rec.onresult = (e) => { 
             document.getElementById(id).value = e.results[0][0].transcript;
@@ -135,6 +147,11 @@
 
     function generateVoxKey() { document.getElementById('vox-key-out').value = "VOX-" + Math.random().toString(36).substring(2,12).toUpperCase(); }
 
+    function loadFile(e) {
+        const file = e.target.files[0];
+        if(file) { document.getElementById('vox-audio').src = URL.createObjectURL(file); document.getElementById('vox-audio').play(); }
+    }
+
     function run(t) {
         const v = (id) => document.getElementById(id).value;
         if(t==='search') window.open('https://google.com/search?q='+v('s-in'));
@@ -142,6 +159,7 @@
         if(t==='weather') window.open('https://google.com/search?q=погода+'+v('c-in'));
         if(t==='calc') window.open('https://google.com/search?q=результат+'+v('calc-in'));
         if(t==='viber') window.open('viber://chat?number=' + v('vib-c'));
+        if(t==='meet') window.open('https://meet.jit.si/'+v('mt-c'));
     }
 
     function wipe() {
