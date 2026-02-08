@@ -3,42 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v43 | ORGANIZER</title>
+    <title>VOX OS v44 | FINAL</title>
     <style>
-        :root { --main: #00ff41; --bg: #000; --win: #0a0a0a; --accent: #ffeb3b; }
+        :root { --main: #00ff41; --bg: #000; --win: #0a0a0a; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
 
         /* Рабочий стол */
         #desktop { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 110px); padding: 25px; gap: 15px; background: radial-gradient(circle, #001a05 0%, #000 100%); }
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; padding: 10px; border-radius: 8px; }
-        .icon:hover { background: rgba(0, 255, 65, 0.1); }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 10px; border-radius: 8px; }
+        .icon:active { background: rgba(0, 255, 65, 0.2); }
         .icon span { font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 0 5px var(--main)); }
-        .icon label { font-size: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        .icon label { font-size: 10px; text-align: center; text-transform: uppercase; }
 
         /* Окна */
         .window { position: absolute; top: 10%; left: 5%; width: 90%; max-width: 450px; background: var(--win); border: 1px solid var(--main); display: none; flex-direction: column; z-index: 100; box-shadow: 0 0 30px rgba(0, 255, 65, 0.3); }
         .win-header { background: var(--main); color: #000; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 12px; }
-        .close-btn { cursor: pointer; font-size: 20px; }
+        .close-btn { cursor: pointer; font-size: 20px; padding: 0 5px; }
         .win-content { padding: 15px; max-height: 80vh; overflow-y: auto; }
 
         input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; }
         .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
-        .log { height: 100px; overflow-y: auto; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; font-size: 12px; background: #000; color: #fff; }
+        .log { height: 100px; overflow-y: auto; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; font-size: 12px; background: #000; }
         
-        /* Специфические стили для калькулятора */
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-        .btn-c { padding: 10px; background: #222; color: #fff; border: 1px solid var(--main); cursor: pointer; }
+        .btn-c { padding: 12px; background: #111; color: var(--main); border: 1px solid var(--main); cursor: pointer; font-weight: bold; }
 
+        /* Экран входа */
         #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
 <div id="lock-screen">
-    <div style="letter-spacing: 5px; margin-bottom: 20px;">VOX_STATION_LOCKED</div>
-    <input type="password" id="sys-pass" style="width: 200px; text-align: center;" placeholder="ПАРОЛЬ">
-    <button class="btn" style="width: 200px;" onclick="unlock()">ВХОД</button>
+    <div style="letter-spacing: 5px; margin-bottom: 20px;">SYSTEM_ENCRYPTED</div>
+    <input type="password" id="sys-pass" style="width: 200px; text-align: center;" placeholder="VOX-777">
+    <button class="btn" style="width: 200px;" onclick="unlock()">ACCESS STATION</button>
 </div>
 
 <div id="desktop">
@@ -52,45 +52,42 @@
 </div>
 
 <div id="win-org" class="window">
-    <div class="win-header"><span>ORGANIZER TOOLKIT</span><span class="close-btn" onclick="closeWin('win-org')">×</span></div>
+    <div class="win-header"><span>ORGANIZER</span><span class="close-btn" onclick="closeWin('win-org')">×</span></div>
     <div class="win-content">
-        <label style="font-size: 10px;">БЛОКНОТ:</label>
         <div id="note-log" class="log"></div>
-        <input type="text" id="note-in" placeholder="Новая заметка...">
-        <button class="btn" style="padding: 5px; font-size: 10px;" onclick="addNote()">ЗАПИСАТЬ</button>
-        
+        <input type="text" id="note-in" placeholder="Заметка...">
+        <button class="btn" style="padding:5px; font-size:10px;" onclick="addNote()">СОХРАНИТЬ</button>
         <hr border="0" style="border-top: 1px solid #333; margin: 15px 0;">
-        
-        <label style="font-size: 10px;">КАЛЬКУЛЯТОР:</label>
-        <input type="text" id="calc-display" disabled style="text-align: right; font-size: 18px; color: var(--accent);">
+        <input type="text" id="calc-display" disabled style="text-align: right; font-size: 18px; color: #fff;">
         <div class="calc-grid">
             <button class="btn-c" onclick="calc(1)">1</button><button class="btn-c" onclick="calc(2)">2</button><button class="btn-c" onclick="calc(3)">3</button><button class="btn-c" onclick="calc('+')">+</button>
             <button class="btn-c" onclick="calc(4)">4</button><button class="btn-c" onclick="calc(5)">5</button><button class="btn-c" onclick="calc(6)">6</button><button class="btn-c" onclick="calc('-')">-</button>
             <button class="btn-c" onclick="calc(7)">7</button><button class="btn-c" onclick="calc(8)">8</button><button class="btn-c" onclick="calc(9)">9</button><button class="btn-c" onclick="calc('*')">*</button>
-            <button class="btn-c" onclick="calcDisplay.value=''">C</button><button class="btn-c" onclick="calc(0)">0</button><button class="btn-c" onclick="calcEval()">=</button><button class="btn-c" onclick="calc('/')">/</button>
+            <button class="btn-c" onclick="document.getElementById('calc-display').value=''">C</button><button class="btn-c" onclick="calc(0)">0</button><button class="btn-c" onclick="calcEval()">=</button><button class="btn-c" onclick="calc('/')">/</button>
         </div>
-
         <hr border="0" style="border-top: 1px solid #333; margin: 15px 0;">
-
-        <button class="btn" style="background: #2196F3; color: #fff;" onclick="window.open('https://www.google.com/search?q=погода')">⛅ УЗНАТЬ ПОГОДУ</button>
-        <button class="btn" style="background: #33e3ff; color: #000;" onclick="window.open('waze://')">🚙 ЗАПУСТИТЬ WAZE</button>
+        <button class="btn" style="background:#2196F3; color:#fff;" onclick="window.open('https://google.com/search?q=погода')">ПОГОДА</button>
+        <button class="btn" style="background:#33e3ff; color:#000;" onclick="window.open('https://www.waze.com/ul')">ОТКРЫТЬ WAZE</button>
     </div>
 </div>
 
-<div id="win-voice" class="window"><div class="win-header"><span>VOICE</span><span class="close-btn" onclick="closeWin('win-voice')">×</span></div><div class="win-content"><button class="btn" onclick="startVoice()">СЛУШАТЬ</button><div id="v-res"></div></div></div>
-<div id="win-search" class="window"><div class="win-header"><span>SEARCH</span><span class="close-btn" onclick="closeWin('win-search')">×</span></div><div class="win-content"><input id="q-search"><button class="btn" onclick="window.open('https://google.com/search?q='+document.getElementById('q-search').value)">ПОИСК</button></div></div>
-<div id="win-music" class="window"><div class="win-header"><span>MUSIC</span><span class="close-btn" onclick="closeWin('win-music')">×</span></div><div class="win-content"><input id="m-search"><button class="btn" onclick="window.open('https://www.google.com/search?q='+document.getElementById('m-search').value+'+mp3')">НАЙТИ ТРЕК</button></div></div>
-<div id="win-chat" class="window"><div class="win-header"><span>CHAT</span><span class="close-btn" onclick="closeWin('win-chat')">×</span></div><div class="win-content"><div id="c-log" class="log"></div><input id="c-in"><button class="btn" onclick="sendMsg()">ОТПРАВИТЬ</button></div></div>
-<div id="win-video" class="window"><div class="win-header"><span>VIDEO</span><span class="close-btn" onclick="closeWin('win-video')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://meet.jit.si/VOX-'+Math.random())">ВИДЕО-МОСТ</button></div></div>
-<div id="win-file" class="window"><div class="win-header"><span>FILES</span><span class="close-btn" onclick="closeWin('win-file')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://toffeeshare.com/')">P2P ПЕРЕДАЧА</button></div></div>
+<div id="win-voice" class="window"><div class="win-header"><span>VOICE</span><span class="close-btn" onclick="closeWin('win-voice')">×</span></div><div class="win-content"><button class="btn" onclick="startVoice()">СЛУШАТЬ</button><div id="v-res" style="margin-top:10px;"></div></div></div>
+<div id="win-search" class="window"><div class="win-header"><span>SEARCH / CINEMA</span><span class="close-btn" onclick="closeWin('win-search')">×</span></div><div class="win-content"><input id="q-search" placeholder="Запрос..."><button class="btn" onclick="runS('web')">ПОИСК</button><button class="btn" style="background:#111; border:1px solid var(--main); color:#fff;" onclick="runS('film')">ФИЛЬМЫ HD</button></div></div>
+<div id="win-music" class="window"><div class="win-header"><span>MUSIC</span><span class="close-btn" onclick="closeWin('win-music')">×</span></div><div class="win-content"><input id="m-search" placeholder="Песня..."><button class="btn" onclick="runM()">НАЙТИ MP3</button></div></div>
+<div id="win-chat" class="window"><div class="win-header"><span>MESSENGER</span><span class="close-btn" onclick="closeWin('win-chat')">×</span></div><div class="win-content"><div id="c-log" class="log"></div><input id="c-in" placeholder="Текст..."><button class="btn" onclick="sendMsg()">SEND</button></div></div>
+<div id="win-video" class="window"><div class="win-header"><span>VIDEO</span><span class="close-btn" onclick="closeWin('win-video')">×</span></div><div class="win-content"><button class="btn" onclick="vBridge()">СОЗДАТЬ МОСТ</button><div id="v-link"></div></div></div>
+<div id="win-file" class="window"><div class="win-header"><span>FILES</span><span class="close-btn" onclick="closeWin('win-file')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://toffeeshare.com/')">P2P TRANSFER</button></div></div>
 
 <script>
     let currentOpenWin = null;
-    const calcDisplay = document.getElementById('calc-display');
 
     function unlock() {
-        if(document.getElementById('sys-pass').value === "777") document.getElementById('lock-screen').style.display = 'none';
-        else alert('ACCESS DENIED');
+        const pass = document.getElementById('sys-pass').value;
+        if(pass === "VOX-777") {
+            document.getElementById('lock-screen').style.display = 'none';
+        } else {
+            alert('ОШИБКА ПАРОЛЯ');
+        }
     }
 
     function smartOpen(id) {
@@ -102,26 +99,42 @@
 
     function closeWin(id) { document.getElementById(id).style.display = 'none'; if (currentOpenWin === id) currentOpenWin = null; }
 
-    // Логика Органайзера
+    // Функционал
     function addNote() {
         const i = document.getElementById('note-in'); const l = document.getElementById('note-log');
         if(i.value) { l.innerHTML += `<div>> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
     }
-
-    function calc(v) { calcDisplay.value += v; }
-    function calcEval() { try { calcDisplay.value = eval(calcDisplay.value); } catch { calcDisplay.value = "Ошибка"; } }
+    function calc(v) { document.getElementById('calc-display').value += v; }
+    function calcEval() { try { const d = document.getElementById('calc-display'); d.value = eval(d.value); } catch { d.value = "Error"; } }
 
     function sendMsg() {
         const i = document.getElementById('c-in'); const l = document.getElementById('c-log');
-        if(i.value) { l.innerHTML += `<div><b>Я:</b> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
+        if(i.value) { l.innerHTML += `<div><b>[Я]:</b> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
+    }
+
+    function runS(t) {
+        let q = document.getElementById('q-search').value; if(!q) return;
+        let url = "https://google.com/search?q=" + q;
+        if(t === 'film') url += "+фильм+смотреть+онлайн+hd";
+        window.open(url, '_blank');
+    }
+
+    function runM() {
+        let q = document.getElementById('m-search').value; if(!q) return;
+        window.open("https://www.google.com/search?q=" + q + "+слушать+mp3", '_blank');
+    }
+
+    function vBridge() {
+        const id = "VOX-" + Math.floor(Math.random()*9999);
+        document.getElementById('v-link').innerHTML = `<button class="btn" style="background:#fff;margin-top:10px;" onclick="window.open('https://meet.jit.si/${id}')">ВОЙТИ: ${id}</button>`;
     }
 
     function startVoice() {
         if ('webkitSpeechRecognition' in window) {
             const r = new webkitSpeechRecognition(); r.lang = 'ru-RU';
-            r.onresult = (e) => { document.getElementById('v-res').innerText = e.results[0][0].transcript; };
+            r.onresult = (e) => { document.getElementById('v-res').innerText = "Вы сказали: " + e.results[0][0].transcript; };
             r.start();
-        }
+        } else { alert("Не поддерживается"); }
     }
 </script>
 </body>
