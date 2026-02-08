@@ -3,43 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v105 | FIX</title>
+    <title>VOX OS v107 | ULTIMATE</title>
     <style>
         :root { --main: #00ff41; --bg: #000; --win: #0d0d0d; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: var(--main); font-family: monospace; overflow: hidden; }
-        
-        /* Эффект Матрицы на фоне */
         canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; }
 
-        /* Верхняя панель */
         #status-bar { position: fixed; top: 0; width: 100%; padding: 10px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; border-bottom: 1px solid #222; align-items: center; }
-        #ai-btn { background: #ff0000; border: none; color: #fff; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        #ai-btn.active { background: #fff; color: #000; box-shadow: 0 0 15px #fff; }
+        #ai-btn { background: #ff0000; border: none; color: #fff; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; animation: pulse 2s infinite; }
+        #ai-btn.active { background: #fff; color: #000; animation: none; box-shadow: 0 0 20px #fff; }
 
-        /* Рабочий стол */
-        #desktop { position: relative; z-index: 1; display: none; padding: 70px 20px; height: 100%; overflow-y: auto; }
+        #desktop { position: relative; z-index: 1; display: none; padding: 75px 20px; height: 100%; overflow-y: auto; }
         
-        /* БЛОК ПОИСКА И МУЗЫКИ (ВСЕГДА ВИДЕН) */
-        .main-hub { background: rgba(0,255,65,0.1); border: 1px solid var(--main); border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0,255,65,0.2); }
-        h3 { margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase; text-align: center; }
+        .main-hub { background: rgba(0,255,65,0.05); border: 1px solid var(--main); border-radius: 15px; padding: 15px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(0,255,65,0.1); }
+        input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--main); color: var(--main); border-radius: 10px; margin-bottom: 12px; text-align: center; font-size: 16px; }
+        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; }
 
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); border-radius: 8px; margin-bottom: 10px; text-align: center; font-size: 16px; }
-        .btn { width: 100%; padding: 12px; background: var(--main); color: #000; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
+        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 20px; }
+        .icon { display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transition: 0.3s; }
+        .icon span { font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 0 8px var(--main)); }
+        .icon label { font-size: 10px; color: #fff; text-transform: uppercase; font-weight: bold; white-space: nowrap; overflow: hidden; width: 100%; }
 
-        /* Иконки приложений ниже */
-        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 15px; margin-top: 20px; }
-        .icon { display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; }
-        .icon span { font-size: 35px; margin-bottom: 5px; }
-        .icon label { font-size: 10px; color: #fff; }
+        .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--win); border: 2px solid var(--main); display: none; flex-direction: column; z-index: 2000; width: 92%; max-width: 420px; border-radius: 15px; }
+        .win-header { background: var(--main); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; border-radius: 13px 13px 0 0; }
+        .win-content { padding: 20px; }
 
-        /* Окна */
-        .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--win); border: 2px solid var(--main); display: none; flex-direction: column; z-index: 2000; width: 90%; max-width: 400px; border-radius: 12px; }
-        .win-header { background: var(--main); color: #000; padding: 10px; display: flex; justify-content: space-between; font-weight: bold; }
-        .win-content { padding: 15px; }
-
-        /* Экран входа */
         #lock { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -47,64 +38,125 @@
 <canvas id="matrix"></canvas>
 
 <div id="status-bar">
-    <div>VOX OS v105</div>
+    <div>VOX v107</div>
     <button id="ai-btn" onclick="globalVox()">🎤 VOX CONTROL</button>
     <div id="clock">00:00</div>
 </div>
 
 <div id="lock">
-    <div style="text-align:center; border: 1px solid var(--main); padding: 30px; border-radius: 15px;">
-        <h1 style="letter-spacing:5px;">VOX</h1>
-        <input type="password" id="pin" placeholder="PIN (111)">
-        <button class="btn" onclick="auth()">ВХОД</button>
+    <div style="text-align:center; border: 1px solid var(--main); padding: 50px; border-radius: 25px; background: rgba(0,0,0,0.95);">
+        <h1 style="letter-spacing:15px; margin-bottom:40px;">VOX OS</h1>
+        <input type="password" id="pin" placeholder="ENTER ACCESS CODE">
+        <button class="btn" onclick="auth()">VERIFY SYSTEM</button>
     </div>
 </div>
 
 <div id="desktop">
     <div class="main-hub">
-        <h3>Центр Управления</h3>
-        <input id="global-search" placeholder="Поиск или музыка...">
-        <button class="btn" onclick="window.open('https://youtube.com/results?search_query=' + document.getElementById('global-search').value)">🎵 ИСКАТЬ МУЗЫКУ</button>
-        <button class="btn" style="background:#fff" onclick="window.open('https://play.google.com/store/search?q=' + document.getElementById('global-search').value)">🏪 ИСКАТЬ В МАРКЕТЕ</button>
+        <input id="global-search" placeholder="Поиск, музыка или команда...">
+        <button class="btn" onclick="handleSearch()">ИСКАТЬ МУЗЫКУ</button>
+        <button class="btn" style="background:#fff;" onclick="showW('w-store')">🏪 INSTALL NEW APP</button>
     </div>
 
     <div id="apps-grid">
         <div class="icon" onclick="showW('w-met')"><span>📹</span><label>Meet AI</label></div>
         <div class="icon" onclick="showW('w-org')"><span>📝</span><label>Заметки</label></div>
-        <div class="icon" onclick="showW('w-adm')"><span>💀</span><label style="color:red">Админ</label></div>
-        <div class="icon" onclick="location.reload()"><span>🔐</span><label>Выход</label></div>
+        <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>💀</span><label style="color:red">Admin</label></div>
+        <div class="icon" onclick="location.reload()"><span>🔐</span><label>Logout</label></div>
     </div>
 </div>
 
-<div id="w-met" class="window"><div class="win-header"><span>MEET</span><span onclick="hideW('w-met')">×</span></div><div class="win-content"><input id="me-in" placeholder="ID..."><button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">ВОЙТИ</button></div></div>
-<div id="w-org" class="window"><div class="win-header"><span>NOTES</span><span onclick="hideW('w-org')">×</span></div><div class="win-content"><textarea id="note-pad" style="width:100%; height:100px; background:#000; color:#0f0; border:1px solid #0f0;"></textarea><button class="btn" onclick="alert('Сохранено')">OK</button></div></div>
-<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red; color:#fff"><span>LOGS</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content"><div id="logs" style="font-size:10px; text-align:left; height:100px; overflow:auto;"></div></div></div>
+<div id="w-store" class="window"><div class="win-header"><span>APP INSTALLER</span><span onclick="hideW('w-store')">×</span></div><div class="win-content">
+    <input id="app-name" placeholder="Name: Telegram, YouTube...">
+    <button class="btn" onclick="installApp()">УСТАНОВИТЬ</button>
+</div></div>
+
+<div id="w-met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
+    <input id="me-in" placeholder="ID появится здесь...">
+    <button class="btn" onclick="genCode()">ГЕНЕРИРОВАТЬ КОД</button>
+    <button class="btn" style="background:#00c853; color:#fff" onclick="if(document.getElementById('me-in').value) window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">ВОЙТИ</button>
+</div></div>
+
+<div id="w-org" class="window"><div class="win-header"><span>SECURE NOTES</span><span onclick="hideW('w-org')">×</span></div><div class="win-content"><textarea id="note-pad" style="width:100%; height:120px; background:#000; color:#0f0; border:1px solid #0f0; padding:12px; border-radius:10px;"></textarea><button class="btn" onclick="alert('SAVED')">SAVE TO BUFFER</button></div></div>
+
+<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red; color:#fff"><span>SYS LOGS</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content"><div id="logs" style="font-size:9px; text-align:left; height:150px; overflow:auto;"></div></div></div>
 
 <script>
-    function auth() { if(document.getElementById('pin').value === '111') { document.getElementById('lock').style.display='none'; document.getElementById('desktop').style.display='block'; } }
-    function showW(id) { document.getElementById(id).style.display='flex'; }
-    function hideW(id) { document.getElementById(id).style.display='none'; }
-    function log(m) { document.getElementById('logs').innerHTML += `<div>> ${m}</div>`; }
+    function log(m) { const l = document.getElementById('logs'); if(l) l.innerHTML = `<div>[${new Date().toLocaleTimeString()}] > ${m}</div>` + l.innerHTML; }
 
-    // ГОЛОСОВОЕ УПРАВЛЕНИЕ
+    function auth() { 
+        let p = document.getElementById('pin').value;
+        if(p === '111' || p === '777') {
+            if(p === '777') document.getElementById('adm-ico').style.display='flex';
+            document.getElementById('lock').style.display='none'; 
+            document.getElementById('desktop').style.display='block'; 
+            log("Система разблокирована.");
+        } else { alert('ACCESS DENIED'); }
+    }
+
+    function showW(id) { document.querySelectorAll('.window').forEach(w=>w.style.display='none'); document.getElementById(id).style.display='flex'; }
+    function hideW(id) { document.getElementById(id).style.display='none'; }
+
+    function genCode() {
+        document.getElementById('me-in').value = 'VOX-' + Math.random().toString(36).substring(7).toUpperCase();
+        log("Сгенерирован код Meet.");
+    }
+
+    function handleSearch() {
+        let val = document.getElementById('global-search').value;
+        if(!val) return;
+        window.open('https://youtube.com/results?search_query=' + val);
+    }
+
+    function installApp() {
+        let name = document.getElementById('app-name').value.trim();
+        if(!name) return;
+        
+        let iconSymbol = "📱";
+        let lowName = name.toLowerCase();
+        
+        if(lowName.includes("tube")) iconSymbol = "🔴";
+        else if(lowName.includes("telegr")) iconSymbol = "✈️";
+        else if(lowName.includes("whats")) iconSymbol = "🟢";
+        else if(lowName.includes("tik")) iconSymbol = "🎵";
+        else if(lowName.includes("music") || lowName.includes("spot")) iconSymbol = "🎧";
+        else iconSymbol = "📦";
+
+        const icon = document.createElement('div');
+        icon.className = 'icon';
+        icon.innerHTML = `<span>${iconSymbol}</span><label>${name}</label>`;
+        icon.onclick = () => window.open(`https://play.google.com/store/search?q=${name}&c=apps`);
+        document.getElementById('apps-grid').appendChild(icon);
+        
+        log(`Установлено: ${name}`);
+        document.getElementById('app-name').value = '';
+        hideW('w-store');
+    }
+
+    // УЛУЧШЕННОЕ ГОЛОСОВОЕ УПРАВЛЕНИЕ
     function globalVox() {
         const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!Rec) return;
         const r = new Rec(); r.lang = 'ru-RU';
         const b = document.getElementById('ai-btn');
-        b.classList.add('active');
+        b.classList.add('active'); b.innerText = "🛑 VOX LISTENING";
+
         r.onresult = (e) => {
             const cmd = e.results[0][0].transcript.toLowerCase();
             document.getElementById('global-search').value = cmd;
-            log("Голос: " + cmd);
-            if(cmd.includes("музык")) window.open('https://youtube.com/results?search_query=' + cmd);
-            if(cmd.includes("видео")) showW('w-met');
+            log(`Голос: ${cmd}`);
+
+            if(cmd.includes("видео") || cmd.includes("создай встречу")) showW('w-met');
+            else if(cmd.includes("заметки") || cmd.includes("запиши")) showW('w-org');
+            else if(cmd.includes("маркет") || cmd.includes("установи")) showW('w-store');
+            else if(cmd.includes("закрой")) document.querySelectorAll('.window').forEach(w=>w.style.display='none');
+            else handleSearch();
         };
-        r.onend = () => b.classList.remove('active');
+        r.onend = () => { b.classList.remove('active'); b.innerText = "🎤 VOX CONTROL"; };
         r.start();
     }
 
-    // МАТРИЦА
+    // Matrix BG
     const c = document.getElementById('matrix');
     const ctx = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
