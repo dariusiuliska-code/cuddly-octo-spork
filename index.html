@@ -3,99 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v61 | ULTIMATE</title>
+    <title>VOX OS v61 | MAXIMUM EDITION</title>
     <style>
         :root { 
-            --main: #00ff41; 
-            --bg: #000; 
-            --win: rgba(10, 10, 10, 0.95); 
-            --accent: #00bbff; 
-            --cinema: #e50914; 
-            --error: #ff3131;
+            --main: #00ff41; --bg: #000; --win: rgba(10, 10, 10, 0.95); 
+            --accent: #00bbff; --cinema: #e50914; --error: #ff3131;
+            --video: #8a2be2; --game: #ffaa00;
         }
-        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: var(--bg); color: var(--main); 
-            font-family: 'Consolas', monospace; overflow: hidden; 
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
 
-        /* Рабочий стол */
         #desktop { 
-            width: 100%; height: 100%; 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
-            grid-template-rows: repeat(auto-fill, 110px); 
-            padding: 20px; gap: 10px; 
+            width: 100%; height: 100%; display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+            grid-template-rows: repeat(auto-fill, 100px); 
+            padding: 15px; gap: 5px; 
             background: radial-gradient(circle, #001a05 0%, #000 100%); 
+            overflow-y: auto;
         }
 
-        .icon { 
-            display: flex; flex-direction: column; align-items: center; 
-            cursor: pointer; padding: 10px; border-radius: 12px;
-            transition: 0.2s;
-        }
-        .icon:active { transform: scale(0.9); background: rgba(0, 255, 65, 0.1); }
-        .icon span { font-size: 35px; margin-bottom: 8px; filter: drop-shadow(0 0 5px var(--main)); }
-        .icon label { font-size: 9px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 10px; border-radius: 12px; transition: 0.2s; }
+        .icon:active { transform: scale(0.95); background: rgba(0, 255, 65, 0.1); }
+        .icon span { font-size: 28px; margin-bottom: 5px; filter: drop-shadow(0 0 5px var(--main)); }
+        .icon label { font-size: 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1; }
 
-        /* Окна */
         .window { 
-            position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%);
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--win); border: 1px solid var(--main); 
             display: none; flex-direction: column; z-index: 100; 
-            box-shadow: 0 0 40px rgba(0,255,65,0.2);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(0,255,65,0.2); backdrop-filter: blur(15px);
         }
 
-        /* Адаптивность окон */
-        @media (min-width: 600px) { .window { width: 400px; border-radius: 4px; } }
+        @media (min-width: 600px) { .window { width: 420px; border-radius: 4px; } }
         @media (max-width: 599px) { .window { width: 95%; max-height: 90vh; border-radius: 15px; } }
 
-        .win-header { 
-            background: var(--main); color: #000; padding: 12px; 
-            display: flex; justify-content: space-between; 
-            font-weight: bold; font-size: 12px; 
-        }
-        
-        .win-content { padding: 20px; text-align: center; overflow-y: auto; }
+        .win-header { background: var(--main); color: #000; padding: 10px; display: flex; justify-content: space-between; font-weight: bold; font-size: 11px; }
+        .win-content { padding: 15px; text-align: center; overflow-y: auto; }
 
-        /* Элементы управления */
-        .btn { 
-            width: 100%; padding: 14px; background: var(--main); color: #000; 
-            border: none; font-weight: bold; cursor: pointer; 
-            text-transform: uppercase; font-size: 11px; margin-bottom: 10px; 
-            font-family: inherit; border-radius: 4px;
-        }
-        .btn:active { opacity: 0.7; }
-        .btn-cinema { background: var(--cinema); color: #fff; }
-        .btn-accent { background: var(--accent); color: #fff; }
-        
-        input { 
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.7); 
-            border: 1px solid var(--main); color: var(--main); 
-            margin-bottom: 10px; font-family: inherit; text-align: center;
-            font-size: 16px; 
-        }
+        .btn { width: 100%; padding: 12px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 10px; margin-bottom: 8px; font-family: inherit; border-radius: 4px; }
+        input { width: 100%; padding: 10px; background: rgba(0,0,0,0.7); border: 1px solid var(--main); color: var(--main); margin-bottom: 8px; font-family: inherit; text-align: center; font-size: 16px; }
 
-        /* Экран блокировки */
-        #lock-screen { 
-            position: fixed; inset: 0; background: #000; 
-            z-index: 9999; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; 
-            transition: opacity 0.4s ease-out;
-        }
-
-        /* Полоса воспроизведения (имитация) */
-        .wa-display { 
-            background: #000; border: 1px solid #333; padding: 10px; 
-            margin-bottom: 15px; color: var(--accent); font-size: 11px; 
-            min-height: 50px; display: flex; align-items: center; justify-content: center;
-        }
+        #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -103,88 +51,90 @@
 <div id="lock-screen">
     <div id="lock-status" style="letter-spacing: 5px; margin-bottom: 25px;">VOX_v61_LOCKED</div>
     <input type="password" id="sys-pass" placeholder="PIN: 777" onkeydown="if(event.key==='Enter') unlock()" autofocus>
-    <button class="btn" style="width: 220px;" onclick="unlock()">ACCESS SYSTEM</button>
+    <button class="btn" style="width: 200px;" onclick="unlock()">ACCESS SYSTEM</button>
 </div>
 
 <div id="desktop">
     <div class="icon" onclick="smartOpen('win-cinema')"><span>🎬</span><label>Кино</label></div>
-    <div class="icon" onclick="smartOpen('win-wa')"><span>⚡</span><label>Winamp+</label></div>
-    <div class="icon" onclick="smartOpen('win-file')"><span>📡</span><label>Передача</label></div>
+    <div class="icon" onclick="smartOpen('win-wa')"><span>⚡</span><label>Winamp</label></div>
+    <div class="icon" onclick="smartOpen('win-video')"><span>📹</span><label>Meet</label></div>
     <div class="icon" onclick="smartOpen('win-chat')"><span>💬</span><label>Чат</label></div>
-    <div class="icon" onclick="smartOpen('win-wipe')"><span>💀</span><label>Wipe</label></div>
+    <div class="icon" onclick="smartOpen('win-file')"><span>📡</span><label>Файлы</label></div>
+    
+    <div class="icon" onclick="smartOpen('win-search')"><span>🔍</span><label>Поиск</label></div>
+    <div class="icon" onclick="smartOpen('win-tools')"><span>🧮</span><label>Органайзер</label></div>
+    <div class="icon" onclick="smartOpen('win-weather')"><span>☁️</span><label>Погода</label></div>
+    <div class="icon" onclick="smartOpen('win-waze')"><span>🚗</span><label>Waze</label></div>
+    <div class="icon" onclick="smartOpen('win-games')"><span>🎮</span><label>Игры</label></div>
+    <div class="icon" onclick="instantWipe()"><span>💀</span><label>Wipe</label></div>
 </div>
 
-<div id="win-cinema" class="window">
-    <div class="win-header"><span>CINEMA ENGINE</span><span onclick="closeWin('win-cinema')" style="cursor:pointer">×</span></div>
+<div id="win-search" class="window">
+    <div class="win-header"><span>WEB SEARCH</span><span onclick="closeWin('win-search')" style="cursor:pointer">×</span></div>
     <div class="win-content">
-        <button class="btn btn-cinema" onclick="voiceSearch('film')">🎤 ГОЛОСОВОЙ ПОИСК</button>
-        <input type="text" id="film-query" placeholder="Название фильма...">
-        <button class="btn" onclick="findFilm()">НАЙТИ И СМОТРЕТЬ</button>
+        <input type="text" id="web-search-input" placeholder="Что найти в сети?">
+        <button class="btn" onclick="webSearch()">SEARCH GOOGLE</button>
+    </div>
+</div>
+
+<div id="win-tools" class="window">
+    <div class="win-header"><span>TOOLS</span><span onclick="closeWin('win-tools')" style="cursor:pointer">×</span></div>
+    <div class="win-content">
+        <button class="btn" onclick="window.open('https://www.google.com/calendar')">📅 КАЛЕНДАРЬ</button>
+        <button class="btn" onclick="window.open('https://www.desmos.com/scientific?lang=ru')">🧮 КАЛЬКУЛЯТОР</button>
+        <button class="btn" onclick="window.open('https://keep.google.com/')">📝 ЗАМЕТКИ</button>
+    </div>
+</div>
+
+<div id="win-weather" class="window">
+    <div class="win-header"><span>WEATHER</span><span onclick="closeWin('win-weather')" style="cursor:pointer">×</span></div>
+    <div class="win-content">
+        <input type="text" id="city-input" placeholder="Введите город">
+        <button class="btn" onclick="checkWeather()">УЗНАТЬ ПОГОДУ</button>
+    </div>
+</div>
+
+<div id="win-waze" class="window">
+    <div class="win-header"><span>NAVIGATION</span><span onclick="closeWin('win-waze')" style="cursor:pointer">×</span></div>
+    <div class="win-content">
+        <button class="btn" style="background:#33ccff" onclick="window.open('https://www.waze.com/live-map/')">ОТКРЫТЬ WAZE (ПРОБКИ)</button>
+        <button class="btn" onclick="window.open('https://www.google.com/maps')">GOOGLE MAPS</button>
+    </div>
+</div>
+
+<div id="win-games" class="window">
+    <div class="win-header"><span>ARCADE</span><span onclick="closeWin('win-games')" style="cursor:pointer">×</span></div>
+    <div class="win-content">
+        <button class="btn" style="background:var(--game)" onclick="window.open('https://www.retrogames.cc/')">RETRO GAMES (NES/Sega)</button>
+        <button class="btn" style="background:#ff4400" onclick="window.open('https://poki.com/ru')">POKI GAMES</button>
     </div>
 </div>
 
 <div id="win-wa" class="window">
-    <div class="win-header"><span>WINAMP v2.95</span><span onclick="closeWin('win-wa')" style="cursor:pointer">×</span></div>
+    <div class="win-header"><span>WINAMP MP3</span><span onclick="closeWin('win-wa')" style="cursor:pointer">×</span></div>
     <div class="win-content">
-        <div id="wa-info" class="wa-display">SYSTEM READY</div>
-        <button class="btn btn-accent" onclick="voiceSearch('music')">🎤 ИСКАТЬ МУЗЫКУ</button>
-        <input type="text" id="wa-url" placeholder="Название или URL...">
-        <div style="display:flex; gap:10px;">
-            <button class="btn" style="flex:1;" onclick="waPlay()">PLAY</button>
-            <button class="btn" style="flex:1; background:#333; color:#fff;" onclick="waStop()">STOP</button>
-        </div>
+        <div id="wa-info" style="font-size:10px; margin-bottom:10px;">IDLE</div>
+        <input type="text" id="wa-url" placeholder="Артист или песня">
+        <button class="btn btn-accent" onclick="waSearchAndPlay()">FIND & PLAY MP3</button>
+        <button class="btn" onclick="waStop()">STOP</button>
     </div>
 </div>
 
-<div id="win-file" class="window">
-    <div class="win-header"><span>P2P SHARE</span><span onclick="closeWin('win-file')" style="cursor:pointer">×</span></div>
-    <div class="win-content">
-        <button class="btn" onclick="window.open('https://send-anywhere.com/')">ОТПРАВИТЬ ФАЙЛЫ</button>
-        <input type="text" placeholder="Код получения...">
-        <button class="btn" style="background:#fff; color:#000;">ПОЛУЧИТЬ</button>
-    </div>
-</div>
-
-<div id="win-chat" class="window">
-    <div class="win-header"><span>MESSENGER</span><span onclick="closeWin('win-chat')" style="cursor:pointer">×</span></div>
-    <div class="win-content">
-        <p style="font-size:10px; margin-bottom:15px;">GLOBAL MATRIX NETWORK</p>
-        <button class="btn" onclick="window.open('https://element.io/app/#/room/#VOX_GENERAL:matrix.org')">ВОЙТИ В ЧАТ</button>
-    </div>
-</div>
-
-<div id="win-wipe" class="window">
-    <div class="win-header"><span>EMERGENCY EXIT</span><span onclick="closeWin('win-wipe')" style="cursor:pointer">×</span></div>
-    <div class="win-content">
-        <p style="font-size:11px; color:var(--error); margin-bottom:20px;">МГНОВЕННОЕ УДАЛЕНИЕ ДАННЫХ СЕССИИ</p>
-        <button class="btn" style="background:var(--error); color:#fff;" onclick="instantWipe()">ACTIVATE WIPE</button>
-    </div>
-</div>
+<div id="win-cinema" class="window"><div class="win-header"><span>CINEMA</span><span onclick="closeWin('win-cinema')">×</span></div><div class="win-content"><input type="text" id="film-query"><button class="btn" onclick="findFilm()">FIND</button></div></div>
+<div id="win-chat" class="window"><div class="win-header"><span>CHAT</span><span onclick="closeWin('win-chat')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://element.io/app/')">OPEN</button></div></div>
+<div id="win-video" class="window"><div class="win-header"><span>VIDEO</span><span onclick="closeWin('win-video')">×</span></div><div class="win-content"><input type="text" id="meet-room"><button class="btn" onclick="startMeet()">START</button></div></div>
+<div id="win-file" class="window"><div class="win-header"><span>FILES</span><span onclick="closeWin('win-file')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://send-anywhere.com/')">SEND</button></div></div>
 
 <script>
     let currentWin = null;
     const audio = new Audio();
 
-    // Вход в систему
     function unlock() {
-        const pass = document.getElementById('sys-pass').value;
-        const status = document.getElementById('lock-status');
-        if(pass === "777") {
-            status.innerText = "AUTHORIZED";
-            status.style.color = "var(--main)";
-            document.getElementById('lock-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('lock-screen').style.display = 'none', 400);
-        } else {
-            status.innerText = "ACCESS DENIED";
-            status.style.color = "var(--error)";
-            setTimeout(() => {
-                status.innerText = "VOX_v61_LOCKED";
-                status.style.color = "var(--main)";
-            }, 1000);
-        }
+        if(document.getElementById('sys-pass').value === "777") {
+            document.getElementById('lock-screen').style.display = 'none';
+        } else alert("DENIED");
     }
 
-    // Управление окнами
     function smartOpen(id) {
         if(currentWin) closeWin(currentWin);
         document.getElementById(id).style.display = 'flex';
@@ -193,68 +143,42 @@
 
     function closeWin(id) {
         document.getElementById(id).style.display = 'none';
-        if(currentWin === id) currentWin = null;
+        currentWin = null;
     }
 
-    // Поиск фильмов
+    // Новые функции
+    function webSearch() {
+        const q = document.getElementById('web-search-input').value;
+        if(q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`);
+    }
+
+    function checkWeather() {
+        const city = document.getElementById('city-input').value;
+        if(city) window.open(`https://www.google.com/search?q=погода+в+${encodeURIComponent(city)}`);
+    }
+
+    function waSearchAndPlay() {
+        const q = document.getElementById('wa-url').value;
+        if(q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}+intitle:"index.of"+mp3`);
+    }
+
+    function waStop() { audio.pause(); }
+
     function findFilm() {
         const q = document.getElementById('film-query').value;
         if(q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}+смотреть+онлайн+hd`);
     }
 
-    // Музыка
-    function waPlay() {
-        const q = document.getElementById('wa-url').value;
-        if(q) {
-            if(q.startsWith('http')) {
-                audio.src = q; audio.play();
-                document.getElementById('wa-info').innerText = "PLAYING STREAM...";
-            } else {
-                window.open(`https://music.youtube.com/search?q=${encodeURIComponent(q)}`);
-            }
-        }
-    }
-    function waStop() { audio.pause(); document.getElementById('wa-info').innerText = "STOPPED"; }
-
-    // Голосовой поиск
-    function voiceSearch(type) {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!Speech) return alert("Голос не поддерживается");
-        const rec = new Speech();
-        rec.lang = 'ru-RU';
-        rec.onstart = () => {
-            if(type === 'film') document.getElementById('film-query').placeholder = "Слушаю...";
-            else document.getElementById('wa-info').innerText = "СЛУШАЮ ГОЛОС...";
-        };
-        rec.onresult = (e) => {
-            const res = e.results[0][0].transcript;
-            if(type === 'film') {
-                document.getElementById('film-query').value = res;
-                findFilm();
-            } else {
-                document.getElementById('wa-url').value = res;
-                waPlay();
-            }
-        };
-        rec.start();
+    function startMeet() {
+        const r = document.getElementById('meet-room').value || 'Vox-Room';
+        window.open('https://meet.jit.si/' + r);
     }
 
-    // МГНОВЕННАЯ ОЧИСТКА
     function instantWipe() {
-        if(currentWin) closeWin(currentWin);
-        const overlay = document.createElement('div');
-        overlay.style.cssText = "position:fixed;inset:0;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;color:#00ff41;font-family:monospace;";
-        overlay.innerText = "WIPING_SYSTEM_DATA...";
-        document.body.appendChild(overlay);
-        setTimeout(() => {
-            localStorage.clear();
-            location.reload();
-        }, 700);
+        location.reload();
     }
 
-    // Автофокус
     window.onload = () => document.getElementById('sys-pass').focus();
 </script>
-
 </body>
 </html>
