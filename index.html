@@ -3,53 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v61 FIXED</title>
+    <title>VOX OS v61 FINAL FIXED</title>
     <style>
         :root { 
-            --main: #00ff41; --bg: #000; --win: rgba(15, 15, 15, 0.98); 
+            --main: #00ff41; --bg: #000; --win: rgba(20, 20, 20, 0.95); 
             --accent: #00bbff; --error: #ff3131;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,255,65,0.3); outline: none; }
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
             background: var(--bg); color: var(--main); 
             font-family: 'Consolas', monospace; overflow: hidden; 
+            position: fixed; /* Предотвращает прокрутку фона */
         }
 
-        /* Исправленный рабочий стол */
+        /* Рабочий стол */
         #desktop { 
-            position: absolute; inset: 0;
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); 
-            grid-template-rows: repeat(auto-fill, 110px); 
-            padding: 40px 15px; gap: 10px; 
-            background: radial-gradient(circle, #001a05 0%, #000 100%); 
-            overflow-y: auto; z-index: 1;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+            grid-template-rows: repeat(auto-fill, 100px); 
+            padding: 50px 10px 10px 10px; gap: 10px; 
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, #001a05 0%, #000 100%);
+            position: absolute; top: 0; left: 0; z-index: 1;
         }
 
         .icon { 
-            display: flex; flex-direction: column; align-items: center; 
-            cursor: pointer; padding: 10px; border-radius: 12px; 
-            z-index: 10; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; padding: 5px; border-radius: 10px; border: 1px solid transparent;
         }
-        .icon:active { background: rgba(0, 255, 65, 0.2); transform: scale(0.9); }
-        .icon span { font-size: 35px; margin-bottom: 5px; pointer-events: none; }
-        .icon label { font-size: 9px; text-transform: uppercase; pointer-events: none; }
+        .icon:active { background: rgba(0, 255, 65, 0.2); border: 1px solid var(--main); }
+        .icon span { font-size: 32px; margin-bottom: 5px; pointer-events: none; }
+        .icon label { font-size: 9px; text-transform: uppercase; pointer-events: none; text-align: center; }
 
         /* Окна */
         .window { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--win); border: 2px solid var(--main); 
-            display: none; flex-direction: column; z-index: 1000; 
-            box-shadow: 0 0 50px rgba(0,0,0,1); width: 90%; max-width: 400px;
-            border-radius: 15px; overflow: hidden;
+            display: none; flex-direction: column; z-index: 2000; 
+            width: 90%; max-width: 400px; border-radius: 15px; 
+            box-shadow: 0 0 100px rgba(0,0,0,1);
         }
 
-        .win-header { background: var(--main); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; font-size: 12px; }
+        .win-header { background: var(--main); color: #000; padding: 10px 15px; display: flex; justify-content: space-between; font-weight: bold; align-items: center; border-radius: 12px 12px 0 0; }
         .win-content { padding: 20px; text-align: center; }
 
-        .btn { width: 100%; padding: 15px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; border-radius: 8px; }
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; text-align: center; font-size: 18px; border-radius: 8px; }
+        .btn { width: 100%; padding: 15px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; border-radius: 8px; font-family: inherit; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 15px; text-align: center; font-size: 18px; border-radius: 8px; font-family: inherit; }
 
         /* Экран блокировки */
         #lock-screen { 
@@ -58,7 +58,8 @@
             align-items: center; justify-content: center; 
         }
 
-        #status-bar { position: fixed; top: 0; width: 100%; padding: 10px; font-size: 10px; z-index: 5; background: rgba(0,0,0,0.8); display: flex; justify-content: space-between; border-bottom: 1px solid #111; }
+        #status-bar { position: fixed; top: 0; width: 100%; padding: 10px 15px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; border-bottom: 1px solid #111; }
+        
         .panic { animation: flash 0.3s infinite; }
         @keyframes flash { 0% { background: #000; } 50% { background: #500; } 100% { background: #000; } }
     </style>
@@ -66,14 +67,14 @@
 <body>
 
 <div id="status-bar">
-    <div id="user-display">SYSTEM_WAITING</div>
-    <div id="live-clock">VOX OS v61</div>
+    <div id="user-display">OS_READY</div>
+    <div id="live-clock">VOX v61</div>
 </div>
 
 <div id="lock-screen">
-    <div style="letter-spacing: 5px; margin-bottom: 20px;">VOX_v61_SECURITY</div>
+    <div style="font-size: 14px; letter-spacing: 5px; margin-bottom: 30px; color: var(--main);">VOX SECURITY</div>
     <input type="tel" id="sys-pass" placeholder="PIN: 777" style="-webkit-text-security: disc;">
-    <button class="btn" style="width: 220px;" onclick="unlockSystem()">ACCESS SYSTEM</button>
+    <button class="btn" style="width: 220px;" onclick="unlockSystem()">ENTER</button>
 </div>
 
 <div id="desktop">
@@ -89,29 +90,29 @@
 </div>
 
 <div id="win-wa" class="window">
-    <div class="win-header"><span>WINAMP MP3</span><span onclick="closeApp('win-wa')" style="padding:0 10px; cursor:pointer">X</span></div>
+    <div class="win-header"><span>WINAMP MP3</span><span onclick="closeApp('win-wa')" style="cursor:pointer; font-size:20px;">×</span></div>
     <div class="win-content">
-        <div id="wa-info" style="color:var(--accent); margin-bottom:10px;">READY</div>
-        <button class="btn" onclick="startVoice()">🎤 СКАЗАТЬ ПЕСНЮ</button>
+        <div id="wa-info" style="color:var(--accent); margin-bottom:15px; font-size:12px;">ГОТОВ К ПОИСКУ</div>
+        <button class="btn" onclick="startVoice()">🎤 ГОЛОСОВОЙ ПОИСК</button>
         <input type="text" id="wa-input" placeholder="Артист или песня">
         <button class="btn" onclick="runMusicSearch()">НАЙТИ MP3</button>
     </div>
 </div>
 
 <div id="win-wipe" class="window" style="border-color:red">
-    <div class="win-header" style="background:red"><span>SELF DESTRUCT</span><span onclick="closeApp('win-wipe')">X</span></div>
+    <div class="win-header" style="background:red"><span>САМОУНИЧТОЖЕНИЕ</span><span onclick="closeApp('win-wipe')" style="cursor:pointer; font-size:20px;">×</span></div>
     <div class="win-content">
-        <h1 id="timer" style="color:red; font-size:40px;">5</h1>
-        <button id="burn-btn" class="btn" style="background:red; color:#fff;" onclick="nuclearWipe()">ACTIVATE</button>
-        <button id="stop-btn" class="btn" style="display:none" onclick="stopWipe()">ABORT</button>
+        <h1 id="timer" style="color:red; font-size:60px; margin: 10px 0;">5</h1>
+        <button id="burn-btn" class="btn" style="background:red; color:#fff;" onclick="nuclearWipe()">ЗАПУСТИТЬ ОЧИСТКУ</button>
+        <button id="stop-btn" class="btn" style="display:none; background:#333; color:#fff;" onclick="stopWipe()">ОТМЕНА</button>
     </div>
 </div>
 
 <div id="win-search" class="window">
-    <div class="win-header"><span>SEARCH</span><span onclick="closeApp('win-search')">X</span></div>
+    <div class="win-header"><span>ПОИСК В СЕТИ</span><span onclick="closeApp('win-search')" style="cursor:pointer; font-size:20px;">×</span></div>
     <div class="win-content">
-        <input type="text" id="s-input" placeholder="Что найти?">
-        <button class="btn" onclick="window.open('https://google.com/search?q='+document.getElementById('s-input').value)">GOOGLE SEARCH</button>
+        <input type="text" id="s-input" placeholder="Введите запрос...">
+        <button class="btn" onclick="window.open('https://google.com/search?q='+encodeURIComponent(document.getElementById('s-input').value))">ИСКАТЬ В GOOGLE</button>
     </div>
 </div>
 
@@ -119,38 +120,44 @@
     let activeWin = null;
     let wipeInt = null;
 
-    // ФУНКЦИЯ РАЗБЛОКИРОВКИ
     function unlockSystem() {
         const pin = document.getElementById('sys-pass').value;
         if(pin === "777") {
-            document.getElementById('lock-screen').style.display = 'none';
+            // ФИЗИЧЕСКОЕ УДАЛЕНИЕ экрана блокировки
+            const ls = document.getElementById('lock-screen');
+            ls.style.transition = "opacity 0.5s";
+            ls.style.opacity = "0";
+            setTimeout(() => {
+                ls.remove(); // Полностью убираем из памяти и DOM
+            }, 500);
+
             let name = localStorage.getItem('vox_user') || prompt("ВВЕДИТЕ ВАШЕ ИМЯ:");
             if(name) {
                 localStorage.setItem('vox_user', name);
                 document.getElementById('user-display').innerText = "AGENT: " + name.toUpperCase();
             }
         } else {
-            alert("WRONG PIN");
+            alert("ДОСТУП ЗАПРЕЩЕН");
+            document.getElementById('sys-pass').value = "";
         }
     }
 
-    // ФУНКЦИЯ ОТКРЫТИЯ ОКОН (ИСПРАВЛЕННАЯ)
     function openApp(id) {
-        if(activeWin) closeApp(activeWin);
-        const win = document.getElementById(id);
-        if(win) {
-            win.style.display = 'flex';
-            activeWin = id;
+        // Закрываем текущее окно если есть
+        if(activeWin) {
+            document.getElementById(activeWin).style.display = 'none';
         }
+        // Открываем новое
+        const win = document.getElementById(id);
+        win.style.display = 'flex';
+        activeWin = id;
     }
 
     function closeApp(id) {
-        const win = document.getElementById(id);
-        if(win) win.style.display = 'none';
+        document.getElementById(id).style.display = 'none';
         activeWin = null;
     }
 
-    // МУЗЫКА И ГОЛОС
     function startVoice() {
         const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!Rec) return alert("Голос не поддерживается");
@@ -166,10 +173,12 @@
 
     function runMusicSearch() {
         const q = document.getElementById('wa-input').value;
-        if(q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}+intitle:"index.of"+mp3`);
+        if(q) {
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}+intitle:"index.of"+mp3`);
+            document.getElementById('wa-info').innerText = "ПОИСК ЗАПУЩЕН";
+        }
     }
 
-    // САМОУНИЧТОЖЕНИЕ
     function nuclearWipe() {
         let count = 5;
         document.body.classList.add('panic');
@@ -182,8 +191,8 @@
             if(count <= 0) {
                 clearInterval(wipeInt);
                 localStorage.clear();
-                document.body.innerHTML = "<div style='background:#fff;color:#000;height:100vh;display:flex;align-items:center;justify-content:center;font-size:30px;'>SYSTEM_WIPED</div>";
-                setTimeout(() => location.reload(), 1000);
+                document.body.innerHTML = "<div style='background:#fff;color:#000;height:100vh;display:flex;align-items:center;justify-content:center;font-size:30px;font-family:sans-serif;'>MEMORY_WIPED</div>";
+                setTimeout(() => location.reload(), 1500);
             }
         }, 1000);
     }
