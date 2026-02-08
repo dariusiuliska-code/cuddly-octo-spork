@@ -1,6 +1,137 @@
-    function hideW(id) { document.getElementById(id).style.display='none'; }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VOX OS v104 | FINAL</title>
+    <style>
+        :root { 
+            --main: #00ff41; --bg: #000; --win: #0d0d0d; 
+            --viber: #7360f2; --yt: #ff0000; --meet: #00c853;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: var(--main); font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        
+        /* Эффект Матрицы */
+        #matrix-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.25; pointer-events: none; }
 
-    // ФУНКЦИЯ УСТАНОВКИ ПРИЛОЖЕНИЙ
+        /* Статус-бар */
+        #status-bar { position: fixed; top: 0; width: 100%; padding: 10px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        #ai-btn { background: #ff0000; border: none; color: #fff; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 10px; transition: 0.3s; }
+        #ai-btn.active { background: #fff; color: #000; transform: scale(1.1); box-shadow: 0 0 15px #fff; }
+
+        /* Рабочий стол */
+        #desktop { position: relative; z-index: 1; display: none; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); padding: 75px 15px; gap: 20px; height: 100%; overflow-y: auto; }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; }
+        .icon span { font-size: 42px; margin-bottom: 5px; filter: drop-shadow(0 0 10px var(--main)); }
+        .icon label { font-size: 10px; color: #fff; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Окна */
+        .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--win); border: 2px solid var(--main); display: none; flex-direction: column; z-index: 2000; width: 92%; max-width: 450px; border-radius: 15px; box-shadow: 0 0 40px rgba(0,255,0,0.3); max-height: 85vh; }
+        .win-header { background: var(--main); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; border-radius: 13px 13px 0 0; }
+        .win-content { padding: 20px; text-align: center; overflow-y: auto; }
+
+        /* Кнопки и ввод */
+        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; border-radius: 10px; margin-top: 8px; cursor: pointer; text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; border-radius: 10px; text-align: center; font-size: 16px; }
+        textarea { text-align: left; height: 140px; font-family: monospace; resize: none; }
+
+        /* Терминал логов */
+        #sys-logs { background: #000; border: 1px solid #333; height: 160px; overflow-y: auto; text-align: left; padding: 10px; font-family: monospace; font-size: 10px; color: var(--main); border-radius: 5px; }
+        .log-entry { margin-bottom: 4px; border-left: 2px solid var(--main); padding-left: 5px; }
+    </style>
+</head>
+<body>
+
+<canvas id="matrix-bg"></canvas>
+
+<div id="status-bar">
+    <div id="role">VOX OS | ACTIVE</div>
+    <button id="ai-btn" onclick="globalVox()">🎤 VOX CONTROL</button>
+    <div id="clock">00:00:00</div>
+</div>
+
+<div id="lock" style="position:fixed; inset:0; z-index:9999; background:#000; display:flex; align-items:center; justify-content:center;">
+    <div style="border:1px solid var(--main); padding:40px; border-radius:20px; text-align:center; background: rgba(0,0,0,0.95);">
+        <h1 style="letter-spacing:10px; color: var(--main); margin-bottom:20px;">VOX</h1>
+        <input type="password" id="pin" placeholder="PIN (111 или 777)" inputmode="numeric">
+        <button class="btn" onclick="auth()">ВОЙТИ</button>
+    </div>
+</div>
+
+<div id="desktop">
+    <div class="icon" onclick="showW('w-store')"><span>🏪</span><label>Store</label></div>
+    <div class="icon" onclick="showW('w-met')"><span>📹</span><label>Meet AI</label></div>
+    <div class="icon" onclick="showW('w-wa')"><span>🎵</span><label>Winamp</label></div>
+    <div class="icon" onclick="showW('w-org')"><span>📝</span><label>Notes</label></div>
+    <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>💀</span><label style="color:red">Admin</label></div>
+    <div class="icon" onclick="location.reload()"><span>🔐</span><label>Выход</label></div>
+</div>
+
+<div id="w-store" class="window"><div class="win-header"><span>APP STORE</span><span onclick="hideW('w-store')">×</span></div><div class="win-content">
+    <input id="app-name" placeholder="Название программы">
+    <button class="btn" onclick="installApp()">ДОБАВИТЬ В СИСТЕМУ</button>
+</div></div>
+
+<div id="w-met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
+    <input id="me-in" placeholder="ID комнаты">
+    <button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">ГЕНЕРИРОВАТЬ</button>
+    <button class="btn" style="background:var(--meet);color:white" onclick="window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">ВОЙТИ</button>
+</div></div>
+
+<div id="w-wa" class="window"><div class="win-header"><span>MUSIC</span><span onclick="hideW('w-wa')">×</span></div><div class="win-content">
+    <input id="mu-in" placeholder="Трек или группа">
+    <button class="btn" onclick="window.open('https://youtube.com/results?search_query='+document.getElementById('mu-in').value)">ПОИСК</button>
+</div></div>
+
+<div id="w-org" class="window"><div class="win-header"><span>NOTES</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
+    <textarea id="note-pad" placeholder="Текст заметки..."></textarea>
+    <button class="btn" onclick="saveNote()">СОХРАНИТЬ</button>
+</div></div>
+
+<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red;color:#fff"><span>TERMINAL</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content">
+    <div id="sys-logs"></div>
+    <button class="btn" style="background:red;color:#fff;margin-top:10px" onclick="localStorage.clear(); location.reload();">WIPE SYSTEM</button>
+</div></div>
+
+<script>
+    // --- ЯДРО И ВХОД ---
+    function log(msg) {
+        const logs = document.getElementById('sys-logs');
+        if(!logs) return;
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerText = `[${new Date().toLocaleTimeString()}] > ${msg}`;
+        logs.prepend(entry);
+    }
+
+    function auth() {
+        let p = document.getElementById('pin').value;
+        if(p === '111' || p === '777') {
+            if(p === '777') document.getElementById('adm-ico').style.display = 'flex';
+            document.getElementById('lock').style.display = 'none';
+            document.getElementById('desktop').style.display = 'grid';
+            log("Доступ разрешен. VOX OS v104 запущена.");
+        } else {
+            alert("НЕВЕРНЫЙ КОД");
+            log("Попытка взлома: неверный PIN.");
+        }
+    }
+
+    function showW(id) { 
+        document.querySelectorAll('.window').forEach(w => w.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+        log(`Открыт модуль: ${id}`);
+    }
+
+    function hideW(id) { document.getElementById(id).style.display = 'none'; }
+
+    function saveNote() {
+        localStorage.setItem('vox_note', document.getElementById('note-pad').value);
+        log("Заметка сохранена в кэш.");
+        alert("СОХРАНЕНО");
+    }
+
     function installApp() {
         let name = document.getElementById('app-name').value;
         if(!name) return;
@@ -9,29 +140,55 @@
         icon.innerHTML = `<span>📱</span><label>${name}</label>`;
         icon.onclick = () => window.open(`https://play.google.com/store/search?q=${name}&c=apps`);
         document.getElementById('desktop').appendChild(icon);
-        log(`Приложение ${name} интегрировано.`);
+        log(`Приложение ${name} добавлено.`);
         hideW('w-store');
     }
 
+    // --- ГОЛОСОВОЕ УПРАВЛЕНИЕ ---
     function globalVox() {
         const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Rec) return;
+        if(!Rec) return alert("Голос не поддерживается в этом браузере.");
         const r = new Rec(); r.lang = 'ru-RU';
-        document.getElementById('ai-btn').classList.add('active');
+        const btn = document.getElementById('ai-btn');
+        btn.classList.add('active'); btn.innerText = "🛑 СЛУШАЮ...";
+
         r.onresult = (e) => {
             const cmd = e.results[0][0].transcript.toLowerCase();
-            log(`Голос: ${cmd}`);
-            if (cmd.includes("маркет") || cmd.includes("магазин") || cmd.includes("установи")) showW('w-store');
-            if (cmd.includes("видео") || cmd.includes("конференц")) showW('w-met');
-            if (cmd.includes("музык")) showW('w-wa');
-            if (cmd.includes("заметк")) showW('w-org');
-            if (cmd.includes("закрой")) document.querySelectorAll('.window').forEach(w=>w.style.display='none');
+            log(`ИИ Команда: ${cmd}`);
+            if (cmd.includes("открой") || cmd.includes("запусти")) {
+                if (cmd.includes("видео") || cmd.includes("конференц")) showW('w-met');
+                if (cmd.includes("музык")) showW('w-wa');
+                if (cmd.includes("заметк")) showW('w-org');
+                if (cmd.includes("маркет") || cmd.includes("магазин")) showW('w-store');
+            }
+            if (cmd.includes("запиши")) {
+                let t = cmd.split("запиши")[1];
+                showW('w-org');
+                document.getElementById('note-pad').value += t + ". ";
+            }
+            if (cmd.includes("закрой")) document.querySelectorAll('.window').forEach(w => w.style.display = 'none');
         };
-        r.onend = () => document.getElementById('ai-btn').classList.remove('active');
+        r.onend = () => { btn.classList.remove('active'); btn.innerText = "🎤 VOX CONTROL"; };
         r.start();
     }
 
+    // --- ЭФФЕКТЫ ---
+    const canvas = document.getElementById('matrix-bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const drops = Array(Math.floor(canvas.width / 16)).fill(1);
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#0F0"; ctx.font = "15px monospace";
+        drops.forEach((y, i) => {
+            ctx.fillText(Math.floor(Math.random()*2), i*16, y*16);
+            if(y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        });
+    }
+    setInterval(draw, 50);
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    window.onload = () => { if(localStorage.getItem('vox_note')) document.getElementById('note-pad').value = localStorage.getItem('vox_note'); };
 </script>
 </body>
 </html>
