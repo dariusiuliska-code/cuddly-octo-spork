@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v72 | GLOBAL & NATIVE</title>
+    <title>VOX OS v73 | PERFECT STABLE</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: rgba(15, 15, 15, 0.98); 
@@ -21,7 +21,7 @@
 
         .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; }
         .icon span { font-size: 42px; margin-bottom: 5px; filter: drop-shadow(0 0 10px var(--main)); }
-        .icon label { font-size: 11px; color: #fff; font-weight: bold; text-transform: uppercase; }
+        .icon label { font-size: 11px; color: #fff; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .window { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -41,21 +41,22 @@
         #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 20px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
         #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        .listening { animation: pulse 1s infinite; background: red !important; }
+        .listening { animation: pulse 1s infinite; background: red !important; border: 1px solid white !important; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="status-bar">
-    <div id="role-info">VOX OS v72: ГЛОБАЛЬНЫЙ ВВОД</div>
+    <div id="role-info">VOX OS v73: READY</div>
     <div id="clock">00:00:00</div>
 </div>
 
 <div id="lock-screen">
-    <div style="font-size: 30px; color: var(--main); margin-bottom: 25px; letter-spacing: 5px; font-weight: bold;">ВОЙТИ В VOX</div>
-    <input type="tel" id="pin-input" placeholder="ПИН-КОД" style="-webkit-text-security: disc; width: 200px;">
-    <button class="btn" style="width: 200px;" onclick="checkAuth()">ВХОД</button>
+    <div style="font-size: 32px; color: var(--main); margin-bottom: 25px; letter-spacing: 10px; font-weight: bold;">VOX OS</div>
+    <input type="tel" id="pin-input" placeholder="ПИН-КОД" style="-webkit-text-security: disc; width: 220px;">
+    <button class="btn" style="width: 220px;" onclick="checkAuth()">ВОЙТИ В СИСТЕМУ</button>
+    <div style="font-size: 10px; color: #444; margin-top: 15px;">ADMIN: 777 | USER: 111</div>
 </div>
 
 <div id="desktop">
@@ -69,50 +70,31 @@
     <div class="icon" onclick="openApp('met')"><span>📹</span><label>Meet AI</label></div>
     <div class="icon" onclick="openApp('cal')"><span>🧮</span><label>Calc</label></div>
     <div id="adm-icon" class="icon" style="display:none;" onclick="openApp('adm')"><span>⚙️</span><label style="color:var(--admin)">Admin</label></div>
-    <div class="icon" onclick="location.reload()"><span>🔐</span><label>Блок</label></div>
+    <div class="icon" onclick="location.reload()"><span>🔐</span><label>Выход</label></div>
 </div>
 
-<div id="wa" class="window"><div class="win-header"><span>WINAMP AI</span><span onclick="closeApp('wa')">×</span></div><div class="win-content"><audio id="player" controls style="width:100%; filter:invert(1);"></audio><input type="file" id="f" style="display:none" onchange="playFile(this.files)"><button class="btn" onclick="document.getElementById('f').click()">ОТКРЫТЬ MP3</button><input id="wa-in" placeholder="Песня..."><button class="btn btn-vox" onclick="voiceIn('wa-in', 'music')">🎤 ИСКАТЬ (ЛЮБОЙ ЯЗЫК)</button></div></div>
-<div id="wea" class="window"><div class="win-header"><span>ПОГОДА</span><span onclick="closeApp('wea')">×</span></div><div class="win-content"><input id="wea-in" placeholder="Город..."><button class="btn btn-vox" onclick="voiceIn('wea-in', 'weather')">🎤 НАЗВАТЬ ГОРОД</button></div></div>
-<div id="met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="closeApp('met')">×</span></div><div class="win-content"><button class="btn" onclick="gen()">ГЕНЕРИРОВАТЬ КОД</button><input id="met-in" placeholder="Код..."><button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('met-in').value)">ВОЙТИ</button></div></div>
-<div id="adm" class="window"><div class="win-header"><span>ADMIN</span><span onclick="closeApp('adm')">×</span></div><div class="win-content"><button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='PURGED'">💀 САМОУНИЧТОЖЕНИЕ</button></div></div>
-<div id="off" class="window"><div class="win-header"><span>OFFICE</span><span onclick="closeApp('off')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://docs.google.com')">DOCS</button><button class="btn" onclick="window.open('https://sheets.google.com')">SHEETS</button></div></div>
+<div id="wa" class="window"><div class="win-header"><span>WINAMP AI</span><span onclick="closeApp('wa')">×</span></div><div class="win-content"><audio id="player" controls style="width:100%; filter:invert(1);"></audio><input type="file" id="f" style="display:none" onchange="playFile(this.files)"><button class="btn" onclick="document.getElementById('f').click()">ОТКРЫТЬ MP3</button><input id="wa-in" placeholder="Песня или артист..."><button class="btn btn-vox" onclick="voiceIn('wa-in', 'music')">🎤 ПОИСК ГОЛОСОМ</button></div></div>
+
+<div id="wea" class="window" style="border-color:var(--weather)"><div class="win-header" style="background:var(--weather);color:000"><span>ПОГОДА</span><span onclick="closeApp('wea')">×</span></div><div class="win-content"><input id="wea-in" placeholder="Город..."><button class="btn btn-vox" onclick="voiceIn('wea-in', 'weather')">🎤 НАЗВАТЬ ГОРОД</button></div></div>
+
+<div id="met" class="window" style="border-color:var(--accent)"><div class="win-header" style="background:var(--accent);color:fff"><span>MEET AI</span><span onclick="closeApp('met')">×</span></div><div class="win-content"><button class="btn" onclick="gen()">ГЕНЕРИРОВАТЬ КОД ПРИГЛАШЕНИЯ</button><input id="met-in" placeholder="Код комнаты..."><button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('met-in').value)">СОЗДАТЬ/ВОЙТИ</button></div></div>
+
+<div id="adm" class="window" style="border-color:var(--admin)"><div class="win-header" style="background:var(--admin);color:fff"><span>ADMIN CORE</span><span onclick="closeApp('adm')">×</span></div><div class="win-content"><button class="btn" onclick="alert('Права подтверждены')">ИНТЕГРИРОВАТЬ ПРАВА</button><button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='<h1 style=color:red;text-align:center;margin-top:20%>SYSTEM PURGED</h1>'">💀 САМОУНИЧТОЖЕНИЕ</button></div></div>
+
+<div id="goo" class="window"><div class="win-header"><span>GOOGLE</span><span onclick="closeApp('goo')">×</span></div><div class="win-content"><input id="goo-in" placeholder="Поиск..."><button class="btn btn-vox" onclick="voiceIn('goo-in', 'google')">🎤 ГОЛОСОВОЙ ПОИСК</button></div></div>
+
+<div id="yan" class="window" style="border-color:red"><div class="win-header" style="background:red;color:fff"><span>YANDEX</span><span onclick="closeApp('yan')">×</span></div><div class="win-content"><input id="yan-in" placeholder="Найти в Яндекс..."><button class="btn btn-vox" onclick="voiceIn('yan-in', 'yandex')">🎤 ГОЛОСОВОЙ ПОИСК</button></div></div>
+
+<div id="off" class="window"><div class="win-header"><span>OFFICE</span><span onclick="closeApp('off')">×</span></div><div class="win-content"><p>Бесплатный Офис:</p><button class="btn" onclick="window.open('https://docs.google.com')">ДОКУМЕНТЫ</button><button class="btn" onclick="window.open('https://sheets.google.com')">ТАБЛИЦЫ</button></div></div>
+
+<div id="vib" class="window" style="border-color:#7360f2"><div class="win-header" style="background:#7360f2;color:fff"><span>VIBER</span><span onclick="closeApp('vib')">×</span></div><div class="win-content"><input id="vib-in" placeholder="Номер телефона..."><button class="btn" onclick="window.open('viber://chat?number='+document.getElementById('vib-in').value)">ОТКРЫТЬ ЧАТ</button></div></div>
+
+<div id="cin" class="window"><div class="win-header"><span>CINEMA</span><span onclick="closeApp('cin')">×</span></div><div class="win-content"><input id="cin-in" placeholder="Название фильма..."><button class="btn btn-vox" onclick="voiceIn('cin-in', 'movie')">🎤 НАЙТИ ФИЛЬМ</button></div></div>
+
+<div id="cal" class="window"><div class="win-header"><span>CALC</span><span onclick="closeApp('cal')">×</span></div><div class="win-content"><input id="cal-in" placeholder="Пример (напр. 5+5)"><button class="btn" onclick="try{alert('Результат: '+eval(document.getElementById('cal-in').value))}catch(e){alert('Ошибка')}">СЧИТАТЬ</button></div></div>
 
 <script>
     function checkAuth() {
         const pin = document.getElementById('pin-input').value;
         if(pin === "777") { document.getElementById('adm-icon').style.display = 'flex'; document.getElementById('lock-screen').style.display = 'none'; }
-        else if(pin === "111") { document.getElementById('lock-screen').style.display = 'none'; }
-        else alert("НЕВЕРНЫЙ ПИН");
-    }
-
-    function voiceIn(targetId, type) {
-        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Recognition) return alert("Голос не работает");
-        const rec = new Recognition();
-        rec.lang = ''; // ПУСТОЙ ПАРАМЕТР = АВТООПРЕДЕЛЕНИЕ ЯЗЫКА
-        const btn = event.currentTarget; btn.classList.add('listening');
-        rec.onresult = (e) => {
-            const res = e.results[0][0].transcript;
-            document.getElementById(targetId).value = res;
-            if(type !== 'none') goWeb(type, res);
-        };
-        rec.onend = () => btn.classList.remove('listening');
-        rec.start();
-    }
-
-    function goWeb(type, val) {
-        const q = encodeURIComponent(val);
-        if(type === 'music') window.open('https://music.youtube.com/search?q=' + q);
-        if(type === 'weather') window.open('https://google.com/search?q=weather+' + q);
-        if(type === 'movie') window.open('https://google.com/search?q=watch+movie+' + q);
-    }
-
-    function openApp(id) { document.getElementById(id).style.display='flex'; }
-    function closeApp(id) { document.getElementById(id).style.display='none'; }
-    function playFile(f) { if(f[0]) { document.getElementById('player').src=URL.createObjectURL(f[0]); document.getElementById('player').play(); } }
-    function gen() { document.getElementById('met-in').value = "VOX-" + Math.floor(Math.random()*999); }
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-</script>
-</body>
-</html>
+        else if(pin === "111") { document.getElementById('lock-screen').
