@@ -3,232 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v109 | NEON EDITION</title>
+    <title>VOX OS v112 | MEDIA PLAYER</title>
     <style>
-        :root { 
-            --neon: #00f2ff; 
-            --accent: #7000ff; 
-            --bg: #050505;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(0, 242, 255, 0.3);
-        }
+        :root { --neon: #00f2ff; --accent: #7000ff; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(0, 242, 255, 0.3); }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: var(--bg); color: #fff; 
-            font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden; 
-        }
-        
-        /* Живой фон */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         #matrix-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.15; pointer-events: none; }
-        .glow-overlay {
-            position: fixed; inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(112, 0, 255, 0.1), transparent);
-            pointer-events: none; z-index: 1;
-        }
-
-        /* Статус-бар */
-        #status-bar { 
-            position: fixed; top: 0; width: 100%; padding: 15px 25px; 
-            z-index: 1000; background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(10px); display: flex; justify-content: space-between; 
-            border-bottom: 1px solid var(--border); box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
-        }
-        #ai-btn { 
-            background: linear-gradient(45deg, var(--neon), var(--accent)); 
-            border: none; color: #fff; padding: 8px 20px; border-radius: 30px; 
-            cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); transition: 0.3s;
-        }
-        #ai-btn.active { transform: scale(1.1); filter: hue-rotate(90deg); box-shadow: 0 0 30px #fff; }
-
-        /* Рабочий стол */
-        #desktop { 
-            position: relative; z-index: 10; display: none; 
-            padding: 100px 20px 40px; height: 100%; overflow-y: auto;
-            animation: fadeIn 1s ease;
-        }
         
-        /* Главная панель управления */
-        .main-hub { 
-            background: var(--glass); border: 1px solid var(--border); 
-            border-radius: 20px; padding: 25px; margin-bottom: 30px; 
-            backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        input { 
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.4); 
-            border: 1px solid var(--border); color: var(--neon); 
-            border-radius: 12px; margin-bottom: 15px; text-align: center; 
-            font-size: 16px; transition: 0.3s;
-        }
-        input:focus { border-color: #fff; box-shadow: 0 0 15px var(--border); }
-        .btn { 
-            width: 100%; padding: 15px; background: var(--glass); 
-            color: var(--neon); border: 1px solid var(--neon); 
-            font-weight: bold; border-radius: 12px; cursor: pointer; 
-            text-transform: uppercase; transition: 0.3s; margin-bottom: 10px;
-        }
+        #status-bar { position: fixed; top: 0; width: 100%; padding: 15px 25px; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
+        #ai-btn { background: linear-gradient(45deg, var(--neon), var(--accent)); border: none; color: #fff; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+        #ai-btn.active { filter: hue-rotate(90deg); transform: scale(1.05); }
+
+        #desktop { position: relative; z-index: 10; display: none; padding: 90px 20px; height: 100%; overflow-y: auto; }
+        .main-hub { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(15px); }
+        
+        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); color: var(--neon); border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 16px; }
+        .btn { width: 100%; padding: 14px; background: var(--glass); color: var(--neon); border: 1px solid var(--neon); font-weight: bold; border-radius: 12px; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; transition: 0.3s; }
         .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
 
-        /* Иконки */
-        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 25px; }
-        .icon { 
-            display: flex; flex-direction: column; align-items: center; 
-            cursor: pointer; transition: 0.3s; position: relative;
-        }
-        .icon span { 
-            font-size: 45px; margin-bottom: 10px; 
-            filter: drop-shadow(0 0 10px var(--neon)); transition: 0.3s;
-        }
-        .icon:hover span { transform: translateY(-5px) scale(1.1); filter: drop-shadow(0 0 20px var(--neon)); }
-        .icon label { font-size: 11px; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 1px; }
+        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 20px; }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
+        .icon span { font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 0 10px var(--neon)); }
+        .icon label { font-size: 10px; text-transform: uppercase; color: rgba(255,255,255,0.7); text-align: center; font-weight: bold; }
 
-        /* Окна в стиле Sci-Fi */
-        .window { 
-            position: fixed; top: 55%; left: 50%; transform: translate(-50%, -50%); 
-            background: rgba(10, 10, 15, 0.95); border: 1px solid var(--neon); 
-            display: none; flex-direction: column; z-index: 2000; 
-            width: 92%; max-width: 450px; border-radius: 20px; 
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2); backdrop-filter: blur(20px);
-        }
-        .win-header { 
-            background: linear-gradient(90deg, var(--neon), var(--accent)); 
-            color: #000; padding: 15px; display: flex; justify-content: space-between; 
-            font-weight: bold; border-radius: 18px 18px 0 0; 
-        }
-        .win-content { padding: 25px; }
+        .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 10, 15, 0.98); border: 1px solid var(--neon); display: none; flex-direction: column; z-index: 2000; width: 90%; max-width: 400px; border-radius: 20px; box-shadow: 0 0 50px rgba(0, 242, 255, 0.3); overflow: hidden;}
+        .win-header { background: linear-gradient(90deg, var(--neon), var(--accent)); color: #000; padding: 15px; display: flex; justify-content: space-between; font-weight: bold; }
+        .win-content { padding: 20px; text-align: center; }
 
-        /* Экран блокировки */
-        #lock { 
-            position: fixed; inset: 0; z-index: 9999; 
-            background: radial-gradient(circle, #1a0033 0%, #000 100%); 
-            display: flex; align-items: center; justify-content: center; 
-        }
-        .lock-box {
-            text-align: center; border: 1px solid var(--border); 
-            padding: 60px 40px; border-radius: 30px; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(20px); box-shadow: 0 0 40px rgba(112, 0, 255, 0.3);
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #lock { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
 <canvas id="matrix-bg"></canvas>
-<div class="glow-overlay"></div>
 
 <div id="status-bar">
-    <div style="color: var(--neon); font-weight: bold; letter-spacing: 2px;">VOX SYSTEM</div>
+    <div id="sys-title" style="color:var(--neon); font-weight:bold;">VOX OS v112</div>
     <button id="ai-btn" onclick="globalVox()">🎤 VOX CONTROL</button>
-    <div id="clock" style="color: var(--neon);">00:00</div>
+    <div id="clock">00:00</div>
 </div>
 
 <div id="lock">
-    <div class="lock-box">
-        <div style="font-size: 50px; margin-bottom: 20px;">🛡️</div>
-        <h2 style="letter-spacing: 5px; color: var(--neon);">ВВЕДИТЕ КОД</h2>
-        <input type="password" id="pin" placeholder="****" style="font-size: 30px; letter-spacing: 10px;">
-        <button class="btn" onclick="auth()">АВТОРИЗАЦИЯ</button>
+    <div style="text-align:center; padding:40px; border:1px solid var(--border); border-radius:30px; background:rgba(10,10,15,0.9);">
+        <h1 style="color:var(--neon); letter-spacing:10px;">VOX OS</h1>
+        <input type="password" id="pin" placeholder="ENTER CODE">
+        <button class="btn" onclick="auth()">ACCESS SYSTEM</button>
     </div>
 </div>
 
 <div id="desktop">
     <div class="main-hub">
-        <input id="global-search" placeholder="Поиск, музыка или команда ИИ...">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button class="btn" onclick="handleSearch()">🔍 ИСКАТЬ</button>
-            <button class="btn" onclick="showW('w-store')">🏪 МАРКЕТ</button>
-        </div>
+        <input id="global-search" placeholder="Поиск или команда...">
+        <button class="btn" onclick="handleSearch()">GO TO WEB</button>
     </div>
-
     <div id="apps-grid">
+        <div class="icon" onclick="window.open('https://google.com')"><span>🔍</span><label>Google</label></div>
+        <div class="icon" onclick="showW('w-play')"><span>🎵</span><label>Player</label></div>
         <div class="icon" onclick="showW('w-met')"><span>📡</span><label>Meet AI</label></div>
-        <div class="icon" onclick="showW('w-org')"><span>💾</span><label>Заметки</label></div>
+        <div class="icon" onclick="showW('w-org')"><span>💾</span><label>Notes</label></div>
         <div id="custom-apps" style="display: contents;"></div>
         <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>☣️</span><label style="color:red">Root</label></div>
-        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Выход</label></div>
+        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Logout</label></div>
     </div>
 </div>
 
-<div id="w-store" class="window"><div class="win-header"><span>APP INSTALLER</span><span onclick="hideW('w-store')" style="cursor:pointer">×</span></div><div class="win-content">
-    <input id="app-name" placeholder="Название (Telegram, YouTube...)">
-    <button class="btn" onclick="installApp()">УСТАНОВИТЬ</button>
+<div id="w-play" class="window"><div class="win-header"><span>VOX PLAYER</span><span onclick="hideW('w-play')" style="cursor:pointer">×</span></div><div class="win-content">
+    <div style="background:#000; border-radius:15px; padding:20px; border:1px solid var(--border); margin-bottom:15px;">
+        <div style="font-size:50px;">🎧</div>
+        <p id="track-name" style="font-size:12px; color:var(--neon);">Вставьте ссылку на файл или YouTube</p>
+    </div>
+    <input id="media-url" placeholder="URL: mp3, mp4 или YouTube">
+    <button class="btn" onclick="playMedia()">PLAY</button>
+    <button class="btn" style="border-color:#ff0000; color:#ff0000" onclick="document.getElementById('v-frame').src=''">STOP</button>
+    <iframe id="v-frame" style="width:100%; height:0; border:none; margin-top:10px;"></iframe>
 </div></div>
 
-<div id="w-met" class="window"><div class="win-header"><span>VIDEO SATELLITE</span><span onclick="hideW('w-met')" style="cursor:pointer">×</span></div><div class="win-content">
-    <input id="me-in" placeholder="ID КОМНАТЫ">
-    <button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">ГЕНЕРИРОВАТЬ</button>
-    <button class="btn" style="background:var(--neon); color:#000" onclick="if(document.getElementById('me-in').value) window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">ПОДКЛЮЧИТЬСЯ</button>
+<div id="w-choice" class="window"><div class="win-header"><span>INSTALLER</span><span onclick="hideW('w-choice')">×</span></div><div class="win-content">
+    <p id="choice-text" style="color:var(--neon); font-weight:bold;"></p>
+    <button class="btn" onclick="installConfirmed('store')">OPEN STORE</button>
+    <button class="btn" onclick="installConfirmed('local')">ADD TO DESKTOP</button>
 </div></div>
 
-<div id="w-org" class="window"><div class="win-header"><span>DATA STORAGE</span><span onclick="hideW('w-org')" style="cursor:pointer">×</span></div><div class="win-content">
-    <textarea id="note-pad" style="width:100%; height:150px; background:rgba(0,0,0,0.5); color:var(--neon); border:1px solid var(--border); border-radius:10px; padding:15px;"></textarea>
-    <button class="btn" onclick="saveNote()" style="margin-top:10px;">СОХРАНИТЬ В ЯДРО</button>
+<div id="w-met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
+    <input id="me-in" placeholder="ID">
+    <button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">GENERATE</button>
+    <button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">JOIN</button>
 </div></div>
 
-<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red; color:#fff"><span>ADMIN CONSOLE</span><span onclick="hideW('w-adm')" style="cursor:pointer">×</span></div><div class="win-content">
-    <div id="logs" style="font-size:11px; text-align:left; height:200px; overflow:auto; color:red; margin-bottom:15px; border: 1px solid red; padding: 10px;"></div>
-    <button class="btn" style="border-color:red; color:red" onclick="localStorage.clear(); location.reload();">ПОЛНАЯ ОЧИСТКА СИСТЕМЫ</button>
+<div id="w-org" class="window"><div class="win-header"><span>NOTES</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
+    <textarea id="note-pad" style="width:100%; height:150px; background:#000; color:var(--neon); border:1px solid var(--border); padding:10px;"></textarea>
+    <button class="btn" onclick="localStorage.setItem('vox_note', document.getElementById('note-pad').value); alert('SAVED')">SAVE</button>
 </div></div>
 
 <script>
-    let isAdmin = false;
-    function log(m) { const l = document.getElementById('logs'); if(l) l.innerHTML = `<div>> ${m}</div>` + l.innerHTML; }
+    let currentPendingApp = "";
 
-    function auth() { 
+    function auth() {
         let p = document.getElementById('pin').value;
         if(p === '111' || p === '777') {
-            isAdmin = (p === '777');
-            document.getElementById('adm-ico').style.display = isAdmin ? 'flex' : 'none';
-            document.getElementById('lock').style.display='none'; 
-            document.getElementById('desktop').style.display='block'; 
-            loadApps();
-        } else { alert('ОШИБКА ДОСТУПА'); }
+            document.getElementById('adm-ico').style.display = (p === '777') ? 'flex' : 'none';
+            document.getElementById('lock').style.display='none';
+            document.getElementById('desktop').style.display='block';
+            renderApps();
+        } else { alert('DENIED'); }
     }
 
-    function showW(id) { document.querySelectorAll('.window').forEach(w=>w.style.display='none'); document.getElementById(id).style.display='flex'; }
+    function showW(id) { document.getElementById(id).style.display='flex'; }
     function hideW(id) { document.getElementById(id).style.display='none'; }
 
-    function saveNote() { localStorage.setItem('vox_note_neon', document.getElementById('note-pad').value); alert('ДАННЫЕ ЗАПИСАНЫ'); }
+    function playMedia() {
+        let url = document.getElementById('media-url').value;
+        if(!url) return;
+        let frame = document.getElementById('v-frame');
+        if(url.includes('youtube.com') || url.includes('youtu.be')) {
+            let id = url.split('v=')[1] || url.split('/').pop();
+            frame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            frame.style.height = "200px";
+        } else {
+            window.open(url);
+        }
+    }
 
-    function installApp(nameFromVox = null) {
-        let name = nameFromVox || document.getElementById('app-name').value.trim();
-        if(!name) return;
-        let apps = JSON.parse(localStorage.getItem('vox_apps_neon') || '[]');
-        if(!apps.includes(name)) { apps.push(name); localStorage.setItem('vox_apps_neon', JSON.stringify(apps)); }
-        renderApps(); hideW('w-store'); document.getElementById('app-name').value = '';
+    function askToInstall(name) {
+        currentPendingApp = name;
+        document.getElementById('choice-text').innerText = `APP: ${name.toUpperCase()}`;
+        showW('w-choice');
+    }
+
+    function installConfirmed(type) {
+        if(type === 'store') {
+            window.open(`https://play.google.com/store/search?q=${currentPendingApp}&c=apps`);
+        } else {
+            let apps = JSON.parse(localStorage.getItem('vox_apps_v112') || '[]');
+            if(!apps.includes(currentPendingApp)) { apps.push(currentPendingApp); localStorage.setItem('vox_apps_v112', JSON.stringify(apps)); }
+            renderApps();
+        }
+        hideW('w-choice');
     }
 
     function renderApps() {
         const container = document.getElementById('custom-apps');
         container.innerHTML = '';
-        let apps = JSON.parse(localStorage.getItem('vox_apps_neon') || '[]');
+        let apps = JSON.parse(localStorage.getItem('vox_apps_v112') || '[]');
         apps.forEach(name => {
-            let icon = "🔮";
-            let low = name.toLowerCase();
-            if(low.includes("tube")) icon = "🎞️";
-            else if(low.includes("tele")) icon = "🪐";
-            else if(low.includes("whats")) icon = "🔋";
-            else if(low.includes("tik")) icon = "🎵";
-            
-            const div = document.createElement('div');
-            div.className = 'icon';
-            div.innerHTML = `<span>${icon}</span><label>${name}</label>`;
+            const div = document.createElement('div'); div.className = 'icon';
+            div.innerHTML = `<span>📱</span><label>${name}</label>`;
             div.onclick = () => window.open(`https://play.google.com/store/search?q=${name}&c=apps`);
             container.appendChild(div);
         });
     }
 
-    function loadApps() { 
-        renderApps(); 
-        if(localStorage.getItem('vox_note_neon')) document.getElementById('note-pad').value = localStorage.getItem('vox_note_neon');
-    }
-
     function handleSearch() {
-        let val = document.getElementById('global-search').value;
-        if(!val) return;
-        window.open('https://youtube.com/results?search_query=' + val);
+        let v = document.getElementById('global-search').value;
+        if(v) window.open('https://www.google.com/search?q=' + encodeURIComponent(v));
     }
 
     function globalVox() {
@@ -241,28 +168,29 @@
         r.onresult = (e) => {
             const cmd = e.results[0][0].transcript.toLowerCase();
             document.getElementById('global-search').value = cmd;
-            if(cmd.includes("видео") || cmd.includes("встреч")) showW('w-met');
+
+            if(cmd.includes("музык") || cmd.includes("плеер") || cmd.includes("включи")) showW('w-play');
+            else if(cmd.includes("скачай") || cmd.includes("установи")) {
+                let appName = cmd.replace(/скачай|установи|программу/g, "").trim();
+                if(appName) askToInstall(appName);
+            } 
+            else if(cmd.includes("гугл")) window.open('https://google.com');
             else if(cmd.includes("заметк")) showW('w-org');
-            else if(cmd.includes("маркет") || cmd.includes("установи")) showW('w-store');
-            else if(cmd.includes("закрой")) document.querySelectorAll('.window').forEach(w=>w.style.display='none');
+            else if(cmd.includes("видео") || cmd.includes("мит")) showW('w-met');
             else handleSearch();
         };
         r.onend = () => b.classList.remove('active');
         r.start();
     }
 
-    // Matrix Background Effect
     const c = document.getElementById('matrix-bg');
     const ctx = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
-    const chars = "0101010101";
     const drops = Array(Math.floor(c.width/20)).fill(1);
     function draw() {
         ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
-        ctx.fillStyle = "#00f2ff"; ctx.font = "15px monospace";
-        drops.forEach((y,i) => {
-            const text = chars[Math.floor(Math.random()*chars.length)];
-            ctx.fillText(text, i*20, y*20);
+        ctx.fillStyle = "#00f2ff"; drops.forEach((y,i) => {
+            ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
             if(y*20 > c.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
         });
     }
