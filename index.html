@@ -1,85 +1,129 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v63 | TOTAL CONTROL</title>
+    <title>VOX OS v71 | MULTI-LANG EDITION</title>
     <style>
         :root { 
-            --main: #00ff41; --bg: #000; --win: rgba(10, 10, 10, 0.98); 
-            --accent: #00bbff; --admin: #ff00ff; --cinema: #e50914; --sc: #ff5500;
+            --main: #00ff41; --bg: #000; --win: rgba(15, 15, 15, 0.98); 
+            --accent: #00bbff; --admin: #ff00ff; --danger: #ff0000; --weather: #ffce00;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: sans-serif; overflow: hidden; }
 
         #desktop { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); 
-            padding: 110px 20px; gap: 20px; width: 100%; height: 100%;
-            background: radial-gradient(circle, #001f06 0%, #000 100%);
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
+            padding: 90px 15px; gap: 15px; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #001a00 0%, #000 100%);
             position: absolute; inset: 0; z-index: 1; overflow-y: auto;
         }
 
         .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; }
-        .icon span { font-size: 45px; margin-bottom: 8px; filter: drop-shadow(0 0 10px var(--main)); }
+        .icon span { font-size: 42px; margin-bottom: 5px; filter: drop-shadow(0 0 10px var(--main)); }
         .icon label { font-size: 11px; color: #fff; font-weight: bold; text-transform: uppercase; }
 
         .window { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--win); border: 2px solid var(--main); 
             display: none; flex-direction: column; z-index: 2000; 
-            width: 95%; max-width: 450px; border-radius: 20px; box-shadow: 0 0 80px #000;
+            width: 92%; max-width: 450px; border-radius: 15px; box-shadow: 0 0 40px rgba(0,255,65,0.3);
         }
 
-        .win-header { background: var(--main); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; border-radius: 18px 18px 0 0; }
-        .win-content { padding: 20px; text-align: center; }
+        .win-header { background: var(--main); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; border-radius: 13px 13px 0 0; }
+        .win-content { padding: 15px; text-align: center; }
 
-        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; border-radius: 12px; font-family: inherit; text-transform: uppercase; font-size: 11px; }
-        .btn-vox { background: var(--accent); color: white; border: 2px solid #fff; box-shadow: 0 0 10px var(--accent); }
-        .btn-sc { background: var(--sc); color: white; }
+        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; border-radius: 10px; text-transform: uppercase; font-size: 11px; }
+        .btn-vox { background: var(--accent); color: white; border: 1px solid #fff; }
         
-        #playlist-box { text-align: left; background: #050505; border: 1px solid #222; height: 100px; overflow-y: auto; margin: 10px 0; border-radius: 8px; font-size: 12px; }
-        .track { padding: 8px; border-bottom: 1px solid #111; color: #888; cursor: pointer; }
-        .track:hover { color: var(--main); background: #001a00; }
+        input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 12px; border-radius: 10px; text-align: center; font-size: 16px; }
 
-        input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 15px; border-radius: 12px; text-align: center; font-size: 16px; }
-        
-        #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 25px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.95); display: flex; justify-content: space-between; border-bottom: 1px solid #1a1a1a; }
+        #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 20px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
         #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-        .listening { animation: pulse 1s infinite; background: red !important; border-color: white !important; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        .listening { animation: pulse 1s infinite; background: red !important; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
-<body>
+<body id="main-body">
 
 <div id="status-bar">
-    <div id="user-info" style="color:var(--admin)">VOX OS: SECURE</div>
-    <div id="live-clock">00:00:00</div>
+    <div id="role-info">VOX GLOBAL v71</div>
+    <div id="clock">00:00:00</div>
 </div>
 
 <div id="lock-screen">
-    <div style="font-size: 24px; color: var(--main); letter-spacing: 10px; margin-bottom: 30px;">VOX GENESIS</div>
-    <input type="tel" id="sys-pass" placeholder="PIN" style="-webkit-text-security: disc; width: 220px;">
-    <button class="btn" style="width: 220px;" onclick="unlock()">ENTER</button>
+    <div style="font-size: 30px; color: var(--main); margin-bottom: 25px; letter-spacing: 5px; font-weight: bold;">VOX OS</div>
+    <input type="tel" id="pin-input" placeholder="PIN" style="-webkit-text-security: disc; width: 200px;">
+    <button class="btn" style="width: 200px;" onclick="checkAuth()">LOGIN</button>
 </div>
 
 <div id="desktop">
-    <div class="icon" onclick="openApp('win-wa')"><span>📻</span><label>Winamp AI</label></div>
-    <div class="icon" onclick="openApp('win-cinema')"><span>🎬</span><label>Cinema Web</label></div>
-    <div class="icon" onclick="openApp('win-meet')"><span>📹</span><label>Video Meet</label></div>
-    <div class="icon" onclick="openApp('win-admin')"><span>⚙️</span><label style="color:var(--admin)">Admin</label></div>
-    <div class="icon" onclick="openApp('win-calc')"><span>🧮</span><label>Calc AI</label></div>
-    <div class="icon" onclick="openApp('win-google')"><span>🌐</span><label>Web Search</label></div>
+    <div class="icon" onclick="openApp('wa')"><span>📻</span><label>Music</label></div>
+    <div class="icon" onclick="openApp('off')"><span>📄</span><label>Office</label></div>
+    <div class="icon" onclick="openApp('cin')"><span>🎬</span><label>Cinema</label></div>
+    <div class="icon" onclick="openApp('wea')"><span>☀️</span><label>Weather</label></div>
+    <div class="icon" onclick="openApp('vib')"><span>💜</span><label>Viber</label></div>
+    <div class="icon" onclick="openApp('goo')"><span>🌐</span><label>Google</label></div>
+    <div class="icon" onclick="openApp('yan')"><span>Я</span><label>Yandex</label></div>
+    <div class="icon" onclick="openApp('met')"><span>📹</span><label>Meet AI</label></div>
+    <div class="icon" onclick="openApp('cal')"><span>🧮</span><label>Calc</label></div>
+    <div id="adm-icon" class="icon" style="display:none;" onclick="openApp('adm')"><span>⚙️</span><label style="color:var(--admin)">Admin</label></div>
+    <div class="icon" onclick="location.reload()"><span>🔐</span><label>Exit</label></div>
 </div>
 
-<div id="win-wa" class="window">
-    <div class="win-header"><span>WINAMP AI CONTROL</span><span onclick="closeApp('win-wa')" style="cursor:pointer">×</span></div>
-    <div class="win-content">
-        <audio id="player" controls style="width:100%; filter:invert(1); margin-bottom:10px;"></audio>
-        <div id="playlist-box"></div>
-        <input type="file" id="files" multiple accept="audio/*" style="display:none" onchange="loadLocal(this.files)">
-        <button class="btn" onclick="document.getElementById('files').click()">📂 ОТКРЫТЬ MP3 (ПАМЯТЬ ТЕЛЕФОНА)</button>
-        <button class="btn btn-vox" onclick="startVox('wa-q', 'music')">🎤 СКАЗАТЬ АРТИСТА / ТРЕК</button>
-        <input id="wa-q" placeholder="Или напечатай тут...">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button class="btn btn-sc" onclick="web('sc')
+<script>
+    // Главная функция распознавания - ТЕПЕРЬ С ПОДДЕРЖКОЙ ВСЕХ ЯЗЫКОВ
+    function voiceIn(targetId, type) {
+        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!Recognition) return alert("Browser does not support Voice");
+        
+        const rec = new Recognition();
+        rec.continuous = false;
+        rec.interimResults = false;
+        // rec.lang удален или заменен на авто - браузер использует системный язык или слушает все
+        
+        const btn = event.currentTarget; 
+        btn.classList.add('listening');
+        
+        rec.onresult = (e) => {
+            const result = e.results[0][0].transcript;
+            document.getElementById(targetId).value = result;
+            if(type !== 'none') goWeb(type, result);
+        };
+        rec.onend = () => btn.classList.remove('listening');
+        rec.start();
+    }
+
+    function goWeb(type, val) {
+        let url = "";
+        const query = val || document.getElementById(type + '-input')?.value || "";
+        const q = encodeURIComponent(query);
+
+        if(type === 'movie') url = 'https://www.google.com/search?q=watch+movie+' + q;
+        if(type === 'music') url = 'https://music.youtube.com/search?q=' + q;
+        if(type === 'google') url = 'https://www.google.com/search?q=' + q;
+        if(type === 'yandex') url = 'https://yandex.com/search/?text=' + q;
+        if(type === 'weather') url = 'https://www.google.com/search?q=weather+' + q;
+        
+        if(url) window.open(url);
+    }
+
+    // Вспомогательные функции
+    function checkAuth() {
+        const pin = document.getElementById('pin-input').value;
+        if(pin === "777") { document.getElementById('adm-icon').style.display = 'flex'; document.getElementById('lock-screen').style.display = 'none'; }
+        else if(pin === "111") { document.getElementById('lock-screen').style.display = 'none'; }
+        else alert("DENIED");
+    }
+    function openApp(id) { document.querySelectorAll('.window').forEach(w=>w.style.display='none'); document.getElementById(id).style.display='flex'; }
+    function closeApp(id) { document.getElementById(id).style.display='none'; }
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+</script>
+
+<div id="wa" class="window"><div class="win-header"><span>WINAMP</span><span onclick="closeApp('wa')">×</span></div><div class="win-content"><input id="wa-input" placeholder="Artist..."><button class="btn btn-vox" onclick="voiceIn('wa-input', 'music')">🎤 VOICE SEARCH</button></div></div>
+<div id="wea" class="window"><div class="win-header"><span>WEATHER</span><span onclick="closeApp('wea')">×</span></div><div class="win-content"><input id="wea-input" placeholder="City..."><button class="btn btn-vox" onclick="voiceIn('wea-input', 'weather')">🎤 SAY CITY</button></div></div>
+<div id="met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="closeApp('met')">×</span></div><div class="win-content"><input id="met-input" placeholder="Room ID..."><button class="btn btn-vox" onclick="voiceIn('met-input', 'none')">🎤 SAY CODE</button></div></div>
+<div id="adm" class="window"><div class="win-header"><span>ADMIN</span><span onclick="closeApp('adm')">×</span></div><div class="win-content"><button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='PURGED'">💀 SELF-DESTRUCT</button></div></div>
+</body>
+</html>
