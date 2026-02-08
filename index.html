@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v112 | MEDIA PLAYER</title>
+    <title>VOX OS v113 | MARKET RESTORED</title>
     <style>
         :root { --neon: #00f2ff; --accent: #7000ff; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(0, 242, 255, 0.3); }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -38,7 +38,7 @@
 <canvas id="matrix-bg"></canvas>
 
 <div id="status-bar">
-    <div id="sys-title" style="color:var(--neon); font-weight:bold;">VOX OS v112</div>
+    <div id="sys-title" style="color:var(--neon); font-weight:bold;">VOX OS v113</div>
     <button id="ai-btn" onclick="globalVox()">🎤 VOX CONTROL</button>
     <div id="clock">00:00</div>
 </div>
@@ -46,53 +46,54 @@
 <div id="lock">
     <div style="text-align:center; padding:40px; border:1px solid var(--border); border-radius:30px; background:rgba(10,10,15,0.9);">
         <h1 style="color:var(--neon); letter-spacing:10px;">VOX OS</h1>
-        <input type="password" id="pin" placeholder="ENTER CODE">
-        <button class="btn" onclick="auth()">ACCESS SYSTEM</button>
+        <input type="password" id="pin" placeholder="ВВЕДИТЕ КОД">
+        <button class="btn" onclick="auth()">ВХОД</button>
     </div>
 </div>
 
 <div id="desktop">
     <div class="main-hub">
         <input id="global-search" placeholder="Поиск или команда...">
-        <button class="btn" onclick="handleSearch()">GO TO WEB</button>
+        <button class="btn" onclick="handleSearch()">ПОИСК GOOGLE</button>
     </div>
     <div id="apps-grid">
         <div class="icon" onclick="window.open('https://google.com')"><span>🔍</span><label>Google</label></div>
+        <div class="icon" onclick="showW('w-store-manual')"><span>🏪</span><label>Market</label></div>
         <div class="icon" onclick="showW('w-play')"><span>🎵</span><label>Player</label></div>
         <div class="icon" onclick="showW('w-met')"><span>📡</span><label>Meet AI</label></div>
         <div class="icon" onclick="showW('w-org')"><span>💾</span><label>Notes</label></div>
         <div id="custom-apps" style="display: contents;"></div>
         <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>☣️</span><label style="color:red">Root</label></div>
-        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Logout</label></div>
+        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Выход</label></div>
     </div>
 </div>
 
-<div id="w-play" class="window"><div class="win-header"><span>VOX PLAYER</span><span onclick="hideW('w-play')" style="cursor:pointer">×</span></div><div class="win-content">
-    <div style="background:#000; border-radius:15px; padding:20px; border:1px solid var(--border); margin-bottom:15px;">
-        <div style="font-size:50px;">🎧</div>
-        <p id="track-name" style="font-size:12px; color:var(--neon);">Вставьте ссылку на файл или YouTube</p>
-    </div>
-    <input id="media-url" placeholder="URL: mp3, mp4 или YouTube">
-    <button class="btn" onclick="playMedia()">PLAY</button>
-    <button class="btn" style="border-color:#ff0000; color:#ff0000" onclick="document.getElementById('v-frame').src=''">STOP</button>
-    <iframe id="v-frame" style="width:100%; height:0; border:none; margin-top:10px;"></iframe>
+<div id="w-store-manual" class="window"><div class="win-header"><span>МАРКЕТ</span><span onclick="hideW('w-store-manual')" style="cursor:pointer">×</span></div><div class="win-content">
+    <input id="manual-app-input" placeholder="Название приложения">
+    <button class="btn" onclick="let n = document.getElementById('manual-app-input').value; if(n) askToInstall(n); hideW('w-store-manual');">УСТАНОВИТЬ</button>
 </div></div>
 
 <div id="w-choice" class="window"><div class="win-header"><span>INSTALLER</span><span onclick="hideW('w-choice')">×</span></div><div class="win-content">
     <p id="choice-text" style="color:var(--neon); font-weight:bold;"></p>
-    <button class="btn" onclick="installConfirmed('store')">OPEN STORE</button>
-    <button class="btn" onclick="installConfirmed('local')">ADD TO DESKTOP</button>
+    <button class="btn" onclick="installConfirmed('store')">ОТКРЫТЬ В STORE</button>
+    <button class="btn" onclick="installConfirmed('local')">ДОБАВИТЬ НА СТОЛ</button>
+</div></div>
+
+<div id="w-play" class="window"><div class="win-header"><span>VOX PLAYER</span><span onclick="hideW('w-play')" style="cursor:pointer">×</span></div><div class="win-content">
+    <input id="media-url" placeholder="Ссылка на музыку или YouTube">
+    <button class="btn" onclick="playMedia()">ИГРАТЬ</button>
+    <iframe id="v-frame" style="width:100%; height:0; border:none; margin-top:10px;"></iframe>
 </div></div>
 
 <div id="w-met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
-    <input id="me-in" placeholder="ID">
-    <button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">GENERATE</button>
-    <button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">JOIN</button>
+    <input id="me-in" placeholder="ID Встречи">
+    <button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">ГЕНЕРИРОВАТЬ</button>
+    <button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">ВОЙТИ</button>
 </div></div>
 
-<div id="w-org" class="window"><div class="win-header"><span>NOTES</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
+<div id="w-org" class="window"><div class="win-header"><span>ЗАМЕТКИ</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
     <textarea id="note-pad" style="width:100%; height:150px; background:#000; color:var(--neon); border:1px solid var(--border); padding:10px;"></textarea>
-    <button class="btn" onclick="localStorage.setItem('vox_note', document.getElementById('note-pad').value); alert('SAVED')">SAVE</button>
+    <button class="btn" onclick="localStorage.setItem('vox_note', document.getElementById('note-pad').value); alert('СОХРАНЕНО')">СОХРАНИТЬ</button>
 </div></div>
 
 <script>
@@ -105,7 +106,7 @@
             document.getElementById('lock').style.display='none';
             document.getElementById('desktop').style.display='block';
             renderApps();
-        } else { alert('DENIED'); }
+        } else { alert('ОШИБКА КОДА'); }
     }
 
     function showW(id) { document.getElementById(id).style.display='flex'; }
@@ -119,14 +120,12 @@
             let id = url.split('v=')[1] || url.split('/').pop();
             frame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
             frame.style.height = "200px";
-        } else {
-            window.open(url);
-        }
+        } else { window.open(url); }
     }
 
     function askToInstall(name) {
         currentPendingApp = name;
-        document.getElementById('choice-text').innerText = `APP: ${name.toUpperCase()}`;
+        document.getElementById('choice-text').innerText = `ПРИЛОЖЕНИЕ: ${name.toUpperCase()}`;
         showW('w-choice');
     }
 
@@ -134,8 +133,8 @@
         if(type === 'store') {
             window.open(`https://play.google.com/store/search?q=${currentPendingApp}&c=apps`);
         } else {
-            let apps = JSON.parse(localStorage.getItem('vox_apps_v112') || '[]');
-            if(!apps.includes(currentPendingApp)) { apps.push(currentPendingApp); localStorage.setItem('vox_apps_v112', JSON.stringify(apps)); }
+            let apps = JSON.parse(localStorage.getItem('vox_apps_v113') || '[]');
+            if(!apps.includes(currentPendingApp)) { apps.push(currentPendingApp); localStorage.setItem('vox_apps_v113', JSON.stringify(apps)); }
             renderApps();
         }
         hideW('w-choice');
@@ -144,7 +143,7 @@
     function renderApps() {
         const container = document.getElementById('custom-apps');
         container.innerHTML = '';
-        let apps = JSON.parse(localStorage.getItem('vox_apps_v112') || '[]');
+        let apps = JSON.parse(localStorage.getItem('vox_apps_v113') || '[]');
         apps.forEach(name => {
             const div = document.createElement('div'); div.className = 'icon';
             div.innerHTML = `<span>📱</span><label>${name}</label>`;
@@ -164,19 +163,17 @@
         const r = new Rec(); r.lang = 'ru-RU';
         const b = document.getElementById('ai-btn');
         b.classList.add('active');
-
         r.onresult = (e) => {
             const cmd = e.results[0][0].transcript.toLowerCase();
             document.getElementById('global-search').value = cmd;
-
-            if(cmd.includes("музык") || cmd.includes("плеер") || cmd.includes("включи")) showW('w-play');
+            if(cmd.includes("маркет") || cmd.includes("магазин")) showW('w-store-manual');
+            else if(cmd.includes("музык") || cmd.includes("плеер")) showW('w-play');
             else if(cmd.includes("скачай") || cmd.includes("установи")) {
                 let appName = cmd.replace(/скачай|установи|программу/g, "").trim();
                 if(appName) askToInstall(appName);
             } 
             else if(cmd.includes("гугл")) window.open('https://google.com');
             else if(cmd.includes("заметк")) showW('w-org');
-            else if(cmd.includes("видео") || cmd.includes("мит")) showW('w-met');
             else handleSearch();
         };
         r.onend = () => b.classList.remove('active');
