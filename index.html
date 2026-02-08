@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v61 | FULL VOICE & MP3</title>
+    <title>VOX OS v61 | ADMIN 777 - USER 111</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: rgba(12, 12, 12, 0.98); 
@@ -21,7 +21,6 @@
         }
 
         .icon { display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; }
-        .icon:active { transform: scale(0.9); }
         .icon span { font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 0 8px var(--main)); }
         .icon label { font-size: 9px; text-transform: uppercase; color: #fff; text-align: center; font-weight: bold; }
 
@@ -37,27 +36,28 @@
 
         .btn { width: 100%; padding: 15px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; border-radius: 12px; font-family: inherit; font-size: 11px; }
         .btn-voice { background: var(--accent); color: #fff; }
-        .btn-gen { background: var(--gen); color: #fff; }
+        .btn-gen { background: var(--gen); color: #fff; display: none; } 
         
         input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 15px; text-align: center; font-size: 16px; border-radius: 12px; font-family: inherit; }
 
         #vox-audio { width: 100%; margin-top: 15px; filter: invert(1) hue-rotate(90deg); }
-        #file-info { font-size: 10px; color: var(--accent); margin-bottom: 10px; display: block; }
-
         #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 20px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; border-bottom: 1px solid #1a1a1a; }
+        
+        .admin-only { display: none; }
     </style>
 </head>
 <body>
 
 <div id="status-bar">
-    <div id="user-display">VOX_ULTIMATE_v61</div>
-    <div id="live-clock">SYSTEM_READY</div>
+    <div id="user-role">WAITING...</div>
+    <div id="live-clock">VOX OS v61</div>
 </div>
 
 <div id="lock-screen">
+    <div style="margin-bottom: 20px; letter-spacing: 5px; color: var(--main)">SYSTEM ENCRYPTED</div>
     <input type="tel" id="sys-pass" placeholder="***" style="-webkit-text-security: disc;">
-    <button class="btn" style="width: 220px;" onclick="unlockSystem()">AUTHORIZE</button>
+    <button class="btn" style="width: 200px;" onclick="unlockSystem()">ACCESS</button>
 </div>
 
 <div id="desktop">
@@ -68,32 +68,26 @@
     <div class="icon" onclick="openApp('win-cinema')"><span>🎬</span><label>Кино</label></div>
     <div class="icon" onclick="openApp('win-weather')"><span>☁️</span><label>Погода</label></div>
     <div class="icon" onclick="openApp('win-tools')"><span>🧮</span><label>Счет</label></div>
-    <div class="icon" onclick="openApp('win-games')"><span>🎮</span><label>Игры</label></div>
-    <div class="icon" onclick="openApp('win-file')"><span>📡</span><label>Файлы</label></div>
-    <div class="icon" onclick="openApp('win-waze')"><span>🚗</span><label>Waze</label></div>
-    <div class="icon" onclick="openApp('win-wipe')"><span>💀</span><label style="color:red">WIPE</label></div>
+    <div class="icon admin-only" onclick="openApp('win-wipe')"><span>💀</span><label style="color:red">WIPE</label></div>
 </div>
 
 <div id="win-wa" class="window">
-    <div class="win-header"><span>WINAMP MP3</span><span onclick="closeApp('win-wa')" style="cursor:pointer">×</span></div>
+    <div class="win-header"><span>WINAMP</span><span onclick="closeApp('win-wa')">×</span></div>
     <div class="win-content">
-        <span id="file-info">Выберите файл или продиктуйте ссылку</span>
-        <button class="btn btn-voice" onclick="document.getElementById('file-up').click()">📂 ОТКРЫТЬ MP3</button>
+        <button class="btn btn-voice" onclick="document.getElementById('file-up').click()">📂 ВЫБРАТЬ MP3</button>
         <input type="file" id="file-up" accept="audio/*" style="display:none" onchange="loadFile(event)">
-        
-        <button class="btn btn-voice" onclick="voxVoice('wa-url', 'music')">🎤 ПРОДИКТОВАТЬ URL</button>
+        <button class="btn btn-voice" onclick="voxVoice('wa-url', 'music')">🎤 СКАЗАТЬ URL</button>
         <input type="text" id="wa-url" placeholder="http://...mp3">
-        
         <audio id="vox-audio" controls></audio>
     </div>
 </div>
 
 <div id="win-msg" class="window">
-    <div class="win-header"><span>MESSENGER</span><span onclick="closeApp('win-msg')">×</span></div>
+    <div class="win-header"><span>SECURE MSG</span><span onclick="closeApp('win-msg')">×</span></div>
     <div class="win-content">
-        <button class="btn btn-gen" onclick="gen('msg-c')">🎲 ГЕНЕРИРОВАТЬ</button>
-        <button class="btn btn-voice" onclick="voxVoice('msg-c', 'msg')">🎤 ГОЛОСОВОЙ ВВОД</button>
-        <input id="msg-c" placeholder="Код комнаты...">
+        <button class="btn btn-gen admin-only" onclick="gen('msg-c')">🎲 GENERATE CODE</button>
+        <button class="btn btn-voice" onclick="voxVoice('msg-c', 'msg')">🎤 VOICE INPUT</button>
+        <input id="msg-c" placeholder="Room ID...">
         <button class="btn" onclick="run('msg')">CONNECT</button>
     </div>
 </div>
@@ -101,67 +95,39 @@
 <div id="win-meet" class="window">
     <div class="win-header"><span>VIDEO MEET</span><span onclick="closeApp('win-meet')">×</span></div>
     <div class="win-content">
-        <button class="btn btn-gen" onclick="gen('mt-c')">🎲 СОЗДАТЬ ID</button>
-        <button class="btn btn-voice" onclick="voxVoice('mt-c', 'meet')">🎤 СКАЗАТЬ ID</button>
-        <input id="mt-c" placeholder="ID встречи...">
+        <button class="btn btn-gen admin-only" onclick="gen('mt-c')">🎲 CREATE ID</button>
+        <button class="btn btn-voice" onclick="voxVoice('mt-c', 'meet')">🎤 VOICE ID</button>
+        <input id="mt-c" placeholder="Meet ID...">
         <button class="btn" onclick="run('meet')">START</button>
     </div>
 </div>
 
-<div id="win-search" class="window">
-    <div class="win-header"><span>GOOGLE</span><span onclick="closeApp('win-search')">×</span></div>
-    <div class="win-content">
-        <button class="btn btn-voice" onclick="voxVoice('s-in', 'search')">🎤 СКАЗАТЬ ЗАПРОС</button>
-        <input id="s-in" placeholder="Искать...">
-        <button class="btn" onclick="run('search')">SEARCH</button>
-    </div>
-</div>
-
-<div id="win-cinema" class="window">
-    <div class="win-header"><span>CINEMA</span><span onclick="closeApp('win-cinema')">×</span></div>
-    <div class="win-content">
-        <button class="btn btn-voice" onclick="voxVoice('f-in', 'cinema')">🎤 КАКОЙ ФИЛЬМ?</button>
-        <input id="f-in" placeholder="Название...">
-        <button class="btn" onclick="run('cinema')">НАЙТИ</button>
-    </div>
-</div>
-
-<div id="win-weather" class="window">
-    <div class="win-header"><span>WEATHER</span><span onclick="closeApp('win-weather')">×</span></div>
-    <div class="win-content">
-        <button class="btn btn-voice" onclick="voxVoice('c-in', 'weather')">🎤 СКАЗАТЬ ГОРОД</button>
-        <input id="c-in" placeholder="Город...">
-        <button class="btn" onclick="run('weather')">УЗНАТЬ</button>
-    </div>
-</div>
-
-<div id="win-tools" class="window">
-    <div class="win-header"><span>CALC</span><span onclick="closeApp('win-tools')">×</span></div>
-    <div class="win-content">
-        <button class="btn btn-voice" onclick="voxVoice('calc-in', 'calc')">🎤 ПРОДИКТОВАТЬ</button>
-        <input id="calc-in" placeholder="Напр: 5 + 5">
-        <button class="btn" onclick="run('calc')">СЧИТАТЬ</button>
-    </div>
-</div>
-
-<div id="win-wipe" class="window" style="border-color:red">
-    <div class="win-header" style="background:red"><span>TERMINAL</span><span onclick="closeApp('win-wipe')">×</span></div>
-    <div class="win-content">
-        <h1 id="tmr" style="color:red; font-size:40px">5</h1>
-        <button class="btn" style="background:red; color:#fff" onclick="wipe()">WIPE ALL DATA</button>
-    </div>
-</div>
-
-<div id="win-games" class="window"><div class="win-header"><span>GAMES</span><span onclick="closeApp('win-games')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://poki.com')">OPEN POKI</button></div></div>
-<div id="win-file" class="window"><div class="win-header"><span>FILES</span><span onclick="closeApp('win-file')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://send-anywhere.com')">SEND FILE</button></div></div>
-<div id="win-waze" class="window"><div class="win-header"><span>WAZE</span><span onclick="closeApp('win-waze')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://www.waze.com/live-map/')">LIVE MAP</button></div></div>
+<div id="win-search" class="window"><div class="win-header"><span>SEARCH</span><span onclick="closeApp('win-search')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('s-in','search')">🎤 VOICE</button><input id="s-in" placeholder="Искать..."><button class="btn" onclick="run('search')">GO</button></div></div>
+<div id="win-cinema" class="window"><div class="win-header"><span>КИНО</span><span onclick="closeApp('win-cinema')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('f-in','cinema')">🎤 VOICE</button><input id="f-in" placeholder="Название..."><button class="btn" onclick="run('cinema')">FIND</button></div></div>
+<div id="win-weather" class="window"><div class="win-header"><span>ПОГОДА</span><span onclick="closeApp('win-weather')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('c-in','weather')">🎤 VOICE</button><input id="c-in" placeholder="Город..."><button class="btn" onclick="run('weather')">CHECK</button></div></div>
+<div id="win-tools" class="window"><div class="win-header"><span>СЧЕТ</span><span onclick="closeApp('win-tools')">×</span></div><div class="win-content"><button class="btn btn-voice" onclick="voxVoice('calc-in','calc')">🎤 VOICE</button><input id="calc-in" placeholder="Пример..."><button class="btn" onclick="run('calc')">RUN</button></div></div>
+<div id="win-wipe" class="window" style="border-color:red"><div class="win-header" style="background:red"><span>TERMINAL</span><span onclick="closeApp('win-wipe')">×</span></div><div class="win-content"><h1 id="tmr">5</h1><button class="btn" style="background:red; color:#fff" onclick="wipe()">DESTROY DATA</button></div></div>
 
 <script>
     let activeWin = null;
-    const player = document.getElementById('vox-audio');
+    let isAdmin = false;
 
     function unlockSystem() {
-        if(document.getElementById('sys-pass').value === "777") document.getElementById('lock-screen').remove();
+        const pass = document.getElementById('sys-pass').value;
+        if(pass === "777") {
+            isAdmin = true;
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+            document.querySelectorAll('.btn-gen').forEach(el => el.style.display = 'block');
+            document.getElementById('user-role').innerText = "AGENT: ADMIN";
+            document.getElementById('lock-screen').remove();
+        } else if (pass === "111") {
+            isAdmin = false;
+            document.getElementById('user-role').innerText = "AGENT: USER";
+            document.getElementById('lock-screen').remove();
+        } else {
+            alert("ACCESS DENIED");
+            document.getElementById('sys-pass').value = "";
+        }
     }
 
     function openApp(id) {
@@ -170,12 +136,10 @@
         activeWin = id;
     }
 
-    function closeApp(id) {
-        document.getElementById(id).style.display = 'none';
-        activeWin = null;
-    }
+    function closeApp(id) { document.getElementById(id).style.display = 'none'; activeWin = null; }
 
     function gen(id) {
+        if(!isAdmin) return;
         document.getElementById(id).value = "VOX-" + Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
@@ -184,48 +148,32 @@
         if(!Rec) return alert("Голос не поддерживается");
         const rec = new Rec(); rec.lang = 'ru-RU';
         const btn = event.target;
-        const oldText = btn.innerText;
         btn.innerText = "• СЛУШАЮ... •";
-        btn.style.background = "red";
-
         rec.onresult = (e) => {
-            const text = e.results[0][0].transcript;
-            document.getElementById(inputId).value = text;
-            btn.innerText = oldText;
-            btn.style.background = "";
-            if(type === 'music') loadUrl();
-            else if(type !== 'msg' && type !== 'meet') run(type);
+            document.getElementById(inputId).value = e.results[0][0].transcript;
+            btn.innerText = "🎤 VOICE INPUT";
+            if(type !== 'msg' && type !== 'meet') run(type);
         };
-        rec.onerror = () => { btn.innerText = oldText; btn.style.background = ""; };
         rec.start();
     }
 
     function loadFile(e) {
         const file = e.target.files[0];
         if(file) {
+            const player = document.getElementById('vox-audio');
             player.src = URL.createObjectURL(file);
-            document.getElementById('file-info').innerText = "FILE: " + file.name;
-            player.play();
-        }
-    }
-
-    function loadUrl() {
-        const url = document.getElementById('wa-url').value;
-        if(url) {
-            player.src = url;
-            document.getElementById('file-info').innerText = "PLAYING FROM URL";
             player.play();
         }
     }
 
     function run(type) {
-        const val = (id) => document.getElementById(id).value;
-        if(type === 'search') window.open('https://google.com/search?q=' + val('s-in'));
-        if(type === 'cinema') window.open('https://google.com/search?q=' + val('f-in') + '+смотреть+онлайн');
-        if(type === 'weather') window.open('https://google.com/search?q=погода+' + val('c-in'));
-        if(type === 'calc') window.open('https://google.com/search?q=результат+' + val('calc-in'));
-        if(type === 'msg') window.open('https://element.io/app/#/room/' + val('msg-c'));
-        if(type === 'meet') window.open('https://meet.jit.si/' + val('mt-c'));
+        const getV = (id) => document.getElementById(id).value;
+        if(type==='search') window.open('https://google.com/search?q='+getV('s-in'));
+        if(type==='cinema') window.open('https://google.com/search?q='+getV('f-in')+'+смотреть');
+        if(type==='weather') window.open('https://google.com/search?q=погода+'+getV('c-in'));
+        if(type==='calc') window.open('https://google.com/search?q=результат+'+getV('calc-in'));
+        if(type==='msg') window.open('https://element.io/app/#/room/'+getV('msg-c'));
+        if(type==='meet') window.open('https://meet.jit.si/'+getV('mt-c'));
     }
 
     function wipe() {
