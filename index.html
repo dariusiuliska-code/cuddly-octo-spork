@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v61 | VOICE AI ADMIN</title>
+    <title>VOX OS v63 | TOTAL CONTROL</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: rgba(10, 10, 10, 0.98); 
-            --accent: #00bbff; --admin: #ff00ff; --yt: #ff0000;
+            --accent: #00bbff; --admin: #ff00ff; --cinema: #e50914; --sc: #ff5500;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
@@ -19,10 +19,9 @@
             position: absolute; inset: 0; z-index: 1; overflow-y: auto;
         }
 
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; transition: 0.3s; }
-        .icon:active { transform: scale(0.9); }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; }
         .icon span { font-size: 45px; margin-bottom: 8px; filter: drop-shadow(0 0 10px var(--main)); }
-        .icon label { font-size: 11px; color: #fff; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .icon label { font-size: 11px; color: #fff; font-weight: bold; text-transform: uppercase; }
 
         .window { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -34,121 +33,53 @@
         .win-header { background: var(--main); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; border-radius: 18px 18px 0 0; }
         .win-content { padding: 20px; text-align: center; }
 
-        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; border-radius: 12px; font-family: inherit; text-transform: uppercase; }
-        .btn-vox { background: var(--accent); color: white; border: 2px solid #fff; box-shadow: 0 0 15px var(--accent); }
+        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; border-radius: 12px; font-family: inherit; text-transform: uppercase; font-size: 11px; }
+        .btn-vox { background: var(--accent); color: white; border: 2px solid #fff; box-shadow: 0 0 10px var(--accent); }
+        .btn-sc { background: var(--sc); color: white; }
         
-        #playlist-box { text-align: left; background: #050505; border: 1px solid #222; height: 120px; overflow-y: auto; margin: 10px 0; border-radius: 8px; font-size: 12px; }
+        #playlist-box { text-align: left; background: #050505; border: 1px solid #222; height: 100px; overflow-y: auto; margin: 10px 0; border-radius: 8px; font-size: 12px; }
         .track { padding: 8px; border-bottom: 1px solid #111; color: #888; cursor: pointer; }
-        .track.active { color: var(--main); background: #001a00; font-weight: bold; }
+        .track:hover { color: var(--main); background: #001a00; }
 
         input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 15px; border-radius: 12px; text-align: center; font-size: 16px; }
         
         #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 25px; font-size: 11px; z-index: 1000; background: rgba(0,0,0,0.95); display: flex; justify-content: space-between; border-bottom: 1px solid #1a1a1a; }
-        
-        .listening { animation: pulse 1s infinite; background: red !important; }
+        #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        .listening { animation: pulse 1s infinite; background: red !important; border-color: white !important; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="status-bar">
-    <div id="user-info" style="color:var(--admin)">ROOT ACCESS: REQUIRED</div>
+    <div id="user-info" style="color:var(--admin)">VOX OS: SECURE</div>
     <div id="live-clock">00:00:00</div>
 </div>
 
-<div id="lock-screen" style="position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <div style="font-size: 24px; color: var(--main); letter-spacing: 10px; margin-bottom: 30px;">VOX OS v61</div>
-    <input type="tel" id="sys-pass" placeholder="PASSWORD" style="-webkit-text-security: disc; width: 220px;">
-    <button class="btn" style="width: 220px;" onclick="unlock()">ACCESS SYSTEM</button>
-    <p style="font-size: 10px; color: #444; margin-top: 20px;">777 - ADMIN | 111 - USER</p>
+<div id="lock-screen">
+    <div style="font-size: 24px; color: var(--main); letter-spacing: 10px; margin-bottom: 30px;">VOX GENESIS</div>
+    <input type="tel" id="sys-pass" placeholder="PIN" style="-webkit-text-security: disc; width: 220px;">
+    <button class="btn" style="width: 220px;" onclick="unlock()">ENTER</button>
 </div>
 
 <div id="desktop">
     <div class="icon" onclick="openApp('win-wa')"><span>📻</span><label>Winamp AI</label></div>
-    <div class="icon" onclick="openApp('win-meet')"><span>📹</span><label>Meet</label></div>
-    <div class="icon" onclick="openApp('win-calc')"><span>🧮</span><label>Calc</label></div>
-    <div class="icon" onclick="openApp('win-weather')"><span>☁️</span><label>Weather</label></div>
-    <div class="icon" onclick="openApp('win-google')"><span>🌐</span><label>Google</label></div>
-    <div class="icon" id="admin-icon" style="display:none;" onclick="openApp('win-admin')"><span>⚙️</span><label style="color:var(--admin)">Admin</label></div>
-    <div class="icon" onclick="location.reload()"><span>🔐</span><label>Logout</label></div>
+    <div class="icon" onclick="openApp('win-cinema')"><span>🎬</span><label>Cinema Web</label></div>
+    <div class="icon" onclick="openApp('win-meet')"><span>📹</span><label>Video Meet</label></div>
+    <div class="icon" onclick="openApp('win-admin')"><span>⚙️</span><label style="color:var(--admin)">Admin</label></div>
+    <div class="icon" onclick="openApp('win-calc')"><span>🧮</span><label>Calc AI</label></div>
+    <div class="icon" onclick="openApp('win-google')"><span>🌐</span><label>Web Search</label></div>
 </div>
 
 <div id="win-wa" class="window">
-    <div class="win-header"><span>WINAMP VOICE PRO</span><span onclick="closeApp('win-wa')" style="cursor:pointer">×</span></div>
+    <div class="win-header"><span>WINAMP AI CONTROL</span><span onclick="closeApp('win-wa')" style="cursor:pointer">×</span></div>
     <div class="win-content">
-        <button id="vox-btn" class="btn btn-vox" onclick="startVoiceSearch()">🎤 СКАЖИ: АРТИСТ ИЛИ ПЕСНЯ</button>
-        <div id="ai-status" style="font-size: 12px; margin-bottom: 10px; color: var(--accent);">Готов к команде...</div>
-        <input id="wa-q" placeholder="Поиск вручную...">
-        <div id="playlist-box">
-            <div class="track">Голосовой поток активен...</div>
-        </div>
-        <button class="btn" style="background:var(--yt); color:white" onclick="ytPlay()">ИГРАТЬ ЧЕРЕЗ YOUTUBE</button>
-    </div>
-</div>
-
-<div id="win-admin" class="window" style="border-color: var(--admin);">
-    <div class="win-header" style="background: var(--admin); color: #fff;"><span>CONTROL PANEL</span><span onclick="closeApp('win-admin')">×</span></div>
-    <div class="win-content">
-        <h3>ПРАВА АДМИНИСТРАТОРА</h3>
-        <button class="btn" onclick="alert('Все пользователи интегрированы')">ИНТЕГРИРОВАТЬ ДОСТУП</button>
-        <button class="btn" style="background:red; color:white" onclick="alert('Система защищена')">BLOCK ALL USERS</button>
-    </div>
-</div>
-
-<div id="win-meet" class="window"><div class="win-header"><span>MEET</span><span onclick="closeApp('win-meet')">×</span></div><div class="win-content"><input id="mi" placeholder="ID"><button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('mi').value)">START</button></div></div>
-<div id="win-calc" class="window"><div class="win-header"><span>CALC</span><span onclick="closeApp('win-calc')">×</span></div><div class="win-content"><input id="ci" placeholder="2+2"><button class="btn" onclick="alert(eval(document.getElementById('ci').value))">CALC</button></div></div>
-<div id="win-weather" class="window"><div class="win-header"><span>WEATHER</span><span onclick="closeApp('win-weather')">×</span></div><div class="win-content"><input id="wi" placeholder="City"><button class="btn" onclick="window.open('https://yandex.ru/pogoda/'+document.getElementById('wi').value)">SHOW</button></div></div>
-<div id="win-google" class="window"><div class="win-header"><span>GOOGLE</span><span onclick="closeApp('win-google')">×</span></div><div class="win-content"><input id="gi" placeholder="Search"><button class="btn" onclick="window.open('https://google.com/search?q='+document.getElementById('gi').value)">SEARCH</button></div></div>
-
-<script>
-    let activeWin = null;
-    setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-
-    function unlock() {
-        const p = document.getElementById('sys-pass').value;
-        if(p === "777") {
-            document.getElementById('admin-icon').style.display = 'flex';
-            document.getElementById('user-info').innerText = "ADMIN: FULL CONTROL";
-            document.getElementById('lock-screen').style.display = 'none';
-        } else if(p === "111") {
-            document.getElementById('user-info').innerText = "USER: RESTRICTED";
-            document.getElementById('lock-screen').style.display = 'none';
-        } else { alert("ACCESS DENIED"); }
-    }
-
-    function openApp(id) { if(activeWin) closeApp(activeWin); document.getElementById(id).style.display = 'flex'; activeWin = id; }
-    function closeApp(id) { document.getElementById(id).style.display = 'none'; activeWin = null; }
-
-    // ГОЛОСОВОЙ ПОИСК ДЛЯ WINAMP
-    function startVoiceSearch() {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Speech) return alert("Браузер не поддерживает голос");
-        
-        const rec = new Speech();
-        rec.lang = 'ru-RU';
-        const btn = document.getElementById('vox-btn');
-        const status = document.getElementById('ai-status');
-
-        btn.classList.add('listening');
-        status.innerText = "Слушаю вас...";
-
-        rec.onresult = (e) => {
-            const query = e.results[0][0].transcript;
-            document.getElementById('wa-q').value = query;
-            status.innerText = "Найдено: " + query;
-            ytPlay(); // Сразу запускаем поиск
-        };
-
-        rec.onend = () => {
-            btn.classList.remove('listening');
-        };
-        rec.start();
-    }
-
-    function ytPlay() {
-        const q = document.getElementById('wa-q').value;
-        if(q) window.open(`https://music.youtube.com/search?q=${encodeURIComponent(q)}`);
-    }
-</script>
-</body>
-</html>
+        <audio id="player" controls style="width:100%; filter:invert(1); margin-bottom:10px;"></audio>
+        <div id="playlist-box"></div>
+        <input type="file" id="files" multiple accept="audio/*" style="display:none" onchange="loadLocal(this.files)">
+        <button class="btn" onclick="document.getElementById('files').click()">📂 ОТКРЫТЬ MP3 (ПАМЯТЬ ТЕЛЕФОНА)</button>
+        <button class="btn btn-vox" onclick="startVox('wa-q', 'music')">🎤 СКАЗАТЬ АРТИСТА / ТРЕК</button>
+        <input id="wa-q" placeholder="Или напечатай тут...">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button class="btn btn-sc" onclick="web('sc')
