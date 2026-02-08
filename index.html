@@ -3,149 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX LITE</title>
+    <title>VOX OS v25.0 | PRIME</title>
     <style>
-        :root { --main: #00ff41; }
-        body { margin: 0; background: #000; color: var(--main); font-family: monospace; overflow: hidden; }
+        :root { --main: #00ff41; --bg: #000; --panel: rgba(0, 20, 0, 0.95); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: var(--main); font-family: 'Courier New', monospace; overflow: hidden; }
         
-        /* Фон Матрица - упрощенный */
-        #bg { position: fixed; inset: 0; z-index: -1; opacity: 0.2; }
+        canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.15; }
+
+        /* Сетка рабочего стола */
+        .desktop { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 15px; 
+            padding: 20px; 
+            height: calc(100vh - 80px); 
+            overflow-y: auto; 
+            align-content: start;
+        }
 
         /* Окна */
         .window { 
-            position: absolute; width: 320px; background: rgba(0, 15, 0, 0.95); 
-            border: 1px solid var(--main); display: none; flex-direction: column; 
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+            background: var(--panel); 
+            border: 1px solid var(--main); 
+            display: none; 
+            flex-direction: column; 
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
         }
-        .header { background: var(--main); color: #000; padding: 8px; cursor: move; font-weight: bold; display: flex; justify-content: space-between; }
-        .close { cursor: pointer; border: 1px solid #000; padding: 0 5px; }
-        .content { padding: 15px; }
+        .header { background: var(--main); color: #000; padding: 10px; font-weight: bold; font-size: 11px; text-align: center; text-transform: uppercase; }
+        .content { padding: 15px; flex: 1; }
 
-        /* Поля и кнопки */
-        input, select { width: 100%; padding: 10px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; }
-        .btn { background: var(--main); color: #000; border: none; padding: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-bottom: 5px; }
-        .btn:hover { background: #fff; }
-
-        /* Панель снизу */
-        .dock { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            background: #000; border: 1px solid var(--main); display: flex; gap: 15px; padding: 10px 20px; border-radius: 10px;
-        }
-        .icon { font-size: 24px; cursor: pointer; }
+        /* Формы */
+        input, select { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; }
+        .btn { background: var(--main); color: #000; border: none; padding: 12px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; margin-bottom: 6px; }
+        .btn:active { background: #fff; }
 
         /* Виджет */
-        #vox-stat { position: fixed; top: 10px; right: 10px; font-size: 10px; border-left: 2px solid var(--main); padding-left: 8px; }
+        .status-bar { position: fixed; top: 10px; right: 20px; font-size: 10px; text-align: right; opacity: 0.7; pointer-events: none; }
 
-        /* Вход */
-        #lock { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        /* Док-панель */
+        .dock { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(0,0,0,0.9); border-top: 1px solid var(--main); 
+            display: flex; justify-content: center; gap: 20px; padding: 15px; z-index: 1000;
+        }
+        .icon { font-size: 24px; cursor: pointer; transition: 0.2s; filter: drop-shadow(0 0 5px var(--main)); }
+        .icon:hover { transform: translateY(-5px); }
+
+        /* Лок-скрин */
+        #lock { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+
+        @media (max-width: 600px) {
+            .desktop { grid-template-columns: 1fr; padding: 10px; }
+        }
     </style>
 </head>
 <body>
 
-<canvas id="bg"></canvas>
+<canvas id="matrix"></canvas>
 
-<div id="vox-stat">VOX CORE: ONLINE<br>ENCRYPTION: ACTIVE</div>
+<div class="status-bar">
+    VOX_PRIME_v25<br>
+    CONNECTION: SECURE<br>
+    P2P_MODE: ACTIVE
+</div>
 
 <div id="lock">
-    <div style="margin-bottom: 15px;">VOX LOGIN</div>
-    <input type="password" id="pass" style="width: 150px; text-align: center;" placeholder="ПАРОЛЬ">
-    <button class="btn" style="width: 150px;" onclick="login()">ВХОД</button>
+    <div style="letter-spacing: 5px; margin-bottom: 20px;">VOX LOGIN REQUIRED</div>
+    <input type="password" id="pass" style="width: 220px; text-align: center;" placeholder="PASSWORD">
+    <button class="btn" style="width: 220px;" onclick="login()">ENTER SYSTEM</button>
 </div>
 
-<div id="win-chat" class="window" style="top: 50px; left: 20px;">
-    <div class="header">ЧАТ <span class="close" onclick="openW('win-chat')">X</span></div>
-    <div class="content">
-        <div id="log" style="height: 150px; overflow-y: auto; border: 1px solid #111; padding: 5px; margin-bottom: 10px; font-size: 12px;"></div>
-        <input type="text" id="msg" placeholder="Сообщение...">
-        <button class="btn" onclick="send()">ОТПРАВИТЬ</button>
+<div class="desktop">
+    
+    <div id="win-chat" class="window">
+        <div class="header">SECURE_MESSENGER</div>
+        <div class="content">
+            <div id="log" style="height: 180px; overflow-y: auto; border: 1px solid #111; padding: 10px; margin-bottom: 10px; font-size: 13px; background: rgba(0,0,0,0.5);">
+                <div style="color: #666;">[Система]: Канал связи открыт.</div>
+            </div>
+            <input type="text" id="msg" placeholder="Введите текст...">
+            <button class="btn" onclick="send()">ОТПРАВИТЬ</button>
+        </div>
     </div>
-</div>
 
-<div id="win-search" class="window" style="top: 100px; left: 50px;">
-    <div class="header">ПОИСК <span class="close" onclick="openW('win-search')">X</span></div>
-    <div class="content">
-        <select id="engine">
-            <option value="google">GOOGLE</option>
-            <option value="yandex">ЯНДЕКС</option>
-        </select>
-        <input type="text" id="query" placeholder="Что ищем?">
-        <button class="btn" onclick="search()">НАЙТИ</button>
-        <button class="btn" style="background: #333; color: #fff;" onclick="search('hd')">КИНО В HD</button>
+    <div id="win-video" class="window">
+        <div class="header">VIDEO_CONFERENCE</div>
+        <div class="content">
+            <div id="v-status" style="text-align: center; margin-bottom: 15px; border: 1px dashed var(--main); padding: 10px; font-size: 11px;">
+                ГОТОВ К СОЗДАНИЮ МОСТА
+            </div>
+            <button class="btn" onclick="createVideo()">СОЗДАТЬ ВИДЕО-КОМНАТУ</button>
+            <div id="v-link" style="margin-top: 10px;"></div>
+        </div>
     </div>
-</div>
 
-<div id="win-files" class="window" style="top: 150px; left: 80px; width: 350px;">
-    <div class="header">ОБМЕН ФАЙЛАМИ <span class="close" onclick="openW('win-files')">X</span></div>
-    <div class="content" style="padding: 0; height: 350px;">
-        <iframe src="https://toffeeshare.com/" style="width: 100%; height: 100%; border: none; filter: invert(1);"></iframe>
+    <div id="win-music" class="window">
+        <div class="header">MUSIC_SEARCH</div>
+        <div class="content">
+            <input type="text" id="m-query" placeholder="Трек, альбом...">
+            <button class="btn" onclick="searchMusic('sc')">SOUNDCLOUD</button>
+            <button class="btn" style="background:#333; color:#fff" onclick="searchMusic('mp3')">GOOGLE MP3</button>
+        </div>
     </div>
-</div>
 
-<div id="win-vid" class="window" style="top: 200px; left: 100px;">
-    <div class="header">ВИДЕОСВЯЗЬ <span class="close" onclick="openW('win-vid')">X</span></div>
-    <div class="content">
-        <button class="btn" onclick="video()">СОЗДАТЬ КОМНАТУ</button>
-        <div id="vid-link" style="font-size: 10px; text-align: center; margin-top: 10px;"></div>
+    <div id="win-search" class="window">
+        <div class="header">WEB_SEARCH</div>
+        <div class="content">
+            <select id="engine">
+                <option value="google">GOOGLE</option>
+                <option value="yandex">YANDEX</option>
+            </select>
+            <input type="text" id="query" placeholder="Искать в сети...">
+            <button class="btn" onclick="searchWeb()">ПОИСК</button>
+            <button class="btn" style="background:#333; color:#fff;" onclick="searchWeb('hd')">КИНО В HD</button>
+        </div>
     </div>
+
+    <div id="win-files" class="window">
+        <div class="header">P2P_FILE_TRANSFER</div>
+        <div class="content" style="padding:0;">
+            <iframe src="https://toffeeshare.com/" style="width:100%; height:320px; border:none; filter: invert(0.9);"></iframe>
+        </div>
+    </div>
+
 </div>
 
 <div class="dock">
-    <div class="icon" onclick="openW('win-chat')">💬</div>
-    <div class="icon" onclick="openW('win-search')">🔍</div>
-    <div class="icon" onclick="openW('win-files')">📁</div>
-    <div class="icon" onclick="openW('win-vid')">📽️</div>
+    <div class="icon" title="Чат" onclick="toggleW('win-chat')">💬</div>
+    <div class="icon" title="Видео" onclick="toggleW('win-video')">📽️</div>
+    <div class="icon" title="Музыка" onclick="toggleW('win-music')">🎵</div>
+    <div class="icon" title="Поиск" onclick="toggleW('win-search')">🔍</div>
+    <div class="icon" title="Файлы" onclick="toggleW('win-files')">📁</div>
 </div>
 
 <script>
-    // Простой фон
-    const c = document.getElementById('bg'); const ctx = c.getContext('2d');
+    // Matrix BG
+    const c = document.getElementById('matrix'); const ctx = c.getContext('2d');
     let w, h, cols, drops;
-    function res() { w=c.width=window.innerWidth; h=c.height=window.innerHeight; cols=Math.floor(w/15); drops=Array(cols).fill(1); }
+    function res() { w=c.width=window.innerWidth; h=c.height=window.innerHeight; cols=Math.floor(w/20); drops=Array(cols).fill(1); }
     window.onresize=res; res();
     function draw() {
-        ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#00ff41';
+        ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#00ff41'; ctx.font="15px monospace";
         drops.forEach((y, i) => {
-            ctx.fillText(Math.floor(Math.random()*10), i*15, y*15);
-            if(y*15 > h && Math.random() > 0.98) drops[i]=0; drops[i]++;
+            ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
+            if(y*20 > h && Math.random() > 0.98) drops[i]=0; drops[i]++;
         });
     }
     setInterval(draw, 50);
 
+    // Функции системы
     function login() {
         if(document.getElementById('pass').value === "VOX-777") document.getElementById('lock').style.display='none';
-        else alert("НЕВЕРНО");
+        else alert("ОТКАЗАНО В ДОСТУПЕ");
     }
 
-    function openW(id) {
+    function toggleW(id) {
         const el = document.getElementById(id);
         el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
-        // Делаем окно перетаскиваемым
-        const head = el.querySelector('.header');
-        head.onmousedown = (e) => {
-            let ox=e.clientX-el.offsetLeft, oy=e.clientY-el.offsetTop;
-            document.onmousemove = (e) => { el.style.left=e.clientX-ox+'px'; el.style.top=e.clientY-oy+'px'; };
-            document.onmouseup = () => { document.onmousemove=null; };
-        };
-    }
-
-    function search(mode) {
-        const q = document.getElementById('query').value;
-        const eng = document.getElementById('engine').value;
-        let url = (eng === 'google') ? `https://google.com/search?q=${q}` : `https://yandex.ru/search/?text=${q}`;
-        if(mode === 'hd') url += " смотреть бесплатно онлайн hd";
-        window.open(url, '_blank');
     }
 
     function send() {
         const i = document.getElementById('msg'); const l = document.getElementById('log');
         if(!i.value) return;
-        l.innerHTML += `<div><b>ВЫ:</b> ${i.value}</div>`;
+        l.innerHTML += `<div><span style="color:#888;">></span> ${i.value}</div>`;
         i.value=''; l.scrollTop = l.scrollHeight;
     }
 
-    function video() {
-        const id = "VOX-" + Math.random().toString(36).substr(7).toUpperCase();
-        document.getElementById('vid-link').innerHTML = `ID: ${id}<br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">ВОЙТИ</button>`;
+    function createVideo() {
+        const id = "VOX-MEET-" + Math.random().toString(36).substr(7).toUpperCase();
+        document.getElementById('v-link').innerHTML = `<button class="btn" style="background:#fff;" onclick="window.open('https://meet.jit.si/${id}')">ВОЙТИ В КОМНАТУ: ${id}</button>`;
+        document.getElementById('v-status').innerText = "КОМНАТА СОЗДАНА";
+    }
+
+    function searchMusic(type) {
+        const q = document.getElementById('m-query').value;
+        if(!q) return;
+        const url = type === 'sc' ? `https://soundcloud.com/search?q=${q}` : `https://www.google.com/search?q=${q}+mp3+слушать+бесплатно`;
+        window.open(url, '_blank');
+    }
+
+    function searchWeb(mode) {
+        const q = document.getElementById('query').value;
+        const eng = document.getElementById('engine').value;
+        if(!q) return;
+        let url = eng === 'google' ? `https://google.com/search?q=${q}` : `https://yandex.ru/search/?text=${q}`;
+        if(mode === 'hd') url += " смотреть онлайн в hd бесплатно";
+        window.open(url, '_blank');
     }
 </script>
 </body>
