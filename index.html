@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v12.0 | THE ONE</title>
+    <title>VOX OS v13.0 | GAME & MATRIX</title>
     <style>
         :root { --main: #00ff41; --bg: #000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -16,9 +16,9 @@
 
         #matrix-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.4; pointer-events: none; }
 
-        /* Окна */
+        /* Система Окон */
         .window {
-            position: absolute; min-width: 290px; max-width: 95vw;
+            position: absolute; min-width: 300px; max-width: 95vw;
             background: rgba(0, 0, 0, 0.95);
             border: 1px solid var(--main);
             display: none; flex-direction: column; z-index: 10;
@@ -52,19 +52,20 @@
         .taskbar {
             position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.9); border: 1px solid var(--main);
-            display: flex; gap: 12px; padding: 10px 15px; z-index: 1000; border-radius: 8px;
+            display: flex; gap: 15px; padding: 10px 20px; z-index: 1000; border-radius: 8px;
         }
-        .app-icon { font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .app-icon:hover { transform: scale(1.3) translateY(-5px); filter: drop-shadow(0 0 8px var(--main)); }
+        .app-icon { font-size: 28px; cursor: pointer; transition: 0.3s; filter: drop-shadow(0 0 5px var(--main)); }
+        .app-icon:hover { transform: scale(1.3) translateY(-5px); }
 
+        /* Экран входа */
         #lock-screen {
             position: fixed; inset: 0; background: #000; z-index: 2000;
             display: flex; align-items: center; justify-content: center; flex-direction: column;
         }
 
         @media (max-width: 600px) {
-            .window { width: 92% !important; left: 4% !important; top: 12% !important; }
-            .taskbar { gap: 8px; padding: 8px; width: 95%; justify-content: space-around; }
+            .window { width: 92% !important; left: 4% !important; top: 10% !important; }
+            .taskbar { width: 95%; justify-content: space-around; gap: 5px; }
         }
     </style>
 </head>
@@ -73,67 +74,66 @@
 <canvas id="matrix-canvas"></canvas>
 
 <div id="lock-screen">
-    <div style="font-size: 24px; margin-bottom: 20px; letter-spacing: 5px;">VOX SYSTEM 12.0</div>
-    <input type="password" id="access-code" style="text-align:center; width: 220px;" placeholder="PASSWORD">
-    <button class="btn" onclick="auth()" style="width: 220px;">ACCESS_GRANTED</button>
+    <div style="font-size: 24px; margin-bottom: 20px; letter-spacing: 5px;">VOX SYSTEM 13.0</div>
+    <input type="password" id="access-code" style="text-align:center; width: 220px;" placeholder="CODE: VOX-777">
+    <button class="btn" onclick="auth()" style="width: 220px;">UNLOCK_SYSTEM</button>
 </div>
 
 <div class="desktop">
     
-    <div id="win-search" class="window" style="top: 20px; left: 20px; width: 350px;">
-        <div class="window-header"><span>NET_CRAWLER</span><span class="close-btn" onclick="toggleWin('win-search')">X</span></div>
+    <div id="win-game" class="window" style="top: 20px; left: 20px; width: 450px; height: 450px;">
+        <div class="window-header"><span>GAME_DURAK_ONLINE</span><span class="close-btn" onclick="toggleWin('win-game')">X</span></div>
+        <div class="window-content" style="padding:0; overflow:hidden;">
+            <iframe src="https://m.igra-durak.ru/" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+    </div>
+
+    <div id="win-search" class="window" style="top: 50px; left: 50px; width: 350px;">
+        <div class="window-header"><span>NET_SEARCH</span><span class="close-btn" onclick="toggleWin('win-search')">X</span></div>
         <div class="window-content">
-            <input type="text" id="net-q" placeholder="Что ищем?">
-            <button class="btn" onclick="runSearch('google')">GOOGLE_SEARCH</button>
+            <input type="text" id="net-q" placeholder="Поиск в интернете...">
+            <button class="btn" onclick="runSearch('google')">GOOGLE SEARCH</button>
             <button class="btn" onclick="runSearch('wiki')">WIKIPEDIA</button>
         </div>
     </div>
 
-    <div id="win-films" class="window" style="top: 60px; left: 60px; width: 350px;">
-        <div class="window-header"><span>CINEMA_MODULE</span><span class="close-btn" onclick="toggleWin('win-films')">X</span></div>
+    <div id="win-films" class="window" style="top: 80px; left: 80px; width: 350px;">
+        <div class="window-header"><span>CINEMA_HUB</span><span class="close-btn" onclick="toggleWin('win-films')">X</span></div>
         <div class="window-content">
             <input type="text" id="film-q" placeholder="Название фильма...">
-            <button class="btn" onclick="runFilms()">SEARCH_FREE_HD</button>
+            <button class="btn" onclick="runFilms()">НАЙТИ БЕСПЛАТНО</button>
         </div>
     </div>
 
-    <div id="win-music" class="window" style="top: 100px; left: 100px; width: 350px;">
-        <div class="window-header"><span>GOOGLE_AUDIO_CORE</span><span class="close-btn" onclick="toggleWin('win-music')">X</span></div>
+    <div id="win-music" class="window" style="top: 110px; left: 110px; width: 350px;">
+        <div class="window-header"><span>GOOGLE_AUDIO</span><span class="close-btn" onclick="toggleWin('win-music')">X</span></div>
         <div class="window-content">
             <input type="text" id="music-q" placeholder="Трек или артист...">
-            <button class="btn" onclick="runMusic('google')">GOOGLE_MUSIC</button>
-            <button class="btn" onclick="runMusic('yt')">YT_MUSIC</button>
+            <button class="btn" onclick="runMusic('google')">GOOGLE MUSIC</button>
+            <button class="btn" onclick="runMusic('yt')">YOUTUBE MUSIC</button>
         </div>
     </div>
 
     <div id="win-meet" class="window" style="top: 140px; left: 140px; width: 320px;">
-        <div class="window-header"><span>SECURE_BRIDGE</span><span class="close-btn" onclick="toggleWin('win-meet')">X</span></div>
+        <div class="window-header"><span>SECURE_MEET</span><span class="close-btn" onclick="toggleWin('win-meet')">X</span></div>
         <div class="window-content">
-            <div id="m-info" style="border: 1px dashed var(--main); padding: 10px; margin-bottom: 10px; text-align: center; font-size: 11px;">LINE_IDLE</div>
-            <button class="btn" onclick="runMeet()">GENERATE_CHANNEL</button>
-        </div>
-    </div>
-
-    <div id="win-term" class="window" style="top: 180px; left: 40px; width: 420px;">
-        <div class="window-header"><span>VOX_TERMINAL</span><span class="close-btn" onclick="toggleWin('win-term')">X</span></div>
-        <div class="window-content">
-            <div id="t-out" style="height:120px; overflow-y:auto; font-size:12px; margin-bottom:10px;">VOX_OS Kernel 12.0 active. Type 'hack'...</div>
-            <input type="text" id="t-in" placeholder="Command...">
+            <div id="m-info" style="border: 1px dashed var(--main); padding: 10px; margin-bottom: 10px; text-align: center;">READY_FOR_LINK</div>
+            <button class="btn" onclick="runMeet()">CREATE CHANNEL</button>
         </div>
     </div>
 
 </div>
 
 <div class="taskbar">
-    <div class="app-icon" title="Инфо" onclick="toggleWin('win-search')">🔍</div>
-    <div class="app-icon" title="Кино" onclick="toggleWin('win-films')">🎬</div>
+    <div class="app-icon" title="Игры" onclick="toggleWin('win-game')">🃏</div>
+    <div class="app-icon" title="Поиск" onclick="toggleWin('win-search')">🔍</div>
+    <div class="app-icon" title="Фильмы" onclick="toggleWin('win-films')">🎬</div>
     <div class="app-icon" title="Музыка" onclick="toggleWin('win-music')">🎵</div>
     <div class="app-icon" title="Связь" onclick="toggleWin('win-meet')">📞</div>
-    <div class="app-icon" title="Терминал" onclick="toggleWin('win-term')">💻</div>
 </div>
 
 <script>
-    // --- MATRIX ---
+    // --- MATRIX EFFECT ---
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
     let w, h, cols, drops;
@@ -153,13 +153,14 @@
     }
     setInterval(draw, 50);
 
-    // --- SYSTEM CORE ---
+    // --- ACCESS ---
     function auth() {
         if(document.getElementById('access-code').value === "VOX-777") {
             document.getElementById('lock-screen').style.display = 'none';
-        } else { alert("ACCESS_DENIED"); }
+        } else { alert("ACCESS DENIED"); }
     }
 
+    // --- WINDOW CONTROLS ---
     function toggleWin(id) {
         const win = document.getElementById(id);
         win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
@@ -171,7 +172,6 @@
         win.style.zIndex = 100;
     }
 
-    // --- HYBRID DRAG (TOUCH + MOUSE) ---
     function makeDraggable(el) {
         let ox, oy;
         const h = el.querySelector('.window-header');
@@ -192,7 +192,7 @@
         h.addEventListener('mousedown', start); h.addEventListener('touchstart', start);
     }
 
-    // --- LOGIC ---
+    // --- APP FUNCTIONS ---
     function runSearch(t) {
         const q = document.getElementById('net-q').value;
         if(!q) return;
@@ -213,26 +213,8 @@
 
     function runMeet() {
         const id = "VOX-" + Math.random().toString(36).substring(7).toUpperCase();
-        document.getElementById('m-info').innerHTML = `ID: ${id}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">OPEN_BRIDGE</button>`;
+        document.getElementById('m-info').innerHTML = `ROOM: ${id}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">GO TO BRIDGE</button>`;
     }
-
-    // --- TERMINAL ---
-    document.getElementById('t-in').addEventListener('keydown', async (e) => {
-        if(e.key === 'Enter') {
-            const v = e.target.value.toLowerCase();
-            const out = document.getElementById('t-out');
-            out.innerHTML += `<div>> ${v}</div>`;
-            if(v === 'hack') {
-                const s = ["DECRYPTING...", "FIREWALL_DOWN", "ROOT_ACCESS_GRANTED"];
-                for(let line of s) {
-                    out.innerHTML += `<div style="color:#fff">${line}</div>`;
-                    out.scrollTop = out.scrollHeight;
-                    await new Promise(r => setTimeout(r, 600));
-                }
-            }
-            e.target.value = ''; out.scrollTop = out.scrollHeight;
-        }
-    });
 </script>
 </body>
 </html>
