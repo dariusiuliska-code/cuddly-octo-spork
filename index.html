@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v93 | THE OMNIPOTENT</title>
+    <title>VOX OS v97 | WEATHER & GAMES</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: #0d0d0d; 
@@ -24,84 +24,72 @@
         .win-content { padding: 20px; text-align: center; overflow-y: auto; }
 
         .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; border-radius: 10px; margin-top: 8px; cursor: pointer; text-transform: uppercase; font-size: 11px; }
-        .btn-vox { background: #00bbff; color: #fff; }
-        input, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 8px; border-radius: 10px; text-align: center; font-size: 16px; }
+        .btn-vox { background: #ff0000; color: #fff; box-shadow: 0 0 15px rgba(255,0,0,0.4); }
+        input, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 8px; border-radius: 10px; text-align: center; font-size: 18px; }
 
-        .listening { animation: pulse 0.8s infinite; background: red !important; color: white; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
+        .listening { background: #fff !important; color: #000 !important; }
     </style>
 </head>
 <body>
 
-<div id="status-bar"><div id="role">VOX ULTIMATE v93</div><div id="clock">00:00:00</div></div>
+<div id="status-bar"><div id="role">VOX v97 | CORE</div><div id="clock">00:00:00</div></div>
 
 <div id="lock" style="position:fixed; inset:0; z-index:9999; background:#000; display:flex; align-items:center; justify-content:center;">
     <div style="border:1px solid var(--main); padding:40px; border-radius:20px; text-align:center;">
         <h1 style="letter-spacing:10px;">VOX</h1>
         <input type="password" id="pin" placeholder="PIN" inputmode="numeric">
-        <button class="btn" onclick="auth()">BOOT SYSTEM</button>
+        <button class="btn" onclick="auth()">ВХОД</button>
     </div>
 </div>
 
 <div id="desktop">
-    <div class="icon" onclick="showW('w-wa')"><span>🎵</span><label>Winamp</label></div>
+    <div class="icon" onclick="showW('w-wa')"><span>🎵</span><label>Music</label></div>
     <div class="icon" onclick="showW('w-cin')"><span>🎬</span><label>Cinema</label></div>
+    <div class="icon" onclick="showW('w-wea')"><span>☁️</span><label>Weather</label></div>
+    <div class="icon" onclick="showW('w-gam')"><span>🎮</span><label>Games</label></div>
     <div class="icon" onclick="showW('w-met')"><span>📹</span><label>Meet AI</label></div>
-    <div class="icon" onclick="showW('w-wea')"><span>☁️</span><label>Погода</label></div>
     <div class="icon" onclick="showW('w-vib')"><span>💜</span><label>Viber</label></div>
-    <div class="icon" onclick="showW('w-gam')"><span>🎮</span><label>Игры</label></div>
-    <div class="icon" onclick="showW('w-org')"><span>📅</span><label>Органайзер</label></div>
-    <div class="icon" onclick="showW('w-goo')"><span>🌐</span><label>Google</label></div>
-    <div class="icon" onclick="showW('w-cal')"><span>🧮</span><label>Calc</label></div>
+    <div class="icon" onclick="showW('w-org')"><span>📅</span><label>Notes</label></div>
     <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>💀</span><label style="color:red">ADMIN</label></div>
     <div class="icon" onclick="location.reload()"><span>🔐</span><label>Exit</label></div>
 </div>
 
+<div id="w-wea" class="window" style="border-color:var(--weather)"><div class="win-header" style="background:var(--weather);color:#000"><span>ПОГОДА DICTATE</span><span onclick="hideW('w-wea')">×</span></div><div class="win-content">
+    <input id="we-in" placeholder="Назови город...">
+    <button class="btn btn-vox" onclick="vox('we-in')">🎤 ДИКТОВАТЬ ГОРОД</button>
+    <button class="btn" style="background:var(--weather);color:#000" onclick="window.open('https://google.com/search?q=погода+'+document.getElementById('we-in').value)">УЗНАТЬ</button>
+</div></div>
+
+<div id="w-gam" class="window" style="border-color:var(--game)"><div class="win-header" style="background:var(--game);color:#fff"><span>GAMES SEARCH</span><span onclick="hideW('w-gam')">×</span></div><div class="win-content">
+    <input id="ga-in" placeholder="Жанр или название...">
+    <button class="btn btn-vox" onclick="vox('ga-in')">🎤 ДИКТОВАТЬ ИГРУ</button>
+    <button class="btn" style="background:var(--game);color:#fff" onclick="window.open('https://poki.com/ru/search/'+document.getElementById('ga-in').value)">НАЙТИ НА POKI</button>
+    <button class="btn" style="background:#333;color:#fff" onclick="window.open('https://yandex.ru/games/search?query='+document.getElementById('ga-in').value)">НА ЯНДЕКСЕ</button>
+</div></div>
+
 <div id="w-wa" class="window"><div class="win-header"><span>WINAMP</span><span onclick="hideW('w-wa')">×</span></div><div class="win-content">
-    <input id="mu-in" placeholder="Трек..."><button class="btn btn-vox" onclick="vox('mu-in')">🎤 ГОЛОС</button>
+    <button class="btn" style="background:#00ffaa; color:#000" onclick="window.open('https://www.youtube.com/feed/library')">МОИ ПЛЕЙЛИСТЫ</button>
+    <input id="mu-in" placeholder="Назови трек..."><button class="btn btn-vox" onclick="vox('mu-in')">🎤 ДИКТОВАТЬ</button>
     <button class="btn" style="background:var(--yt);color:#fff" onclick="window.open('https://youtube.com/results?search_query='+document.getElementById('mu-in').value)">YOUTUBE</button>
-    <button class="btn" style="background:var(--sc);color:#fff" onclick="window.open('https://soundcloud.com/search?q='+document.getElementById('mu-in').value)">SOUNDCLOUD</button>
 </div></div>
 
-<div id="w-cin" class="window"><div class="win-header"><span>CINEMA WEB</span><span onclick="hideW('w-cin')">×</span></div><div class="win-content">
-    <input id="ci-in" placeholder="Фильм..."><button class="btn btn-vox" onclick="vox('ci-in')">🎤 ГОЛОС</button>
-    <button class="btn" style="background:var(--cinema);color:#000" onclick="window.open('https://www.google.com/search?q=смотреть+бесплатно+онлайн+'+document.getElementById('ci-in').value)">НАЙТИ В ИНТЕРНЕТЕ</button>
+<div id="w-cin" class="window"><div class="win-header"><span>CINEMA</span><span onclick="hideW('w-cin')">×</span></div><div class="win-content">
+    <input id="ci-in" placeholder="Назови фильм..."><button class="btn btn-vox" onclick="vox('ci-in')">🎤 ДИКТОВАТЬ</button>
+    <button class="btn" style="background:var(--cinema);color:#000" onclick="window.open('https://www.google.com/search?q=смотреть+фильм+бесплатно+онлайн+'+document.getElementById('ci-in').value)">ПОИСК</button>
 </div></div>
 
-<div id="w-wea" class="window" style="border-color:var(--weather)"><div class="win-header" style="background:var(--weather)"><span>ПОГОДА</span><span onclick="hideW('w-wea')">×</span></div><div class="win-content">
-    <input id="we-in" placeholder="Город..."><button class="btn btn-vox" onclick="vox('we-in')">🎤 ГОЛОС</button>
-    <button class="btn" onclick="window.open('https://www.google.com/search?q=погода+'+document.getElementById('we-in').value)">УЗНАТЬ ПРОГНОЗ</button>
-</div></div>
-
-<div id="w-gam" class="window" style="border-color:var(--game)"><div class="win-header" style="background:var(--game)"><span>GAMES</span><span onclick="hideW('w-gam')">×</span></div><div class="win-content">
-    <button class="btn" onclick="window.open('https://poki.com/ru')">POKI GAMES</button>
-    <button class="btn" onclick="window.open('https://yandex.ru/games')">YANDEX GAMES</button>
-</div></div>
-
-<div id="w-org" class="window"><div class="win-header"><span>ORGANIZER</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
-    <textarea id="org-txt" rows="5" placeholder="Твои заметки..."></textarea>
-    <button class="btn btn-vox" onclick="vox('org-txt')">🎤 ДИКТОВАТЬ</button>
-    <button class="btn" onclick="localStorage.setItem('vox_notes', document.getElementById('org-txt').value)">СОХРАНИТЬ</button>
-</div></div>
-
-<div id="w-met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
-    <input id="me-in" placeholder="Код..."><button class="btn" onclick="document.getElementById('me-in').value='VOX-'+Math.random().toString(36).substring(7).toUpperCase()">ГЕНЕРИРОВАТЬ</button>
+<div id="w-met" class="window"><div class="win-header"><span>MEET</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
+    <input id="me-in" placeholder="Код комнаты..."><button class="btn btn-vox" onclick="vox('me-in')">🎤 ДИКТОВАТЬ</button>
     <button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('me-in').value)">ВОЙТИ</button>
 </div></div>
 
-<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red;color:#fff"><span>SYSTEM DELETE</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content">
-    <button class="btn" style="background:red;color:#fff;font-size:16px;" onclick="document.body.innerHTML='';location.reload()">💀 СТИРАЙ НАХУЙ ВСЁ</button>
+<div id="w-adm" class="window" style="border-color:red"><div class="win-header" style="background:red;color:#fff"><span>CRITICAL</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content">
+    <button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='';location.reload()">💀 СТИРАЙ НАХУЙ ВСЁ</button>
 </div></div>
-
-<div id="w-vib" class="window"><div class="win-header"><span>VIBER</span><span onclick="hideW('w-vib')">×</span></div><div class="win-content"><input id="vi-in" placeholder="7900..."><button class="btn" onclick="window.open('viber://chat?number='+document.getElementById('vi-in').value)">ОТКРЫТЬ ЧАТ</button></div></div>
-<div id="w-goo" class="window"><div class="win-header"><span>GOOGLE</span><span onclick="hideW('w-goo')">×</span></div><div class="win-content"><input id="go-in"><button class="btn" onclick="window.open('https://google.com/search?q='+document.getElementById('go-in').value)">ПОИСК</button></div></div>
-<div id="w-cal" class="window"><div class="win-header"><span>CALC</span><span onclick="hideW('w-cal')">×</span></div><div class="win-content"><input id="ca-in"><button class="btn" onclick="try{alert(eval(document.getElementById('ca-in').value))}catch(e){}">=</button></div></div>
 
 <script>
     function auth(){ let p=document.getElementById('pin').value; if(p==='777'){document.getElementById('adm-ico').style.display='flex';login();} else if(p==='111'){login();} }
-    function login(){ document.getElementById('lock').style.display='none'; document.getElementById('desktop').style.display='grid'; 
-        document.getElementById('org-txt').value = localStorage.getItem('vox_notes') || '';
-    }
+    function login(){ document.getElementById('lock').style.display='none'; document.getElementById('desktop').style.display='grid'; }
     function showW(id){ document.querySelectorAll('.window').forEach(w=>w.style.display='none'); document.getElementById(id).style.display='flex'; }
     function hideW(id){ document.getElementById(id).style.display='none'; }
     
@@ -110,11 +98,7 @@
         if(!Rec) return alert("Голос не поддерживается");
         const r = new Rec(); r.lang = 'ru-RU';
         const b = event.currentTarget; b.classList.add('listening');
-        r.onresult = (e) => { 
-            let t = e.results[0][0].transcript;
-            if(id === 'org-txt') document.getElementById(id).value += ' ' + t;
-            else document.getElementById(id).value = t;
-        };
+        r.onresult = (e) => { document.getElementById(id).value = e.results[0][0].transcript; };
         r.onend = () => b.classList.remove('listening');
         r.start();
     }
