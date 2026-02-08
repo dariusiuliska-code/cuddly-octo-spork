@@ -3,69 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v14.0 | MESSENGER</title>
+    <title>VOX OS v16.0 | DIRECT P2P</title>
     <style>
         :root { --main: #00ff41; --bg: #000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
             background: #000; color: var(--main); 
             font-family: 'Consolas', monospace; overflow: hidden; 
         }
+        #matrix-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.35; pointer-events: none; }
 
-        #matrix-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.4; pointer-events: none; }
-
-        /* Система Окон */
-        .window {
-            position: absolute; min-width: 300px; max-width: 95vw;
-            background: rgba(0, 0, 0, 0.95);
-            border: 1px solid var(--main);
-            display: none; flex-direction: column; z-index: 10;
-            box-shadow: 0 0 25px rgba(0, 255, 65, 0.4);
+        /* Окна системы */
+        .window { 
+            position: absolute; min-width: 300px; max-width: 95vw; 
+            background: rgba(0, 0, 0, 0.95); border: 1px solid var(--main); 
+            display: none; flex-direction: column; z-index: 10; 
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.4); 
         }
-
-        .window-header {
-            background: var(--main); padding: 12px; cursor: move;
-            display: flex; justify-content: space-between; color: #000;
-            font-weight: bold; font-size: 13px; user-select: none;
-            touch-action: none;
+        .window-header { 
+            background: var(--main); padding: 12px; cursor: move; 
+            display: flex; justify-content: space-between; color: #000; 
+            font-weight: bold; font-size: 13px; user-select: none; touch-action: none; 
         }
-
         .close-btn { cursor: pointer; background: #000; color: var(--main); border: 1px solid var(--main); padding: 2px 8px; }
-
         .window-content { padding: 15px; flex: 1; overflow-y: auto; }
 
-        /* Кнопки и инпуты */
+        /* Инпуты и кнопки */
         input { 
             width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); 
-            color: var(--main); margin-bottom: 10px; font-family: inherit; font-size: 16px; outline: none;
+            color: var(--main); margin-bottom: 10px; font-family: inherit; font-size: 16px; outline: none; 
         }
         .btn { 
             background: var(--main); color: #000; border: none; padding: 12px; 
             font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; 
-            margin-bottom: 8px; font-size: 11px; transition: 0.2s;
+            margin-bottom: 8px; font-size: 11px; transition: 0.2s; 
         }
         .btn:active { background: #fff; }
 
-        /* Таскбар */
-        .taskbar {
-            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.9); border: 1px solid var(--main);
-            display: flex; gap: 15px; padding: 10px 20px; z-index: 1000; border-radius: 8px;
+        /* Панель задач */
+        .taskbar { 
+            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); 
+            background: rgba(0,0,0,0.9); border: 1px solid var(--main); 
+            display: flex; gap: 15px; padding: 10px 20px; z-index: 1000; border-radius: 8px; 
         }
-        .app-icon { font-size: 28px; cursor: pointer; transition: 0.3s; filter: drop-shadow(0 0 5px var(--main)); }
-        .app-icon:hover { transform: scale(1.3) translateY(-5px); }
+        .app-icon { font-size: 26px; cursor: pointer; transition: 0.3s; filter: drop-shadow(0 0 5px var(--main)); }
+        .app-icon:hover { transform: scale(1.2) translateY(-5px); }
 
-        /* Экран входа */
-        #lock-screen {
-            position: fixed; inset: 0; background: #000; z-index: 2000;
-            display: flex; align-items: center; justify-content: center; flex-direction: column;
+        /* Экран блокировки */
+        #lock-screen { 
+            position: fixed; inset: 0; background: #000; z-index: 2000; 
+            display: flex; align-items: center; justify-content: center; flex-direction: column; 
         }
-
-        @media (max-width: 600px) {
-            .window { width: 92% !important; left: 4% !important; top: 10% !important; }
-            .taskbar { width: 95%; justify-content: space-around; gap: 5px; }
+        
+        @media (max-width: 600px) { 
+            .window { width: 94% !important; left: 3% !important; top: 8% !important; } 
+            .taskbar { gap: 8px; padding: 10px; }
         }
     </style>
 </head>
@@ -74,82 +67,74 @@
 <canvas id="matrix-canvas"></canvas>
 
 <div id="lock-screen">
-    <div style="font-size: 24px; margin-bottom: 20px; letter-spacing: 5px;">VOX SYSTEM 14.0</div>
-    <input type="password" id="access-code" style="text-align:center; width: 220px;" placeholder="CODE: VOX-777">
-    <button class="btn" onclick="auth()" style="width: 220px;">AUTHORIZE</button>
+    <div style="font-size: 20px; margin-bottom: 20px; letter-spacing: 5px;">VOX SECURE SYSTEM v16</div>
+    <input type="password" id="access-code" style="text-align:center; width: 220px;" placeholder="PASSWORD">
+    <button class="btn" onclick="auth()" style="width: 220px;">ACCESS CORE</button>
 </div>
 
 <div class="desktop">
     
-    <div id="win-chat" class="window" style="top: 20px; left: 20px; width: 450px; height: 500px;">
-        <div class="window-header"><span>VOX_ANON_CHAT</span><span class="close-btn" onclick="toggleWin('win-chat')">X</span></div>
-        <div class="window-content" id="chat-container">
-            <div id="chat-welcome">
-                <p style="font-size: 12px;">Выберите режим общения:</p>
-                <button class="btn" onclick="startChat('vox-global')">ОБЩИЙ КАНАЛ</button>
-                <p style="font-size: 10px; margin-top: 15px;">СЕКРЕТНЫЙ ЧАТ (ТОЛЬКО ДЛЯ ТЕХ, КТО ЗНАЕТ ID):</p>
-                <input type="text" id="private-id" placeholder="Придумайте ID (напр. secret777)">
-                <button class="btn" onclick="startChat(document.getElementById('private-id').value)">СОЗДАТЬ / ВОЙТИ</button>
-            </div>
-            <div id="chat-frame-box" style="display:none; height: 100%;">
-                <button class="btn" style="height:30px; padding:5px; font-size:10px;" onclick="backToChatMenu()">ВЫЙТИ ИЗ ЧАТА</button>
-                <iframe id="chat-iframe" src="" style="width:100%; height:calc(100% - 40px); border:none; background: #fff;"></iframe>
-            </div>
+    <div id="win-files" class="window" style="top: 20px; left: 20px; width: 450px; height: 500px;">
+        <div class="window-header"><span>DIRECT_FILE_TRANSFER</span><span class="close-btn" onclick="toggleWin('win-files')">X</span></div>
+        <div class="window-content" style="padding:0;">
+            <iframe src="https://toffeeshare.com/" style="width:100%; height:100%; border:none; filter: invert(0.9) hue-rotate(180deg);"></iframe>
         </div>
     </div>
 
-    <div id="win-search" class="window" style="top: 50px; left: 50px; width: 350px;">
-        <div class="window-header"><span>NET_SEARCH</span><span class="close-btn" onclick="toggleWin('win-search')">X</span></div>
-        <div class="window-content">
-            <input type="text" id="net-q" placeholder="Поиск в интернете...">
-            <button class="btn" onclick="runSearch('google')">GOOGLE SEARCH</button>
-            <button class="btn" onclick="runSearch('wiki')">WIKIPEDIA</button>
+    <div id="win-chat" class="window" style="top: 50px; left: 50px; width: 400px; height: 450px;">
+        <div class="window-header"><span>VOX_MESSENGER</span><span class="close-btn" onclick="toggleWin('win-chat')">X</span></div>
+        <div class="window-content" style="padding:0;">
+            <iframe src="https://tlk.io/vox-private-club" style="width:100%; height:100%; border:none;"></iframe>
         </div>
     </div>
 
-    <div id="win-films" class="window" style="top: 80px; left: 80px; width: 350px;">
-        <div class="window-header"><span>CINEMA_HUB</span><span class="close-btn" onclick="toggleWin('win-films')">X</span></div>
+    <div id="win-radio" class="window" style="top: 80px; left: 80px; width: 300px;">
+        <div class="window-header"><span>RADIO_STATIONS</span><span class="close-btn" onclick="toggleWin('win-radio')">X</span></div>
         <div class="window-content">
-            <input type="text" id="film-q" placeholder="Название фильма...">
-            <button class="btn" onclick="runFilms()">НАЙТИ БЕСПЛАТНО</button>
+            <button class="btn" onclick="window.open('https://www.kissfm.ru/player','_blank')">KISS FM</button>
+            <button class="btn" onclick="window.open('https://europaplus.ru/player','_blank')">EUROPA +</button>
+            <button class="btn" onclick="window.open('https://dfm.ru/player','_blank')">DINAMIT FM</button>
         </div>
     </div>
 
-    <div id="win-music" class="window" style="top: 110px; left: 110px; width: 350px;">
-        <div class="window-header"><span>GOOGLE_AUDIO</span><span class="close-btn" onclick="toggleWin('win-music')">X</span></div>
+    <div id="win-web" class="window" style="top: 110px; left: 110px; width: 380px;">
+        <div class="window-header"><span>WEB_SEARCH_MODULE</span><span class="close-btn" onclick="toggleWin('win-web')">X</span></div>
         <div class="window-content">
-            <input type="text" id="music-q" placeholder="Трек или артист...">
-            <button class="btn" onclick="runMusic('google')">GOOGLE MUSIC</button>
-            <button class="btn" onclick="runMusic('yt')">YOUTUBE MUSIC</button>
+            <input type="text" id="web-q" placeholder="Поиск информации...">
+            <button class="btn" onclick="runWeb('google')">GOOGLE SEARCH</button>
+            <button class="btn" onclick="runWeb('film')">FIND FILMS HD</button>
+            <button class="btn" onclick="runWeb('music')">FIND MUSIC</button>
         </div>
     </div>
 
     <div id="win-meet" class="window" style="top: 140px; left: 140px; width: 320px;">
-        <div class="window-header"><span>SECURE_MEET</span><span class="close-btn" onclick="toggleWin('win-meet')">X</span></div>
+        <div class="window-header"><span>VIDEO_BRIDGE</span><span class="close-btn" onclick="toggleWin('win-meet')">X</span></div>
         <div class="window-content">
-            <div id="m-info" style="border: 1px dashed var(--main); padding: 10px; margin-bottom: 10px; text-align: center;">IDLE</div>
-            <button class="btn" onclick="runMeet()">CREATE VIDEO LINK</button>
+            <div id="m-info" style="text-align: center; margin-bottom: 10px; font-size: 11px;">BRIDGE_READY</div>
+            <button class="btn" onclick="runMeet()">GENERATE PRIVATE LINK</button>
         </div>
     </div>
 
 </div>
 
 <div class="taskbar">
+    <div class="app-icon" title="Файлы" onclick="toggleWin('win-files')">🚀</div>
     <div class="app-icon" title="Чат" onclick="toggleWin('win-chat')">💬</div>
-    <div class="app-icon" title="Поиск" onclick="toggleWin('win-search')">🔍</div>
-    <div class="app-icon" title="Фильмы" onclick="toggleWin('win-films')">🎬</div>
-    <div class="app-icon" title="Музыка" onclick="toggleWin('win-music')">🎵</div>
+    <div class="app-icon" title="Радио" onclick="toggleWin('win-radio')">📻</div>
+    <div class="app-icon" title="Веб" onclick="toggleWin('win-web')">🌐</div>
     <div class="app-icon" title="Связь" onclick="toggleWin('win-meet')">📞</div>
 </div>
 
 <script>
-    // --- MATRIX EFFECT ---
+    // --- Матрица ---
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
     let w, h, cols, drops;
     function res() { 
-        w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-        cols = Math.floor(w / 15); drops = Array(cols).fill(1);
+        w = canvas.width = window.innerWidth; 
+        h = canvas.height = window.innerHeight; 
+        cols = Math.floor(w / 15); 
+        drops = Array(cols).fill(1); 
     }
     window.onresize = res; res();
     function draw() {
@@ -163,34 +148,36 @@
     }
     setInterval(draw, 50);
 
-    // --- ACCESS ---
+    // --- Система входа ---
     function auth() {
-        if(document.getElementById('access-code').value === "VOX-777") {
-            document.getElementById('lock-screen').style.display = 'none';
+        if(document.getElementById('access-code').value === "VOX-777") { 
+            document.getElementById('lock-screen').style.display = 'none'; 
         } else { alert("ACCESS DENIED"); }
     }
 
-    // --- WINDOW CONTROLS ---
+    // --- Окна и перетаскивание ---
     function toggleWin(id) {
         const win = document.getElementById(id);
         win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
         if(win.style.display === 'flex') { makeDraggable(win); focusWin(win); }
     }
 
-    function focusWin(win) {
-        document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
-        win.style.zIndex = 100;
+    function focusWin(win) { 
+        document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10); 
+        win.style.zIndex = 100; 
     }
 
     function makeDraggable(el) {
-        let ox, oy;
-        const h = el.querySelector('.window-header');
+        let ox, oy; const h = el.querySelector('.window-header');
         const move = (e) => {
             const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
             const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
             el.style.left = (x - ox) + 'px'; el.style.top = (y - oy) + 'px';
         };
-        const stop = () => { window.removeEventListener('mousemove', move); window.removeEventListener('touchmove', move); };
+        const stop = () => { 
+            window.removeEventListener('mousemove', move); 
+            window.removeEventListener('touchmove', move); 
+        };
         const start = (e) => {
             const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
             const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
@@ -202,44 +189,21 @@
         h.addEventListener('mousedown', start); h.addEventListener('touchstart', start);
     }
 
-    // --- CHAT LOGIC ---
-    function startChat(id) {
-        if(!id) { alert("Введите ID комнаты"); return; }
-        const cleanId = id.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-        document.getElementById('chat-welcome').style.display = 'none';
-        document.getElementById('chat-frame-box').style.display = 'block';
-        document.getElementById('chat-iframe').src = `https://tlk.io/${cleanId}`;
-    }
-
-    function backToChatMenu() {
-        document.getElementById('chat-welcome').style.display = 'block';
-        document.getElementById('chat-frame-box').style.display = 'none';
-        document.getElementById('chat-iframe').src = "";
-    }
-
-    // --- APPS ---
-    function runSearch(t) {
-        const q = document.getElementById('net-q').value;
+    // --- Функции модулей ---
+    function runWeb(type) {
+        const q = document.getElementById('web-q').value;
         if(!q) return;
-        window.open(t === 'google' ? `https://google.com/search?q=${q}` : `https://ru.wikipedia.org/wiki/${q}`);
-    }
-
-    function runFilms() {
-        const q = document.getElementById('film-q').value;
-        if(!q) return;
-        window.open(`https://google.com/search?q=${q}+смотреть+бесплатно+онлайн+hd`);
-    }
-
-    function runMusic(t) {
-        const q = document.getElementById('music-q').value;
-        if(!q) return;
-        window.open(t === 'google' ? `https://www.google.com/search?q=${q}+слушать+бесплатно` : `https://music.youtube.com/search?q=${q}`);
+        let url = `https://google.com/search?q=${q}`;
+        if(type === 'film') url += "+смотреть+бесплатно+онлайн+hd";
+        if(type === 'music') url += "+слушать+бесплатно+google+music";
+        window.open(url, '_blank');
     }
 
     function runMeet() {
         const id = "VOX-" + Math.random().toString(36).substring(7).toUpperCase();
-        document.getElementById('m-info').innerHTML = `ROOM: ${id}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">CONNECT VIDEO</button>`;
+        document.getElementById('m-info').innerHTML = `BRIDGE_ID: ${id}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">OPEN LINK</button>`;
     }
 </script>
 </body>
 </html>
+
