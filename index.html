@@ -3,146 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v36 | FINAL</title>
+    <title>VOX OS v40 | SMART DESKTOP</title>
     <style>
-        :root { --main: #00ff41; --bg: #000; --block: #0a0a0a; --code: #00d9ff; --music: #ff00ff; }
+        :root { --main: #00ff41; --bg: #000; --win: #0a0a0a; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; padding: 0; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Consolas', monospace; overflow: hidden; }
+
+        /* Рабочий стол */
+        #desktop { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 110px); padding: 25px; gap: 15px; background: radial-gradient(circle, #001a05 0%, #000 100%); }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; padding: 10px; border-radius: 8px; }
+        .icon:active { background: rgba(0, 255, 65, 0.2); }
+        .icon span { font-size: 42px; margin-bottom: 5px; filter: drop-shadow(0 0 5px var(--main)); }
+        .icon label { font-size: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Окна */
+        .window { position: absolute; top: 10%; left: 5%; width: 90%; max-width: 450px; background: var(--win); border: 1px solid var(--main); display: none; flex-direction: column; z-index: 100; box-shadow: 0 0 30px rgba(0, 255, 65, 0.3); }
+        .win-header { background: var(--main); color: #000; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 12px; }
+        .close-btn { cursor: pointer; font-size: 20px; font-weight: bold; }
+        .win-content { padding: 15px; max-height: 70vh; overflow-y: auto; }
+
+        /* Элементы управления */
+        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; }
+        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .log { height: 120px; overflow-y: auto; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; font-size: 12px; background: #000; }
         
-        /* Экран входа */
         #lock-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .container { width: 100%; max-width: 550px; padding: 20px; display: flex; flex-direction: column; gap: 20px; margin: 0 auto; }
-        
-        .module { border: 1px solid var(--main); background: var(--block); }
-        .m-header { background: var(--main); color: #000; padding: 10px; font-weight: bold; display: flex; justify-content: space-between; font-size: 12px; }
-        .m-content { padding: 15px; }
-
-        input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; border-radius: 0; }
-        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
-        .btn:active { background: #fff; }
-
-        .log { height: 120px; overflow-y: auto; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; font-size: 13px; background: #030303; }
-        .code-block { background: #111; color: var(--code); padding: 10px; border-left: 3px solid var(--code); font-family: 'Courier New'; white-space: pre-wrap; margin-top: 8px; font-size: 11px; cursor: pointer; }
-        #sys-log { font-size: 10px; color: #555; text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div id="lock-screen">
-    <div style="letter-spacing: 5px; margin-bottom: 20px;">VOX_SYSTEM_LOCKED</div>
-    <input type="password" id="sys-pass" style="width: 220px; text-align: center;" placeholder="PASSWORD">
-    <button class="btn" style="width: 220px;" onclick="unlock()">ACCESS</button>
+    <div style="letter-spacing: 5px; margin-bottom: 20px;">VOX_LOCKED</div>
+    <input type="password" id="sys-pass" style="width: 200px; text-align: center;" placeholder="PASSWORD">
+    <button class="btn" style="width: 200px;" onclick="unlock()">ACCESS</button>
 </div>
 
-<div class="container">
-    <div id="sys-log">IDLE...</div>
-    <div style="text-align: center; border-bottom: 1px solid var(--main); padding-bottom: 10px; font-size: 14px; letter-spacing: 2px;">VOX_STATION_v36</div>
-
-    <div class="module">
-        <div class="m-header"><span>ПОИСК / КИНО</span> <span>🔍 🎬</span></div>
-        <div class="m-content">
-            <button id="v-start" class="btn" style="background:#ff4141; color:#fff;">🎤 ГОЛОСОВОЙ ВВОД</button>
-            <input type="text" id="q-search" placeholder="Запрос или название фильма...">
-            <button class="btn" onclick="runS('web')">ПОИСК</button>
-            <button class="btn" style="background:#222; color:#fff;" onclick="runS('film')">СМОТРЕТЬ ФИЛЬМ (HD)</button>
-        </div>
-    </div>
-
-    <div class="module" style="border-color: var(--music);">
-        <div class="m-header" style="background: var(--music); color: white;"><span>МУЗЫКАЛЬНЫЙ ХАБ</span> <span>🎵</span></div>
-        <div class="m-content">
-            <input type="text" id="m-search" placeholder="Введите название песни или артиста..." style="border-color: var(--music);">
-            <button class="btn" style="background: var(--music); color: white;" onclick="runM()">НАЙТИ МУЗЫКУ (MP3)</button>
-        </div>
-    </div>
-
-    <div class="module">
-        <div class="m-header"><span>ОБЩИЙ ЧАТ</span> <span>💬</span></div>
-        <div class="m-content">
-            <div id="gen-log" class="log"></div>
-            <input type="text" id="gen-in" placeholder="Сообщение...">
-            <button class="btn" onclick="msgGen()">ОТПРАВИТЬ</button>
-        </div>
-    </div>
-
-    <div class="module" style="border-color: var(--code);">
-        <div class="m-header" style="background: var(--code);"><span>КОД-КАНАЛ</span> <span>💻</span></div>
-        <div class="m-content">
-            <div id="code-log" class="log" style="height: 150px;"></div>
-            <textarea id="code-in" rows="2" placeholder="Вставьте код здесь..."></textarea>
-            <button class="btn" style="background: var(--code);" onclick="msgCode()">ПЕРЕДАТЬ КОД</button>
-        </div>
-    </div>
-
-    <div class="module">
-        <div class="m-header"><span>СВЯЗЬ / ФАЙЛЫ</span> <span>📡 📁</span></div>
-        <div class="m-content">
-            <button class="btn" onclick="vBridge()">ВИДЕО КОНФЕРЕНЦИЯ</button>
-            <button class="btn" style="background:#fff; color:#000; margin-top:5px;" onclick="window.open('https://toffeeshare.com/')">ПЕРЕДАТЬ ФАЙЛЫ P2P</button>
-            <div id="v-link"></div>
-        </div>
-    </div>
+<div id="desktop">
+    <div class="icon" onclick="smartOpen('win-search')"><span>🔍</span><label>Поиск</label></div>
+    <div class="icon" onclick="smartOpen('win-music')"><span>🎵</span><label>Музыка</label></div>
+    <div class="icon" onclick="smartOpen('win-chat')"><span>💬</span><label>Чат</label></div>
+    <div class="icon" onclick="smartOpen('win-code')"><span>💻</span><label>Код</label></div>
+    <div class="icon" onclick="smartOpen('win-video')"><span>📡</span><label>Видео</label></div>
+    <div class="icon" onclick="smartOpen('win-file')"><span>📁</span><label>Файлы</label></div>
 </div>
+
+<div id="win-search" class="window"><div class="win-header"><span>ПОИСК / КИНО</span><span class="close-btn" onclick="closeWin('win-search')">×</span></div><div class="win-content"><input type="text" id="q-search" placeholder="Запрос..."><button class="btn" onclick="runS('web')">SEARCH</button><button class="btn" style="margin-top:5px; background:#111; color:#0f4;" onclick="runS('film')">ФИЛЬМЫ HD</button></div></div>
+<div id="win-music" class="window"><div class="win-header"><span>MUSIC PLAYER</span><span class="close-btn" onclick="closeWin('win-music')">×</span></div><div class="win-content"><input type="text" id="m-search" placeholder="Трек..."><button class="btn" onclick="runM()">FIND MP3</button></div></div>
+<div id="win-chat" class="window"><div class="win-header"><span>MESSENGER</span><span class="close-btn" onclick="closeWin('win-chat')">×</span></div><div class="win-content"><div id="gen-log" class="log"></div><input type="text" id="gen-in" placeholder="Сообщение..."><button class="btn" onclick="msgGen()">SEND</button></div></div>
+<div id="win-code" class="window"><div class="win-header"><span>CODE GATE</span><span class="close-btn" onclick="closeWin('win-code')">×</span></div><div class="win-content"><div id="code-log" class="log" style="height:150px; color:#00d9ff;"></div><textarea id="code-in" rows="3" placeholder="Paste code..."></textarea><button class="btn" onclick="msgCode()">PUSH CODE</button></div></div>
+<div id="win-video" class="window"><div class="win-header"><span>VIDEO CONF</span><span class="close-btn" onclick="closeWin('win-video')">×</span></div><div class="win-content"><button class="btn" onclick="vBridge()">CREATE ROOM</button><div id="v-link"></div></div></div>
+<div id="win-file" class="window"><div class="win-header"><span>STORAGE</span><span class="close-btn" onclick="closeWin('win-file')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://toffeeshare.com/')">P2P TRANSFER</button></div></div>
 
 <script>
+    let currentOpenWin = null;
+
     function unlock() {
-        if(document.getElementById('sys-pass').value === "VOX-777") {
-            document.getElementById('lock-screen').style.display = 'none';
-            document.getElementById('sys-log').innerText = "SESSION_START: " + new Date().toLocaleTimeString();
-        } else { alert('ACCESS_DENIED'); }
+        if(document.getElementById('sys-pass').value === "VOX-777") document.getElementById('lock-screen').style.display = 'none';
+        else alert('DENIED');
     }
 
-    // Голосовой ввод
-    if ('webkitSpeechRecognition' in window) {
-        const rec = new webkitSpeechRecognition();
-        rec.lang = 'ru-RU';
-        rec.onresult = (e) => { 
-            document.getElementById('q-search').value = e.results[0][0].transcript;
-            document.getElementById('v-start').style.background = '#ff4141';
-        };
-        document.getElementById('v-start').onclick = () => { 
-            rec.start(); 
-            document.getElementById('v-start').style.background = '#00ff41'; 
-        };
+    // Умная функция открытия
+    function smartOpen(id) {
+        if (currentOpenWin && currentOpenWin !== id) {
+            if (confirm("У вас уже открыто окно. Закрыть его перед открытием нового?")) {
+                closeWin(currentOpenWin);
+            }
+        }
+        openWin(id);
     }
 
+    function openWin(id) {
+        document.getElementById(id).style.display = 'flex';
+        currentOpenWin = id;
+    }
+
+    function closeWin(id) {
+        document.getElementById(id).style.display = 'none';
+        if (currentOpenWin === id) currentOpenWin = null;
+    }
+
+    // Функционал
     function runS(t) {
         let q = document.getElementById('q-search').value; if(!q) return;
         let url = `https://google.com/search?q=${q}`;
-        if(t === 'film') url += "+смотреть+бесплатно+в+hd";
+        if(t === 'film') url += "+смотреть+бесплатно+hd";
         window.open(url, '_blank');
     }
 
-    // Поиск музыки
     function runM() {
         const q = document.getElementById('m-search').value;
-        if(!q) return;
-        window.open(`https://www.google.com/search?q=${q}+mp3+слушать+онлайн`, '_blank');
+        if(q) window.open(`https://www.google.com/search?q=${q}+mp3+слушать`, '_blank');
     }
 
     function msgGen() {
-        const i = document.getElementById('gen-in');
-        const l = document.getElementById('gen-log');
-        if(i.value) { l.innerHTML += `<div><b>[USER]:</b> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
+        const i = document.getElementById('gen-in'); const l = document.getElementById('gen-log');
+        if(i.value) { l.innerHTML += `<div><b>></b> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
     }
 
     function msgCode() {
-        const i = document.getElementById('code-in');
-        const l = document.getElementById('code-log');
-        if(i.value) {
-            const clean = i.value.replace(/</g, "&lt;");
-            l.innerHTML += `<div class="code-block" onclick="copyThis(this)">${clean}</div>`;
-            i.value = ''; l.scrollTop = l.scrollHeight;
-        }
-    }
-
-    function copyThis(el) {
-        navigator.clipboard.writeText(el.innerText).then(() => { alert('СКОПИРОВАНО'); });
+        const i = document.getElementById('code-in'); const l = document.getElementById('code-log');
+        if(i.value) { l.innerHTML += `<div style="border-bottom:1px solid #222; padding:5px;">${i.value.replace(/</g, "&lt;")}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
     }
 
     function vBridge() {
         const id = "VOX-" + Math.floor(Math.random()*9999);
-        document.getElementById('v-link').innerHTML = `<button class="btn" style="background:#fff;margin-top:10px;" onclick="window.open('https://meet.jit.si/${id}')">ВХОД В МОСТ: ${id}</button>`;
+        document.getElementById('v-link').innerHTML = `<button class="btn" style="background:#fff;margin-top:10px;" onclick="window.open('https://meet.jit.si/${id}')">OPEN: ${id}</button>`;
     }
 </script>
 </body>
