@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v71 | MULTI-LANG EDITION</title>
+    <title>VOX OS v72 | GLOBAL & NATIVE</title>
     <style>
         :root { 
             --main: #00ff41; --bg: #000; --win: rgba(15, 15, 15, 0.98); 
             --accent: #00bbff; --admin: #ff00ff; --danger: #ff0000; --weather: #ffce00;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--main); font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
         #desktop { 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
-            padding: 90px 15px; gap: 15px; width: 100%; height: 100%;
+            padding: 95px 15px; gap: 15px; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #001a00 0%, #000 100%);
             position: absolute; inset: 0; z-index: 1; overflow-y: auto;
         }
@@ -45,85 +45,74 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
-<body id="main-body">
+<body>
 
 <div id="status-bar">
-    <div id="role-info">VOX GLOBAL v71</div>
+    <div id="role-info">VOX OS v72: ГЛОБАЛЬНЫЙ ВВОД</div>
     <div id="clock">00:00:00</div>
 </div>
 
 <div id="lock-screen">
-    <div style="font-size: 30px; color: var(--main); margin-bottom: 25px; letter-spacing: 5px; font-weight: bold;">VOX OS</div>
-    <input type="tel" id="pin-input" placeholder="PIN" style="-webkit-text-security: disc; width: 200px;">
-    <button class="btn" style="width: 200px;" onclick="checkAuth()">LOGIN</button>
+    <div style="font-size: 30px; color: var(--main); margin-bottom: 25px; letter-spacing: 5px; font-weight: bold;">ВОЙТИ В VOX</div>
+    <input type="tel" id="pin-input" placeholder="ПИН-КОД" style="-webkit-text-security: disc; width: 200px;">
+    <button class="btn" style="width: 200px;" onclick="checkAuth()">ВХОД</button>
 </div>
 
 <div id="desktop">
-    <div class="icon" onclick="openApp('wa')"><span>📻</span><label>Music</label></div>
+    <div class="icon" onclick="openApp('wa')"><span>📻</span><label>Winamp</label></div>
     <div class="icon" onclick="openApp('off')"><span>📄</span><label>Office</label></div>
     <div class="icon" onclick="openApp('cin')"><span>🎬</span><label>Cinema</label></div>
-    <div class="icon" onclick="openApp('wea')"><span>☀️</span><label>Weather</label></div>
+    <div class="icon" onclick="openApp('wea')"><span>☀️</span><label>Погода</label></div>
     <div class="icon" onclick="openApp('vib')"><span>💜</span><label>Viber</label></div>
     <div class="icon" onclick="openApp('goo')"><span>🌐</span><label>Google</label></div>
     <div class="icon" onclick="openApp('yan')"><span>Я</span><label>Yandex</label></div>
     <div class="icon" onclick="openApp('met')"><span>📹</span><label>Meet AI</label></div>
     <div class="icon" onclick="openApp('cal')"><span>🧮</span><label>Calc</label></div>
     <div id="adm-icon" class="icon" style="display:none;" onclick="openApp('adm')"><span>⚙️</span><label style="color:var(--admin)">Admin</label></div>
-    <div class="icon" onclick="location.reload()"><span>🔐</span><label>Exit</label></div>
+    <div class="icon" onclick="location.reload()"><span>🔐</span><label>Блок</label></div>
 </div>
 
+<div id="wa" class="window"><div class="win-header"><span>WINAMP AI</span><span onclick="closeApp('wa')">×</span></div><div class="win-content"><audio id="player" controls style="width:100%; filter:invert(1);"></audio><input type="file" id="f" style="display:none" onchange="playFile(this.files)"><button class="btn" onclick="document.getElementById('f').click()">ОТКРЫТЬ MP3</button><input id="wa-in" placeholder="Песня..."><button class="btn btn-vox" onclick="voiceIn('wa-in', 'music')">🎤 ИСКАТЬ (ЛЮБОЙ ЯЗЫК)</button></div></div>
+<div id="wea" class="window"><div class="win-header"><span>ПОГОДА</span><span onclick="closeApp('wea')">×</span></div><div class="win-content"><input id="wea-in" placeholder="Город..."><button class="btn btn-vox" onclick="voiceIn('wea-in', 'weather')">🎤 НАЗВАТЬ ГОРОД</button></div></div>
+<div id="met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="closeApp('met')">×</span></div><div class="win-content"><button class="btn" onclick="gen()">ГЕНЕРИРОВАТЬ КОД</button><input id="met-in" placeholder="Код..."><button class="btn" onclick="window.open('https://meet.jit.si/'+document.getElementById('met-in').value)">ВОЙТИ</button></div></div>
+<div id="adm" class="window"><div class="win-header"><span>ADMIN</span><span onclick="closeApp('adm')">×</span></div><div class="win-content"><button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='PURGED'">💀 САМОУНИЧТОЖЕНИЕ</button></div></div>
+<div id="off" class="window"><div class="win-header"><span>OFFICE</span><span onclick="closeApp('off')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://docs.google.com')">DOCS</button><button class="btn" onclick="window.open('https://sheets.google.com')">SHEETS</button></div></div>
+
 <script>
-    // Главная функция распознавания - ТЕПЕРЬ С ПОДДЕРЖКОЙ ВСЕХ ЯЗЫКОВ
+    function checkAuth() {
+        const pin = document.getElementById('pin-input').value;
+        if(pin === "777") { document.getElementById('adm-icon').style.display = 'flex'; document.getElementById('lock-screen').style.display = 'none'; }
+        else if(pin === "111") { document.getElementById('lock-screen').style.display = 'none'; }
+        else alert("НЕВЕРНЫЙ ПИН");
+    }
+
     function voiceIn(targetId, type) {
         const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Recognition) return alert("Browser does not support Voice");
-        
+        if(!Recognition) return alert("Голос не работает");
         const rec = new Recognition();
-        rec.continuous = false;
-        rec.interimResults = false;
-        // rec.lang удален или заменен на авто - браузер использует системный язык или слушает все
-        
-        const btn = event.currentTarget; 
-        btn.classList.add('listening');
-        
+        rec.lang = ''; // ПУСТОЙ ПАРАМЕТР = АВТООПРЕДЕЛЕНИЕ ЯЗЫКА
+        const btn = event.currentTarget; btn.classList.add('listening');
         rec.onresult = (e) => {
-            const result = e.results[0][0].transcript;
-            document.getElementById(targetId).value = result;
-            if(type !== 'none') goWeb(type, result);
+            const res = e.results[0][0].transcript;
+            document.getElementById(targetId).value = res;
+            if(type !== 'none') goWeb(type, res);
         };
         rec.onend = () => btn.classList.remove('listening');
         rec.start();
     }
 
     function goWeb(type, val) {
-        let url = "";
-        const query = val || document.getElementById(type + '-input')?.value || "";
-        const q = encodeURIComponent(query);
-
-        if(type === 'movie') url = 'https://www.google.com/search?q=watch+movie+' + q;
-        if(type === 'music') url = 'https://music.youtube.com/search?q=' + q;
-        if(type === 'google') url = 'https://www.google.com/search?q=' + q;
-        if(type === 'yandex') url = 'https://yandex.com/search/?text=' + q;
-        if(type === 'weather') url = 'https://www.google.com/search?q=weather+' + q;
-        
-        if(url) window.open(url);
+        const q = encodeURIComponent(val);
+        if(type === 'music') window.open('https://music.youtube.com/search?q=' + q);
+        if(type === 'weather') window.open('https://google.com/search?q=weather+' + q);
+        if(type === 'movie') window.open('https://google.com/search?q=watch+movie+' + q);
     }
 
-    // Вспомогательные функции
-    function checkAuth() {
-        const pin = document.getElementById('pin-input').value;
-        if(pin === "777") { document.getElementById('adm-icon').style.display = 'flex'; document.getElementById('lock-screen').style.display = 'none'; }
-        else if(pin === "111") { document.getElementById('lock-screen').style.display = 'none'; }
-        else alert("DENIED");
-    }
-    function openApp(id) { document.querySelectorAll('.window').forEach(w=>w.style.display='none'); document.getElementById(id).style.display='flex'; }
+    function openApp(id) { document.getElementById(id).style.display='flex'; }
     function closeApp(id) { document.getElementById(id).style.display='none'; }
+    function playFile(f) { if(f[0]) { document.getElementById('player').src=URL.createObjectURL(f[0]); document.getElementById('player').play(); } }
+    function gen() { document.getElementById('met-in').value = "VOX-" + Math.floor(Math.random()*999); }
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
-
-<div id="wa" class="window"><div class="win-header"><span>WINAMP</span><span onclick="closeApp('wa')">×</span></div><div class="win-content"><input id="wa-input" placeholder="Artist..."><button class="btn btn-vox" onclick="voiceIn('wa-input', 'music')">🎤 VOICE SEARCH</button></div></div>
-<div id="wea" class="window"><div class="win-header"><span>WEATHER</span><span onclick="closeApp('wea')">×</span></div><div class="win-content"><input id="wea-input" placeholder="City..."><button class="btn btn-vox" onclick="voiceIn('wea-input', 'weather')">🎤 SAY CITY</button></div></div>
-<div id="met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="closeApp('met')">×</span></div><div class="win-content"><input id="met-input" placeholder="Room ID..."><button class="btn btn-vox" onclick="voiceIn('met-input', 'none')">🎤 SAY CODE</button></div></div>
-<div id="adm" class="window"><div class="win-header"><span>ADMIN</span><span onclick="closeApp('adm')">×</span></div><div class="win-content"><button class="btn" style="background:red;color:#fff" onclick="document.body.innerHTML='PURGED'">💀 SELF-DESTRUCT</button></div></div>
 </body>
 </html>
