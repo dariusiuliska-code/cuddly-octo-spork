@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v45 | INTELLIGENT</title>
+    <title>VOX OS v46 | GAMING</title>
     <style>
         :root { --main: #00ff41; --bg: #000; --win: #0a0a0a; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -15,13 +15,13 @@
         .icon span { font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 0 5px var(--main)); }
         .icon label { font-size: 10px; text-align: center; text-transform: uppercase; }
 
-        .window { position: absolute; top: 10%; left: 5%; width: 90%; max-width: 450px; background: var(--win); border: 1px solid var(--main); display: none; flex-direction: column; z-index: 100; box-shadow: 0 0 30px rgba(0, 255, 65, 0.3); }
+        .window { position: absolute; top: 5%; left: 5%; width: 90%; max-width: 450px; background: var(--win); border: 1px solid var(--main); display: none; flex-direction: column; z-index: 100; box-shadow: 0 0 30px rgba(0, 255, 65, 0.3); }
         .win-header { background: var(--main); color: #000; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 12px; }
         .close-btn { cursor: pointer; font-size: 20px; padding: 0 5px; }
-        .win-content { padding: 15px; max-height: 80vh; overflow-y: auto; }
+        .win-content { padding: 15px; max-height: 85vh; overflow-y: auto; }
 
-        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; }
-        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); color: var(--main); margin-bottom: 10px; font-family: inherit; }
+        .btn { width: 100%; padding: 14px; background: var(--main); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; }
         .log { height: 100px; overflow-y: auto; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; font-size: 12px; background: #000; }
         
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
@@ -43,23 +43,20 @@
     <div class="icon" onclick="smartOpen('win-voice')"><span>🎤</span><label>Голос</label></div>
     <div class="icon" onclick="smartOpen('win-search')"><span>🎬</span><label>Поиск/Кино</label></div>
     <div class="icon" onclick="smartOpen('win-music')"><span>🎵</span><label>Музыка</label></div>
-    <div class="icon" onclick="smartOpen('win-chat')"><span>💬</span><label>Чат</label></div>
+    <div class="icon" onclick="smartOpen('win-games')"><span>🎮</span><label>Игры</label></div>
     <div class="icon" onclick="smartOpen('win-org')"><span>📅</span><label>Органайзер</label></div>
+    <div class="icon" onclick="smartOpen('win-chat')"><span>💬</span><label>Чат</label></div>
     <div class="icon" onclick="smartOpen('win-video')"><span>📡</span><label>Видео</label></div>
     <div class="icon" onclick="smartOpen('win-file')"><span>📁</span><label>Файлы</label></div>
 </div>
 
-<div id="win-voice" class="window">
-    <div class="win-header"><span>VOICE AI</span><span class="close-btn" onclick="closeWin('win-voice')">×</span></div>
+<div id="win-games" class="window">
+    <div class="win-header"><span>GAME CENTER</span><span class="close-btn" onclick="closeWin('win-games')">×</span></div>
     <div class="win-content">
-        <button id="v-btn" class="btn" style="background:#ff4141; color:#fff;" onclick="startVoice()">ГОВОРИТЬ</button>
-        <div id="v-status" style="margin-top:5px; font-size:11px; text-align:center;">Нажмите для записи</div>
-        
-        <div id="v-choice-box" class="voice-choice">
-            <div id="v-text-res" style="color:#fff; margin-bottom:10px; font-weight:bold;"></div>
-            <button class="btn" onclick="voiceAction('web')">В ИНТЕРНЕТЕ</button>
-            <button class="btn" style="background:#111; color:var(--main); border:1px solid var(--main);" onclick="voiceAction('film')">ИСКАТЬ ФИЛЬМ</button>
-        </div>
+        <button class="btn" style="background:#ffeb3b; color:#000;" onclick="window.open('https://www.sudokukingdom.com/')">🧩 СУДОКУ</button>
+        <button class="btn" style="background:#f44336; color:#fff;" onclick="window.open('https://tetris.com/play-tetris')">🧱 ТЕТРИС</button>
+        <button class="btn" style="background:#4caf50; color:#fff;" onclick="window.open('https://www.google.com/logos/2010/pacman10-i.html')">🟡 PAC-MAN</button>
+        <button class="btn" style="background:#673ab7; color:#fff;" onclick="window.open('https://solitaired.com/')">♠️ ПАСЬЯНС (КАРТЫ)</button>
     </div>
 </div>
 
@@ -83,6 +80,19 @@
     </div>
 </div>
 
+<div id="win-voice" class="window">
+    <div class="win-header"><span>VOICE AI</span><span class="close-btn" onclick="closeWin('win-voice')">×</span></div>
+    <div class="win-content">
+        <button id="v-btn" class="btn" style="background:#ff4141; color:#fff;" onclick="startVoice()">ГОВОРИТЬ</button>
+        <div id="v-status" style="margin-top:5px; font-size:11px; text-align:center;">Нажмите для записи</div>
+        <div id="v-choice-box" class="voice-choice">
+            <div id="v-text-res" style="color:#fff; margin-bottom:10px; font-weight:bold;"></div>
+            <button class="btn" onclick="voiceAction('web')">В ИНТЕРНЕТЕ</button>
+            <button class="btn" style="background:#111; color:var(--main); border:1px solid var(--main);" onclick="voiceAction('film')">ИСКАТЬ ФИЛЬМ</button>
+        </div>
+    </div>
+</div>
+
 <div id="win-search" class="window">
     <div class="win-header"><span>SEARCH</span><span class="close-btn" onclick="closeWin('win-search')">×</span></div>
     <div class="win-content">
@@ -91,21 +101,9 @@
     </div>
 </div>
 
-<div id="win-music" class="window">
-    <div class="win-header"><span>MUSIC</span><span class="close-btn" onclick="closeWin('win-music')">×</span></div>
-    <div class="win-content"><input id="m-search" placeholder="Песня..."><button class="btn" onclick="runM()">НАЙТИ</button></div>
-</div>
-
-<div id="win-chat" class="window">
-    <div class="win-header"><span>CHAT</span><span class="close-btn" onclick="closeWin('win-chat')">×</span></div>
-    <div class="win-content"><div id="c-log" class="log"></div><input id="c-in"><button class="btn" onclick="sendMsg()">SEND</button></div>
-</div>
-
-<div id="win-video" class="window">
-    <div class="win-header"><span>VIDEO</span><span class="close-btn" onclick="closeWin('win-video')">×</span></div>
-    <div class="win-content"><button class="btn" onclick="vBridge()">СОЗДАТЬ МОСТ</button><div id="v-link"></div></div>
-</div>
-
+<div id="win-music" class="window"><div class="win-header"><span>MUSIC</span><span class="close-btn" onclick="closeWin('win-music')">×</span></div><div class="win-content"><input id="m-search" placeholder="Трек..."><button class="btn" onclick="runM()">НАЙТИ</button></div></div>
+<div id="win-chat" class="window"><div class="win-header"><span>CHAT</span><span class="close-btn" onclick="closeWin('win-chat')">×</span></div><div class="win-content"><div id="c-log" class="log"></div><input id="c-in"><button class="btn" onclick="sendMsg()">SEND</button></div></div>
+<div id="win-video" class="window"><div class="win-header"><span>VIDEO</span><span class="close-btn" onclick="closeWin('win-video')">×</span></div><div class="win-content"><button class="btn" onclick="vBridge()">СОЗДАТЬ МОСТ</button><div id="v-link"></div></div></div>
 <div id="win-file" class="window"><div class="win-header"><span>FILES</span><span class="close-btn" onclick="closeWin('win-file')">×</span></div><div class="win-content"><button class="btn" onclick="window.open('https://toffeeshare.com/')">P2P TRANSFER</button></div></div>
 
 <script>
@@ -126,7 +124,6 @@
 
     function closeWin(id) { document.getElementById(id).style.display = 'none'; if (currentOpenWin === id) currentOpenWin = null; }
 
-    // ГОЛОСОВАЯ ЛОГИКА
     function startVoice() {
         if ('webkitSpeechRecognition' in window) {
             const r = new webkitSpeechRecognition(); r.lang = 'ru-RU';
@@ -138,39 +135,33 @@
                 document.getElementById('v-status').innerText = "ВЫБЕРИТЕ ДЕЙСТВИЕ";
             };
             r.start();
-        } else { alert("Голос не поддерживается"); }
+        } else { alert("Не поддерживается"); }
     }
 
     function voiceAction(type) {
         let url = "https://google.com/search?q=" + encodeURIComponent(lastVoiceText);
-        if(type === 'film') url += "+фильм+смотреть+онлайн+hd";
+        if(type === 'film') url += "+смотреть+онлайн+hd";
         window.open(url, '_blank');
         document.getElementById('v-choice-box').style.display = 'none';
-        document.getElementById('v-status').innerText = "ОТКРЫТО";
     }
 
-    // ОСТАЛЬНОЕ
     function addNote() {
         const i = document.getElementById('note-in'); const l = document.getElementById('note-log');
         if(i.value) { l.innerHTML += `<div>> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
     }
     function calc(v) { document.getElementById('calc-display').value += v; }
     function calcEval() { try { document.getElementById('calc-display').value = eval(document.getElementById('calc-display').value); } catch { alert('Ошибка'); } }
-
     function runS(t) {
         let q = document.getElementById('q-search').value; if(!q) return;
         let url = "https://google.com/search?q=" + q;
-        if(t === 'film') url += "+фильм+смотреть+онлайн+hd";
+        if(t === 'film') url += "+смотреть+онлайн+hd";
         window.open(url, '_blank');
     }
-
     function runM() { window.open("https://www.google.com/search?q=" + document.getElementById('m-search').value + "+слушать+mp3"); }
-
     function sendMsg() {
         const i = document.getElementById('c-in'); const l = document.getElementById('c-log');
         if(i.value) { l.innerHTML += `<div><b>Я:</b> ${i.value}</div>`; i.value = ''; l.scrollTop = l.scrollHeight; }
     }
-
     function vBridge() {
         const id = "VOX-" + Math.floor(Math.random()*9999);
         document.getElementById('v-link').innerHTML = `<button class="btn" style="background:#fff;margin-top:10px;" onclick="window.open('https://meet.jit.si/${id}')">ВОЙТИ: ${id}</button>`;
@@ -178,4 +169,3 @@
 </script>
 </body>
 </html>
-
