@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v13.0 | GAME & MATRIX</title>
+    <title>VOX OS v14.0 | MESSENGER</title>
     <style>
         :root { --main: #00ff41; --bg: #000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -74,17 +74,27 @@
 <canvas id="matrix-canvas"></canvas>
 
 <div id="lock-screen">
-    <div style="font-size: 24px; margin-bottom: 20px; letter-spacing: 5px;">VOX SYSTEM 13.0</div>
+    <div style="font-size: 24px; margin-bottom: 20px; letter-spacing: 5px;">VOX SYSTEM 14.0</div>
     <input type="password" id="access-code" style="text-align:center; width: 220px;" placeholder="CODE: VOX-777">
-    <button class="btn" onclick="auth()" style="width: 220px;">UNLOCK_SYSTEM</button>
+    <button class="btn" onclick="auth()" style="width: 220px;">AUTHORIZE</button>
 </div>
 
 <div class="desktop">
     
-    <div id="win-game" class="window" style="top: 20px; left: 20px; width: 450px; height: 450px;">
-        <div class="window-header"><span>GAME_DURAK_ONLINE</span><span class="close-btn" onclick="toggleWin('win-game')">X</span></div>
-        <div class="window-content" style="padding:0; overflow:hidden;">
-            <iframe src="https://m.igra-durak.ru/" style="width:100%; height:100%; border:none;"></iframe>
+    <div id="win-chat" class="window" style="top: 20px; left: 20px; width: 450px; height: 500px;">
+        <div class="window-header"><span>VOX_ANON_CHAT</span><span class="close-btn" onclick="toggleWin('win-chat')">X</span></div>
+        <div class="window-content" id="chat-container">
+            <div id="chat-welcome">
+                <p style="font-size: 12px;">Выберите режим общения:</p>
+                <button class="btn" onclick="startChat('vox-global')">ОБЩИЙ КАНАЛ</button>
+                <p style="font-size: 10px; margin-top: 15px;">СЕКРЕТНЫЙ ЧАТ (ТОЛЬКО ДЛЯ ТЕХ, КТО ЗНАЕТ ID):</p>
+                <input type="text" id="private-id" placeholder="Придумайте ID (напр. secret777)">
+                <button class="btn" onclick="startChat(document.getElementById('private-id').value)">СОЗДАТЬ / ВОЙТИ</button>
+            </div>
+            <div id="chat-frame-box" style="display:none; height: 100%;">
+                <button class="btn" style="height:30px; padding:5px; font-size:10px;" onclick="backToChatMenu()">ВЫЙТИ ИЗ ЧАТА</button>
+                <iframe id="chat-iframe" src="" style="width:100%; height:calc(100% - 40px); border:none; background: #fff;"></iframe>
+            </div>
         </div>
     </div>
 
@@ -117,15 +127,15 @@
     <div id="win-meet" class="window" style="top: 140px; left: 140px; width: 320px;">
         <div class="window-header"><span>SECURE_MEET</span><span class="close-btn" onclick="toggleWin('win-meet')">X</span></div>
         <div class="window-content">
-            <div id="m-info" style="border: 1px dashed var(--main); padding: 10px; margin-bottom: 10px; text-align: center;">READY_FOR_LINK</div>
-            <button class="btn" onclick="runMeet()">CREATE CHANNEL</button>
+            <div id="m-info" style="border: 1px dashed var(--main); padding: 10px; margin-bottom: 10px; text-align: center;">IDLE</div>
+            <button class="btn" onclick="runMeet()">CREATE VIDEO LINK</button>
         </div>
     </div>
 
 </div>
 
 <div class="taskbar">
-    <div class="app-icon" title="Игры" onclick="toggleWin('win-game')">🃏</div>
+    <div class="app-icon" title="Чат" onclick="toggleWin('win-chat')">💬</div>
     <div class="app-icon" title="Поиск" onclick="toggleWin('win-search')">🔍</div>
     <div class="app-icon" title="Фильмы" onclick="toggleWin('win-films')">🎬</div>
     <div class="app-icon" title="Музыка" onclick="toggleWin('win-music')">🎵</div>
@@ -192,7 +202,22 @@
         h.addEventListener('mousedown', start); h.addEventListener('touchstart', start);
     }
 
-    // --- APP FUNCTIONS ---
+    // --- CHAT LOGIC ---
+    function startChat(id) {
+        if(!id) { alert("Введите ID комнаты"); return; }
+        const cleanId = id.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        document.getElementById('chat-welcome').style.display = 'none';
+        document.getElementById('chat-frame-box').style.display = 'block';
+        document.getElementById('chat-iframe').src = `https://tlk.io/${cleanId}`;
+    }
+
+    function backToChatMenu() {
+        document.getElementById('chat-welcome').style.display = 'block';
+        document.getElementById('chat-frame-box').style.display = 'none';
+        document.getElementById('chat-iframe').src = "";
+    }
+
+    // --- APPS ---
     function runSearch(t) {
         const q = document.getElementById('net-q').value;
         if(!q) return;
@@ -213,7 +238,7 @@
 
     function runMeet() {
         const id = "VOX-" + Math.random().toString(36).substring(7).toUpperCase();
-        document.getElementById('m-info').innerHTML = `ROOM: ${id}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">GO TO BRIDGE</button>`;
+        document.getElementById('m-info').innerHTML = `ROOM: ${id}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">CONNECT VIDEO</button>`;
     }
 </script>
 </body>
