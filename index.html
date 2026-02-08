@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX OS v10.5 | ULTIMATE HYBRID</title>
+    <title>VOX OS v11.0 | MULTI-CORE</title>
     <style>
         :root { --main: #00ff41; --bg: #000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -14,12 +14,12 @@
             font-family: 'Consolas', monospace; overflow: hidden; 
         }
 
-        #matrix-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.4; pointer-events: none; }
+        #matrix-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.35; pointer-events: none; }
 
         /* Окна */
         .window {
             position: absolute; min-width: 280px; max-width: 95vw;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             border: 1px solid var(--main);
             display: none; flex-direction: column; z-index: 10;
             box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
@@ -28,15 +28,15 @@
         .window-header {
             background: var(--main); padding: 12px; cursor: move;
             display: flex; justify-content: space-between; color: #000;
-            font-weight: bold; font-size: 14px; user-select: none;
-            touch-action: none; /* Предотвращает скролл при перетаскивании */
+            font-weight: bold; font-size: 13px; user-select: none;
+            touch-action: none;
         }
 
         .close-btn { cursor: pointer; background: #000; color: var(--main); border: 1px solid var(--main); padding: 2px 8px; font-size: 12px; }
 
-        .window-content { padding: 15px; flex: 1; overflow-y: auto; touch-action: auto; }
+        .window-content { padding: 15px; flex: 1; overflow-y: auto; }
 
-        /* Кнопки и инпуты */
+        /* Элементы управления */
         input { 
             width: 100%; padding: 12px; background: #000; border: 1px solid var(--main); 
             color: var(--main); margin-bottom: 10px; font-family: inherit; font-size: 16px; outline: none;
@@ -44,7 +44,7 @@
         .btn { 
             background: var(--main); color: #000; border: none; padding: 12px; 
             font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; 
-            margin-bottom: 5px; font-size: 12px; transition: 0.2s;
+            margin-bottom: 5px; font-size: 11px; transition: 0.2s;
         }
         .btn:active { background: #fff; }
 
@@ -54,17 +54,16 @@
             background: rgba(0,0,0,0.9); border: 1px solid var(--main);
             display: flex; gap: 15px; padding: 10px 20px; z-index: 1000; border-radius: 5px;
         }
-        .app-icon { font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .app-icon:hover { transform: scale(1.2); }
+        .app-icon { font-size: 26px; cursor: pointer; transition: 0.3s; }
+        .app-icon:hover { transform: scale(1.3) translateY(-5px); filter: drop-shadow(0 0 10px var(--main)); }
 
-        /* Экран блокировки */
         #lock-screen {
             position: fixed; inset: 0; background: #000; z-index: 2000;
             display: flex; align-items: center; justify-content: center; flex-direction: column;
         }
 
         @media (max-width: 600px) {
-            .window { width: 90% !important; left: 5% !important; top: 15% !important; }
+            .window { width: 92% !important; left: 4% !important; top: 10% !important; }
         }
     </style>
 </head>
@@ -73,125 +72,97 @@
 <canvas id="matrix-canvas"></canvas>
 
 <div id="lock-screen">
-    <div style="font-size: 24px; margin-bottom: 20px; letter-spacing: 4px;">VOX_SYSTEM_v10.5</div>
-    <input type="password" id="access-code" style="text-align:center; width: 220px;" placeholder="PASSWORD">
-    <button class="btn" onclick="auth()" style="width: 220px;">ACCESS_CORE</button>
+    <div style="font-size: 24px; margin-bottom: 20px; letter-spacing: 5px;">VOX SYSTEM 11.0</div>
+    <input type="password" id="access-code" style="text-align:center; width: 220px;" placeholder="MASTER_CODE">
+    <button class="btn" onclick="auth()" style="width: 220px;">AUTHORIZE</button>
 </div>
 
-<div class="desktop" id="desktop">
-    <div id="win-term" class="window" style="top: 20px; left: 20px; width: 400px;">
-        <div class="window-header"><span>TERMINAL_V10</span><span class="close-btn" onclick="toggleWin('win-term')">X</span></div>
+<div class="desktop">
+    
+    <div id="win-search" class="window" style="top: 20px; left: 20px; width: 350px;">
+        <div class="window-header"><span>NET_SCANNER</span><span class="close-btn" onclick="toggleWin('win-search')">X</span></div>
         <div class="window-content">
-            <div id="term-out" style="height:140px; overflow-y:auto; font-size:12px; margin-bottom:10px;">VOX Kernel ready. Type 'hack'...</div>
-            <input type="text" id="term-in" placeholder="Command...">
+            <input type="text" id="net-q" placeholder="Поиск информации...">
+            <button class="btn" onclick="runSearch('google')">GOOGLE SEARCH</button>
+            <button class="btn" onclick="runSearch('wiki')">WIKIPEDIA</button>
         </div>
     </div>
 
-    <div id="win-media" class="window" style="top: 50px; left: 50px; width: 320px;">
-        <div class="window-header"><span>MEDIA_CRAWLER</span><span class="close-btn" onclick="toggleWin('win-media')">X</span></div>
+    <div id="win-films" class="window" style="top: 60px; left: 60px; width: 350px;">
+        <div class="window-header"><span>CINEMA_CORE</span><span class="close-btn" onclick="toggleWin('win-films')">X</span></div>
         <div class="window-content">
-            <input type="text" id="media-q" placeholder="Название фильма/песни...">
-            <button class="btn" onclick="goMedia('google')">Найти бесплатно</button>
-            <button class="btn" onclick="goMedia('yt')">Смотреть YouTube</button>
+            <input type="text" id="film-q" placeholder="Название фильма...">
+            <button class="btn" onclick="runFilms()">НАЙТИ БЕСПЛАТНО</button>
         </div>
     </div>
 
-    <div id="win-meet" class="window" style="top: 100px; left: 80px; width: 320px;">
+    <div id="win-music" class="window" style="top: 100px; left: 100px; width: 350px;">
+        <div class="window-header"><span>AUDIO_STREAM</span><span class="close-btn" onclick="toggleWin('win-music')">X</span></div>
+        <div class="window-content">
+            <input type="text" id="music-q" placeholder="Трек или артист...">
+            <button class="btn" onclick="runMusic('yt')">YOUTUBE MUSIC</button>
+            <button class="btn" onclick="runMusic('sc')">SOUNDCLOUD</button>
+        </div>
+    </div>
+
+    <div id="win-meet" class="window" style="top: 140px; left: 140px; width: 320px;">
         <div class="window-header"><span>VIDEO_BRIDGE</span><span class="close-btn" onclick="toggleWin('win-meet')">X</span></div>
         <div class="window-content">
-            <div id="meet-info" style="border: 1px dashed var(--main); padding: 10px; margin-bottom: 10px; text-align: center; font-size: 11px;">LINE_IDLE</div>
-            <button class="btn" onclick="genMeet()">CREATE_CHANNEL</button>
+            <div id="m-info" style="border: 1px dashed var(--main); padding: 10px; margin-bottom: 10px; text-align: center;">IDLE</div>
+            <button class="btn" onclick="runMeet()">GENERATE CHANNEL</button>
         </div>
     </div>
 
-    <div id="win-weather" class="window" style="top: 150px; left: 100px; width: 300px;">
-        <div class="window-header"><span>WEATHER_SCAN</span><span class="close-btn" onclick="toggleWin('win-weather')">X</span></div>
+    <div id="win-term" class="window" style="top: 200px; left: 20px; width: 450px;">
+        <div class="window-header"><span>SYSTEM_TERMINAL</span><span class="close-btn" onclick="toggleWin('win-term')">X</span></div>
         <div class="window-content">
-            <input type="text" id="city" placeholder="City...">
-            <button class="btn" onclick="getW()">ATMOSPHERE SCAN</button>
-            <div id="w-out" style="margin-top:10px; font-size: 11px;"></div>
+            <div id="t-out" style="height:120px; overflow-y:auto; font-size:12px;">Kernel v11.0 active.</div>
+            <input type="text" id="t-in" placeholder="Type help...">
         </div>
     </div>
+
 </div>
 
 <div class="taskbar">
-    <div class="app-icon" title="Terminal" onclick="toggleWin('win-term')">💻</div>
-    <div class="app-icon" title="Media" onclick="toggleWin('win-media')">🎬</div>
-    <div class="app-icon" title="Meet" onclick="toggleWin('win-meet')">📞</div>
-    <div class="app-icon" title="Weather" onclick="toggleWin('win-weather')">☁️</div>
+    <div class="app-icon" title="Поиск" onclick="toggleWin('win-search')">🔍</div>
+    <div class="app-icon" title="Фильмы" onclick="toggleWin('win-films')">🎬</div>
+    <div class="app-icon" title="Музыка" onclick="toggleWin('win-music')">🎵</div>
+    <div class="app-icon" title="Связь" onclick="toggleWin('win-meet')">📞</div>
+    <div class="app-icon" title="Терминал" onclick="toggleWin('win-term')">💻</div>
 </div>
 
 <script>
-    // --- MATRIX ENGINE ---
+    // --- МАТРИЦА ---
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
     let w, h, cols, drops;
-    function resize() {
+    function res() { 
         w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
         cols = Math.floor(w / 15); drops = Array(cols).fill(1);
     }
-    window.addEventListener('resize', resize); resize();
+    window.onresize = res; res();
     function draw() {
         ctx.fillStyle = "rgba(0,0,0,0.08)"; ctx.fillRect(0,0,w,h);
         ctx.fillStyle = "#00ff41"; ctx.font = "15px monospace";
-        for(let i=0; i<drops.length; i++) {
-            const txt = Math.floor(Math.random()*2);
-            ctx.fillText(txt, i*15, drops[i]*15);
-            if(drops[i]*15 > h && Math.random() > 0.975) drops[i]=0;
+        drops.forEach((y, i) => {
+            ctx.fillText(Math.floor(Math.random()*2), i*15, y*15);
+            if(y*15 > h && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
-        }
+        });
     }
     setInterval(draw, 50);
 
-    // --- SYSTEM LOGIC ---
+    // --- СИСТЕМА ---
     function auth() {
         if(document.getElementById('access-code').value === "VOX-777") {
             document.getElementById('lock-screen').style.display = 'none';
-        } else { alert("ACCESS DENIED"); }
-    }
-
-    // --- UNIVERSAL DRAG (MOUSE + TOUCH) ---
-    function makeDraggable(el) {
-        let offsetX, offsetY;
-        const header = el.querySelector('.window-header');
-
-        const move = (e) => {
-            const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            el.style.left = (x - offsetX) + 'px';
-            el.style.top = (y - offsetY) + 'px';
-        };
-
-        const stop = () => {
-            window.removeEventListener('mousemove', move);
-            window.removeEventListener('mouseup', stop);
-            window.removeEventListener('touchmove', move);
-            window.removeEventListener('touchend', stop);
-        };
-
-        const start = (e) => {
-            const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            offsetX = x - el.offsetLeft;
-            offsetY = y - el.offsetTop;
-            window.addEventListener(e.type.includes('touch') ? 'touchmove' : 'mousemove', move);
-            window.addEventListener(e.type.includes('touch') ? 'touchend' : 'mouseup', stop);
-            focusWin(el);
-        };
-
-        header.addEventListener('mousedown', start);
-        header.addEventListener('touchstart', start);
+        } else { alert("DENIED"); }
     }
 
     function toggleWin(id) {
         const win = document.getElementById(id);
-        if (win.style.display === 'flex') {
-            win.style.display = 'none';
-        } else {
-            win.style.display = 'flex';
-            makeDraggable(win);
-            focusWin(win);
-        }
+        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+        if(win.style.display === 'flex') { makeDraggable(win); focusWin(win); }
     }
 
     function focusWin(win) {
@@ -199,46 +170,62 @@
         win.style.zIndex = 100;
     }
 
-    // --- APPS FUNCTIONS ---
-    function goMedia(t) {
-        const q = document.getElementById('media-q').value;
+    function makeDraggable(el) {
+        let ox, oy;
+        const h = el.querySelector('.window-header');
+        const move = (e) => {
+            const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            el.style.left = (x - ox) + 'px'; el.style.top = (y - oy) + 'px';
+        };
+        const stop = () => { window.removeEventListener('mousemove', move); window.removeEventListener('touchmove', move); };
+        const start = (e) => {
+            const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            ox = x - el.offsetLeft; oy = y - el.offsetTop;
+            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move);
+            window.addEventListener('mouseup', stop); window.addEventListener('touchend', stop);
+            focusWin(el);
+        };
+        h.addEventListener('mousedown', start); h.addEventListener('touchstart', start);
+    }
+
+    // --- ФУНКЦИИ ПРИЛОЖЕНИЙ ---
+    function runSearch(type) {
+        const q = document.getElementById('net-q').value;
         if(!q) return;
-        window.open(t === 'google' ? `https://google.com/search?q=${q}+смотреть+бесплатно+онлайн` : `https://youtube.com/results?search_query=${q}`);
+        window.open(type === 'google' ? `https://google.com/search?q=${q}` : `https://ru.wikipedia.org/wiki/${q}`);
     }
 
-    function genMeet() {
-        const room = "VOX-" + Math.random().toString(36).substring(7).toUpperCase();
-        document.getElementById('meet-info').innerHTML = `CHANNEL: ${room}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${room}')">ENTER BRIDGE</button>`;
+    function runFilms() {
+        const q = document.getElementById('film-q').value;
+        if(!q) return;
+        window.open(`https://google.com/search?q=${q}+смотреть+бесплатно+онлайн+hd`);
     }
 
-    async function getW() {
-        const c = document.getElementById('city').value;
-        const out = document.getElementById('w-out');
-        if(!c) return;
-        out.innerText = "SCANNING...";
-        try {
-            const r = await fetch(`https://wttr.in/${c}?format=3`);
-            out.innerText = await r.text();
-        } catch(e) { out.innerText = "UPLINK ERROR"; }
+    function runMusic(type) {
+        const q = document.getElementById('music-q').value;
+        if(!q) return;
+        window.open(type === 'yt' ? `https://music.youtube.com/search?q=${q}` : `https://soundcloud.com/search?q=${q}`);
     }
 
-    // --- TERMINAL ---
-    document.getElementById('term-in').addEventListener('keydown', async (e) => {
+    function runMeet() {
+        const id = "VOX-" + Math.random().toString(36).substring(7).toUpperCase();
+        document.getElementById('m-info').innerHTML = `LINE: ${id}<br><br><button class="btn" onclick="window.open('https://meet.jit.si/${id}')">CONNECT</button>`;
+    }
+
+    // --- ТЕРМИНАЛ ---
+    document.getElementById('t-in').addEventListener('keydown', async (e) => {
         if(e.key === 'Enter') {
             const v = e.target.value.toLowerCase();
-            const out = document.getElementById('term-out');
+            const out = document.getElementById('t-out');
             out.innerHTML += `<div>> ${v}</div>`;
             if(v === 'hack') {
-                const l = ["BYPASSING FIREWALL...", "INJECTING PACKETS...", "ACCESS GRANTED."];
-                for(let s of l) {
-                    out.innerHTML += `<div style="color:#fff">${s}</div>`;
-                    out.scrollTop = out.scrollHeight;
-                    await new Promise(r => setTimeout(r, 600));
-                }
-            } else if(v === 'clear') { out.innerHTML = ""; }
-            else { out.innerHTML += "<div>Unknown command.</div>"; }
-            e.target.value = '';
-            out.scrollTop = out.scrollHeight;
+                out.innerHTML += "<div>INJECTING... SUCCESS.</div>";
+            } else if(v === 'help') {
+                out.innerHTML += "<div>Apps: Search, Films, Music, Meet.</div>";
+            }
+            e.target.value = ''; out.scrollTop = out.scrollHeight;
         }
     });
 </script>
