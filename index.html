@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX GENESIS // SOUND-CLOUD</title>
+    <title>VOX GENESIS // ULTRA STABLE</title>
     <style>
-        :root { --neon: #00f2ff; --sc: #ff5500; --bg: #000; }
+        :root { --neon: #00f2ff; --bg: #000; }
         body, html { width: 100%; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
-        #bg { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a0f00 0%, #000 100%); z-index: -1; }
+        #bg { position: fixed; inset: 0; background: radial-gradient(circle at center, #001a1c 0%, #000 100%); z-index: -1; }
         #container { height: 100vh; display: flex; flex-direction: column; padding: 20px; justify-content: space-between; position: relative; }
         
         .vox-core { width: 90px; height: 90px; margin: 10px auto; position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -22,9 +22,6 @@
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             background: rgba(0, 242, 255, 0.05); transition: 0.2s;
         }
-        /* Оранжевый акцент для SoundCloud */
-        .sc-style { border-color: var(--sc); color: var(--sc); background: rgba(255, 85, 0, 0.1); }
-        
         .nexus-unit:active .nexus-shape { background: var(--neon); color: #000; }
         .label { font-size: 8px; color: var(--neon); text-align: center; font-weight: bold; }
 
@@ -37,7 +34,7 @@
     <div id="bg"></div>
     <div id="lock">
         <input type="password" id="pass" placeholder="PIN" maxlength="3">
-        <button onclick="boot()" style="margin-top:25px; background:none; border:1px solid var(--neon); color:var(--neon); padding:10px 30px; border-radius:5px;">ENTER_VOX</button>
+        <button onclick="boot()" style="margin-top:25px; background:none; border:1px solid var(--neon); color:var(--neon); padding:10px 30px; border-radius:5px;">FIX_AND_START</button>
     </div>
 
     <div id="container" style="display:none;">
@@ -47,27 +44,27 @@
         </div>
 
         <div class="nexus-grid">
-            <div class="nexus-unit" onclick="launch('com.android.vending')">
+            <div class="nexus-unit" onclick="smartLaunch('market://details?id=com.google.android.gms', 'https://play.google.com')">
                 <div class="nexus-shape">💎</div><div class="label">PLAY STORE</div>
             </div>
-            <div class="nexus-unit" onclick="launch('com.google.android.googlequicksearchbox')">
+            <div class="nexus-unit" onclick="smartLaunch('googlesearch://', 'https://www.google.com')">
                 <div class="nexus-shape">🌐</div><div class="label">SEARCH</div>
             </div>
-            <div class="nexus-unit" onclick="launch('com.google.android.play.games')">
+            <div class="nexus-unit" onclick="smartLaunch('com.google.android.play.games', 'https://play.google.com/store/games')">
                 <div class="nexus-shape">🎮</div><div class="label">ARCADE</div>
             </div>
-            <div class="nexus-unit" onclick="launch('com.google.android.apps.meetings')">
+            <div class="nexus-unit" onclick="smartLaunch('com.google.android.apps.meetings', 'https://meet.google.com')">
                 <div class="nexus-shape">👥</div><div class="label">MEET</div>
             </div>
-            <div class="nexus-unit" onclick="launch('com.miui.videoplayer')">
-                <div class="nexus-shape">🎬</div><div class="label">OFFLINE_FILMS</div>
+            <div class="nexus-unit" onclick="smartLaunch('com.miui.videoplayer', 'https://www.youtube.com/feed/library')">
+                <div class="nexus-shape">🎬</div><div class="label">FILMS</div>
             </div>
-            <div class="nexus-unit" onclick="launch('com.soundcloud.android')">
-                <div class="nexus-shape sc-style">☁️</div><div class="label" style="color:#ff5500">SOUNDCLOUD</div>
+            <div class="nexus-unit" onclick="smartLaunch('com.soundcloud.android', 'https://soundcloud.com')">
+                <div class="nexus-shape" style="border-color:#ff5500; color:#ff5500;">☁️</div><div class="label" style="color:#ff5500">SOUNDCLOUD</div>
             </div>
         </div>
 
-        <button onclick="location.reload()" style="background:none; border:1px solid #444; color:#444; padding:5px; font-size:9px; width:100px; margin: 0 auto;">REGENERATE_UI</button>
+        <button onclick="location.reload()" style="background:none; border:1px solid #444; color:#444; padding:5px; font-size:9px; width:100px; margin: 0 auto;">REGENERATE</button>
     </div>
 
     <script>
@@ -75,22 +72,25 @@
             if(document.getElementById('pass').value === '777') {
                 document.getElementById('lock').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
-                speak("Ядро обновлено. Саунд Клауд интегрирован.");
+                speak("Протоколы исправлены. Система Vox Genesis в строю.");
             }
         }
         
-        function launch(pkg) {
-            const intent = `intent://scan/#Intent;scheme=android-app;package=${pkg};end`;
+        // УМНЫЙ ЗАПУСК: Сначала приложение, если нет - браузер
+        function smartLaunch(appUri, webUrl) {
             const start = Date.now();
-            window.location.href = intent;
             
+            if (appUri.includes('://')) {
+                window.location.href = appUri;
+            } else {
+                window.location.href = `intent://scan/#Intent;scheme=android-app;package=${appUri};end`;
+            }
+
             setTimeout(() => {
-                if (Date.now() - start < 1000) {
-                    // Если приложение не установлено, открываем веб-версию
-                    if(pkg === 'com.soundcloud.android') window.location.href = "https://soundcloud.com";
-                    else speak("Приложение не найдено.");
+                if (Date.now() - start < 1500) {
+                    window.location.href = webUrl;
                 }
-            }, 500);
+            }, 800);
         }
 
         function startVoice() { 
@@ -98,9 +98,9 @@
             r.lang = 'ru-RU'; r.start(); 
             r.onresult = (e) => {
                 const cmd = e.results[0][0].transcript.toLowerCase();
-                if(cmd.includes("музык")) launch('com.soundcloud.android');
-                else if(cmd.includes("фильм")) launch('com.miui.videoplayer');
-                else speak("Запрос принят.");
+                if(cmd.includes("маркет")) smartLaunch('market://', 'https://play.google.com');
+                else if(cmd.includes("поиск")) smartLaunch('googlesearch://', 'https://google.com');
+                else speak("Принято.");
             };
         }
 
