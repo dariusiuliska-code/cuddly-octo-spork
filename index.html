@@ -3,62 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX GENESIS // ABSOLUTE</title>
+    <title>VOX GENESIS // ZERO</title>
     <style>
-        :root { --n: #00f2ff; --bg: #000; --sc: #ff5500; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { width: 100%; height: 100%; background: #000; color: #fff; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
+        :root { --n: #00f2ff; --bg: #000; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body, html { width: 100%; height: 100%; background: #000; color: var(--n); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         
-        #scan-line { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: var(--n); box-shadow: 0 0 10px var(--n); animation: scan 4s linear infinite; z-index: 5; opacity: 0.3; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
-        #container { height: 100vh; display: flex; flex-direction: column; padding: 20px; z-index: 10; position: relative; justify-content: space-around; }
+        #container { height: 100vh; display: flex; flex-direction: column; padding: 20px; justify-content: space-around; text-align: center; }
 
         /* Ядро */
-        .vox-main { width: 100px; height: 100px; margin: 0 auto; border: 2px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,242,255,0.2); transition: 0.3s; }
-        .vox-main:active { transform: scale(1.1); box-shadow: 0 0 40px var(--n); }
-        .vox-dot { width: 40px; height: 40px; background: var(--n); border-radius: 50%; animation: pulse 1.5s infinite; }
+        .vox-core { width: 80px; height: 80px; margin: 0 auto; border: 2px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px var(--n); }
+        .vox-pulse { width: 30px; height: 30px; background: var(--n); border-radius: 50%; animation: p 1s infinite; }
+        @keyframes p { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.5; } }
 
-        /* Сетка управления */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .unit { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .icon-box { 
-            width: 60px; height: 60px; border: 1px solid var(--n); display: flex; align-items: center; justify-content: center; 
-            font-size: 24px; background: rgba(0,242,255,0.05); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-        }
-        .unit.sc .icon-box { border-color: var(--sc); color: var(--sc); }
-        .label { font-size: 8px; margin-top: 5px; color: var(--n); letter-spacing: 1px; text-transform: uppercase; }
+        /* Иконки */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .item { cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .box { width: 60px; height: 60px; border: 1px solid var(--n); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; background: rgba(0,242,255,0.05); }
+        .label { font-size: 9px; margin-top: 5px; letter-spacing: 1px; }
+
+        /* Поле поиска прямо в Vox */
+        #search-box { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--n); padding: 10px; color: var(--n); font-family: 'Courier New'; font-size: 14px; margin-top: 10px; border-radius: 5px; }
 
         #lock { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        input { background: none; border: none; border-bottom: 2px solid var(--n); color: var(--n); font-size: 30px; text-align: center; width: 120px; outline: none; margin-bottom: 20px; }
-        
-        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.5; } }
+        input[type="password"] { background: none; border: none; border-bottom: 2px solid var(--n); color: var(--n); font-size: 30px; text-align: center; width: 120px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <div id="scan-line"></div>
-    
     <div id="lock">
-        <div style="font-size: 10px; color: var(--n); margin-bottom: 15px;">VOX_GENESIS_CORE</div>
+        <div style="font-size: 12px; margin-bottom: 20px;">ACCESS_CODE_REQUIRED</div>
         <input type="password" id="pin" maxlength="3">
-        <button onclick="boot()" style="background:none; border:1px solid var(--n); color:var(--n); padding:10px 40px; cursor:pointer;">AUTH</button>
+        <button onclick="boot()" style="background:none; border:1px solid var(--n); color:var(--n); padding:10px 40px; cursor:pointer;">DECODE</button>
     </div>
 
     <div id="container" style="display:none;">
-        <div class="vox-main" onclick="startVox()">
-            <div class="vox-dot"></div>
+        <div>
+            <div class="vox-core" onclick="startVox()">
+                <div class="vox-pulse" id="pulse"></div>
+            </div>
+            <div id="status" style="font-size: 10px; margin-top: 10px;">VOX: READY</div>
         </div>
+
+        <input type="text" id="search-box" placeholder="TYPE OR SPEAK SEARCH..." onkeydown="if(event.key==='Enter') webSearch(this.value)">
 
         <div class="grid">
-            <div class="unit" onclick="exe('com.android.vending')"><div class="icon-box">💎</div><div class="label">PLAY</div></div>
-            <div class="unit" onclick="exe('com.google.android.googlequicksearchbox')"><div class="icon-box">🔍</div><div class="label">SEARCH</div></div>
-            <div class="unit" onclick="exe('com.xiaomi.mipicks')"><div class="icon-box">🎮</div><div class="label">ARCADE</div></div>
-            <div class="unit" onclick="exe('com.google.android.apps.meetings')"><div class="icon-box">👥</div><div class="label">MEET</div></div>
-            <div class="unit" onclick="exe('com.miui.videoplayer')"><div class="icon-box">🎥</div><div class="label">FILMS</div></div>
-            <div class="unit sc" onclick="exe('com.soundcloud.android')"><div class="icon-box">☁️</div><div class="label">SOUND</div></div>
+            <div class="item" onclick="openApp('https://play.google.com/store')"><div class="box">💎</div><div class="label">MARKET</div></div>
+            <div class="item" onclick="openApp('https://www.google.com')"><div class="box">🌐</div><div class="label">GOOGLE</div></div>
+            <div class="item" onclick="openApp('https://www.google.com/search?q=arcade+games')"><div class="box">🎮</div><div class="label">GAMES</div></div>
+            <div class="item" onclick="openApp('https://meet.google.com')"><div class="box">👥</div><div class="label">MEET</div></div>
+            <div class="item" onclick="openApp('https://www.youtube.com')"><div class="box">🎬</div><div class="label">YOUTUBE</div></div>
+            <div class="item" onclick="openApp('https://soundcloud.com')"><div class="box" style="color:#ff5500; border-color:#ff5500;">☁️</div><div class="label" style="color:#ff5500;">SOUND</div></div>
         </div>
-
-        <div style="text-align: center; font-size: 8px; opacity: 0.4;">STATUS: VOX_OS_ACTIVE_BY_777</div>
     </div>
 
     <script>
@@ -66,31 +61,31 @@
             if(document.getElementById('pin').value === '777') {
                 document.getElementById('lock').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
-                speak("Админ, система полностью перестроена. Все модули синхронизированы.");
+                speak("Ядро обнулено. Прямой доступ открыт.");
             }
         }
 
-        function exe(pkg) {
-            // Прямой вызов системного интента
-            window.location.href = `intent://scan/#Intent;scheme=android-app;package=${pkg};end`;
-            // Резервный запуск через 600мс
-            setTimeout(() => {
-                if (pkg === 'com.soundcloud.android') window.location.href = "https://soundcloud.com";
-                if (pkg === 'com.google.android.googlequicksearchbox') window.location.href = "https://google.com";
-            }, 600);
+        function openApp(url) {
+            window.open(url, '_blank');
+        }
+
+        function webSearch(q) {
+            if(q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
         }
 
         function startVox() {
             const r = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             r.lang = 'ru-RU';
-            r.onstart = () => { document.querySelector('.vox-dot').style.background = '#ff0055'; };
+            r.onstart = () => { 
+                document.getElementById('pulse').style.background = '#ff0055';
+                document.getElementById('status').innerText = 'VOX: LISTENING...';
+            };
             r.onresult = (e) => {
-                const cmd = e.results[0][0].transcript.toLowerCase();
-                document.querySelector('.vox-dot').style.background = 'var(--n)';
-                if(cmd.includes("музык") || cmd.includes("саунд")) exe('com.soundcloud.android');
-                else if(cmd.includes("маркет")) exe('com.android.vending');
-                else if(cmd.includes("поиск")) exe('com.google.android.googlequicksearchbox');
-                else speak("Принято.");
+                const cmd = e.results[0][0].transcript;
+                document.getElementById('search-box').value = cmd;
+                webSearch(cmd);
+                document.getElementById('pulse').style.background = 'var(--n)';
+                document.getElementById('status').innerText = 'VOX: READY';
             };
             r.start();
         }
