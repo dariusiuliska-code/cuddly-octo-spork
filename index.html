@@ -3,205 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX GENESIS | v117</title>
+    <title>VOX GENESIS | OMNI v210</title>
     <style>
-        :root { --neon: #00f2ff; --accent: #7000ff; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(0, 242, 255, 0.3); }
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        :root { 
+            --neon: #00f2ff; --accent: #7000ff; --bg: #050505; 
+            --glass: rgba(255, 255, 255, 0.05); --border: rgba(0, 242, 255, 0.3); 
+        }
+        * { box-sizing: border-box; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        #matrix-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.15; pointer-events: none; }
-        
-        #status-bar { position: fixed; top: 0; width: 100%; padding: 15px 25px; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); align-items: center;}
-        #ai-btn { background: linear-gradient(45deg, var(--neon), var(--accent)); border: none; color: #fff; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.3s; }
-        #ai-btn.active { box-shadow: 0 0 20px #fff; transform: scale(1.1); }
 
-        #desktop { position: relative; z-index: 10; display: none; padding: 80px 20px; height: 100%; overflow-y: auto; }
-        .main-hub { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(15px); }
+        /* Фоновые движки */
+        #canvas-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .aura-layer { position: fixed; inset: 0; z-index: 0; transition: 1s; opacity: 0.4; pointer-events: none; }
+
+        /* Интерфейс */
+        #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 20px; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); align-items: center;}
         
-        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.7); border: 1px solid var(--border); color: var(--neon); border-radius: 12px; margin-bottom: 10px; text-align: center; }
-        .btn { width: 100%; padding: 14px; background: var(--glass); color: var(--neon); border: 1px solid var(--neon); font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.3s; margin-bottom: 5px; text-transform: uppercase; }
+        #desktop { position: relative; z-index: 10; display: none; padding: 80px 20px; height: 100%; overflow-y: auto; }
+        
+        /* Центральный Хаб */
+        .main-hub { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 25px; backdrop-filter: blur(15px); text-align: center; }
+        #kernel-core { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--neon); margin: 0 auto 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px var(--neon); transition: 0.5s; position: relative; }
+        #kernel-core img { width: 80px; border-radius: 50%; }
+        #voice-wave { position: absolute; inset: -10px; border: 2px solid var(--neon); border-radius: 50%; opacity: 0; }
+
+        /* Панель предложений ИИ */
+        #ai-suggestions { display: none; background: rgba(0, 242, 255, 0.1); border: 1px dashed var(--neon); padding: 15px; border-radius: 15px; margin-bottom: 20px; animation: slideDown 0.3s ease; }
+        .suggest-btn { background: var(--glass); border: 1px solid var(--neon); color: var(--neon); padding: 8px 12px; border-radius: 8px; margin: 5px; cursor: pointer; font-size: 11px; }
+
+        /* Сетка приложений */
+        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 15px; }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
+        .icon span { font-size: 32px; margin-bottom: 5px; filter: drop-shadow(0 0 10px var(--neon)); }
+        .icon label { font-size: 10px; font-weight: bold; opacity: 0.9; }
+
+        /* Система блокировки */
+        #lock { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        
+        input, .btn { width: 100%; padding: 14px; border-radius: 12px; margin-bottom: 10px; font-weight: bold; }
+        input { background: rgba(0,0,0,0.7); border: 1px solid var(--border); color: var(--neon); text-align: center; }
+        .btn { background: var(--glass); color: var(--neon); border: 1px solid var(--neon); cursor: pointer; transition: 0.3s; }
         .btn:hover { background: var(--neon); color: #000; }
 
-        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 15px; }
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
-        .icon:active { transform: scale(0.9); }
-        .icon span { font-size: 35px; margin-bottom: 5px; filter: drop-shadow(0 0 8px var(--neon)); }
-        .icon label { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: bold; text-align: center; }
-
-        .window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5, 5, 10, 0.98); border: 1px solid var(--neon); display: none; flex-direction: column; z-index: 2000; width: 85%; max-width: 380px; border-radius: 15px; box-shadow: 0 0 40px rgba(0, 242, 255, 0.4); }
-        .win-header { background: linear-gradient(90deg, var(--neon), var(--accent)); color: #000; padding: 12px; display: flex; justify-content: space-between; font-weight: bold; }
-        .win-content { padding: 20px; }
-
-        #lock { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
     </style>
 </head>
 <body>
 
-<canvas id="matrix-bg"></canvas>
+<canvas id="canvas-layer"></canvas>
+<div class="aura-layer" id="aura-bg"></div>
 
 <div id="status-bar">
-    <div style="color:var(--neon); font-weight:bold; letter-spacing: 1px;">VOX GENESIS</div>
-    <button id="ai-btn" onclick="globalVox()">🎤 СЛУШАЮ</button>
+    <div style="color:var(--neon); font-weight:bold; letter-spacing: 1px;">VOX OMNI</div>
     <div id="clock">00:00</div>
 </div>
 
 <div id="lock">
-    <div style="text-align:center; width: 80%;">
-        <h1 style="color:var(--neon); letter-spacing:8px; margin-bottom: 20px;">GENESIS</h1>
-        <input type="password" id="pin" placeholder="KEY CODE">
-        <button class="btn" onclick="auth()">LOG IN</button>
+    <img src="logo.png" style="width: 120px; border-radius: 50%; border: 2px solid var(--neon); margin-bottom: 30px; box-shadow: 0 0 30px var(--neon);">
+    <div style="width: 80%; max-width: 300px;">
+        <input type="password" id="pin" placeholder="ACCESS KEY">
+        <button class="btn" onclick="auth()">UNSEAL SYSTEM</button>
     </div>
 </div>
 
 <div id="desktop">
     <div class="main-hub">
-        <input id="global-search" placeholder="Поиск или команда 'Добавь...' ">
-        <button class="btn" onclick="handleSearch()">SEARCH</button>
+        <div id="kernel-core" onclick="startVoice()">
+            <div id="voice-wave"></div>
+            <img src="logo.png" alt="Vox">
+        </div>
+        <div id="kernel-tag" style="font-size: 10px; color: var(--neon); margin-bottom: 15px; letter-spacing: 2px;">CORE: AURA</div>
+        
+        <div id="ai-suggestions">
+            <div style="font-size: 10px; margin-bottom: 10px; opacity: 0.6;">VOX ПРЕДЛАГАЕТ:</div>
+            <div id="suggest-list"></div>
+        </div>
+
+        <input id="global-search" placeholder="Голосовая команда или поиск...">
     </div>
+
     <div id="apps-grid">
-        <div class="icon" onclick="window.open('https://google.com')"><span>🔍</span><label>Google</label></div>
-        <div class="icon" onclick="showW('w-store-manual')"><span>🏪</span><label>Market</label></div>
-        <div class="icon" onclick="showW('w-play')"><span>🎵</span><label>Player</label></div>
-        <div class="icon" onclick="showW('w-met')"><span>📡</span><label>Meet AI</label></div>
-        <div class="icon" onclick="showW('w-org')"><span>💾</span><label>Notes</label></div>
-        <div id="custom-apps" style="display: contents;"></div>
-        <div id="adm-ico" class="icon" style="display:none" onclick="showW('w-adm')"><span>☣️</span><label style="color:red">ROOT</label></div>
-        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Exit</label></div>
+        <div class="icon" onclick="switchKernel()"><span>🌀</span><label>Next Kernel</label></div>
+        <div class="icon" onclick="scanWireless()"><span>📡</span><label>Wireless</label></div>
+        <div class="icon" onclick="window.open('https://google.com')"><span>🔍</span><label>Search</label></div>
+        <div class="icon" onclick="location.reload()"><span>🔒</span><label>Lock</label></div>
     </div>
 </div>
 
-<div id="w-choice" class="window"><div class="win-header"><span>МЕНЕДЖЕР ПРИЛОЖЕНИЙ</span><span onclick="hideW('w-choice')" style="cursor:pointer">×</span></div><div class="win-content">
-    <p id="choice-text" style="color:var(--neon); margin-bottom: 20px; font-weight: bold;"></p>
-    <button class="btn" onclick="installConfirmed('store')">Найти в Google Play</button>
-    <button class="btn" onclick="installConfirmed('local')">Добавить в Vox Genesis</button>
-</div></div>
-
-<div id="w-adm" class="window" style="border-color: red;"><div class="win-header" style="background: red;"><span>ROOT KERNEL</span><span onclick="hideW('w-adm')">×</span></div><div class="win-content">
-    <button class="btn" style="border-color:red; color:red;" onclick="wipeSystem()">PURGE ALL DATA</button>
-</div></div>
-
-<div id="w-play" class="window"><div class="win-header"><span>PLAYER</span><span onclick="hideW('w-play')">×</span></div><div class="win-content">
-    <input id="media-url" placeholder="URL">
-    <button class="btn" onclick="playMedia()">PLAY</button>
-    <iframe id="v-frame" style="width:100%; height:0; border:none;"></iframe>
-</div></div>
-
-<div id="w-store-manual" class="window"><div class="win-header"><span>МАРКЕТ</span><span onclick="hideW('w-store-manual')">×</span></div><div class="win-content">
-    <input id="manual-app-input" placeholder="Название приложения">
-    <button class="btn" onclick="let n = document.getElementById('manual-app-input').value; if(n) askToInstall(n); hideW('w-store-manual');">ОК</button>
-</div></div>
-
-<div id="w-met" class="window"><div class="win-header"><span>MEET AI</span><span onclick="hideW('w-met')">×</span></div><div class="win-content">
-    <button class="btn" onclick="window.open('https://meet.jit.si/vox-'+Math.random())">START CALL</button>
-</div></div>
-
-<div id="w-org" class="window"><div class="win-header"><span>NOTES</span><span onclick="hideW('w-org')">×</span></div><div class="win-content">
-    <textarea id="note-pad" style="width:100%; height:100px; background:#000; color:var(--neon); border:1px solid var(--border); width:100%;"></textarea>
-    <button class="btn" onclick="localStorage.setItem('vox_note', document.getElementById('note-pad').value); alert('SAVED')">SAVE</button>
-</div></div>
-
 <script>
-    let isRoot = false;
-    let currentPendingApp = "";
+    let currentK = 0;
+    const kernels = ['AURA', 'MATRIX', 'NEURAL'];
+    const synth = window.speechSynthesis;
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new Recognition(); rec.lang = 'ru-RU';
 
+    // 1. Авторизация
     function auth() {
-        let p = document.getElementById('pin').value;
-        if(p === '777') { isRoot = true; document.getElementById('adm-ico').style.display = 'flex'; enterSystem(); }
-        else if(p === '111') { isRoot = false; document.getElementById('adm-ico').style.display = 'none'; enterSystem(); }
-        else { alert('DENIED'); }
+        const p = document.getElementById('pin').value;
+        if(p === '777' || p === '111') {
+            document.getElementById('lock').style.display = 'none';
+            document.getElementById('desktop').style.display = 'block';
+            voxSpeak("Система активирована. Добро пожаловать.");
+            initGfx();
+        } else { voxSpeak("Доступ запрещен."); }
     }
 
-    function enterSystem() {
-        document.getElementById('lock').style.display = 'none';
-        document.getElementById('desktop').style.display = 'block';
-        renderApps();
+    // 2. Голосовое управление и диалог
+    function voxSpeak(t) {
+        const u = new SpeechSynthesisUtterance(t);
+        u.pitch = 0.9; u.rate = 1; synth.speak(u);
     }
 
-    function askToInstall(name) {
-        currentPendingApp = name;
-        document.getElementById('choice-text').innerText = `Куда добавить "${name}"?`;
-        showW('w-choice');
-    }
-
-    function installConfirmed(type) {
-        if(type === 'store') {
-            window.open(`https://play.google.com/store/search?q=${currentPendingApp}&c=apps`);
-        } else {
-            let apps = JSON.parse(localStorage.getItem('vox_gen_apps_v117') || '[]');
-            if(!apps.includes(currentPendingApp)) { 
-                apps.push(currentPendingApp); 
-                localStorage.setItem('vox_gen_apps_v117', JSON.stringify(apps)); 
-            }
-            renderApps();
-        }
-        hideW('w-choice');
-    }
-
-    function renderApps() {
-        const container = document.getElementById('custom-apps');
-        container.innerHTML = '';
-        let apps = JSON.parse(localStorage.getItem('vox_gen_apps_v117') || '[]');
-        apps.forEach(name => {
-            const div = document.createElement('div'); div.className = 'icon';
-            div.innerHTML = `<span>📱</span><label>${name}</label>`;
-            div.onclick = () => window.open(`https://play.google.com/store/search?q=${name}&c=apps`);
-            container.appendChild(div);
-        });
-    }
-
-    function showW(id) { document.getElementById(id).style.display = 'flex'; }
-    function hideW(id) { document.getElementById(id).style.display = 'none'; }
-
-    function handleSearch() {
-        let v = document.getElementById('global-search').value;
-        if(v) window.open('https://www.google.com/search?q=' + encodeURIComponent(v));
-    }
-
-    function globalVox() {
-        const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Rec) return alert("Голосовой ввод не поддерживается");
-        const r = new Rec(); r.lang = 'ru-RU';
-        const b = document.getElementById('ai-btn');
-        b.classList.add('active');
-        r.onresult = (e) => {
+    function startVoice() {
+        rec.start();
+        document.getElementById('voice-wave').style.animation = "pulse-ring 1.5s infinite";
+        rec.onresult = (e) => {
             const cmd = e.results[0][0].transcript.toLowerCase();
-            if(cmd.includes("добав") || cmd.includes("установ") || cmd.includes("приложение")) {
-                let name = cmd.replace(/добавь|установи|приложение|пожалуйста/g, "").trim();
-                if(name) askToInstall(name);
-                else showW('w-store-manual');
-            } else {
-                document.getElementById('global-search').value = cmd;
-                handleSearch();
-            }
+            document.getElementById('global-search').value = cmd;
+            handleIntent(cmd);
         };
-        r.onend = () => b.classList.remove('active');
-        r.start();
+        rec.onend = () => { document.getElementById('voice-wave').style.animation = "none"; };
     }
 
-    function playMedia() {
-        let url = document.getElementById('media-url').value;
-        let frame = document.getElementById('v-frame');
-        if(url.includes('youtube')) {
-            frame.src = `https://www.youtube.com/embed/${url.split('v=')[1]}`;
-            frame.style.height = "200px";
-        } else { window.open(url); }
+    function handleIntent(cmd) {
+        if(cmd.includes("включи") || cmd.includes("смени")) {
+            voxSpeak("Что именно вы хотите активировать?");
+            showSuggests([
+                {label: "Matrix Mode", act: () => switchKernel()},
+                {label: "Wireless Scan", act: () => scanWireless()}
+            ]);
+        } else if(cmd.includes("привет")) {
+            voxSpeak("Приветствую. Я Vox Genesis. Жду ваших указаний.");
+        } else {
+            voxSpeak("Выполняю поиск: " + cmd);
+            window.open('https://google.com/search?q=' + cmd);
+        }
     }
 
-    function wipeSystem() {
-        if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); }
-    }
-
-    const c = document.getElementById('matrix-bg');
-    const ctx = c.getContext('2d');
-    c.width = window.innerWidth; c.height = window.innerHeight;
-    const drops = Array(Math.floor(c.width/20)).fill(1);
-    function draw() {
-        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
-        ctx.fillStyle = "#00f2ff"; drops.forEach((y,i) => {
-            ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
-            if(y*20 > c.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
+    function showSuggests(opts) {
+        const list = document.getElementById('suggest-list');
+        list.innerHTML = '';
+        document.getElementById('ai-suggestions').style.display = 'block';
+        opts.forEach(o => {
+            const b = document.createElement('button');
+            b.className = 'suggest-btn'; b.innerText = o.label;
+            b.onclick = () => { o.act(); document.getElementById('ai-suggestions').style.display = 'none'; };
+            list.appendChild(b);
         });
     }
-    setInterval(draw, 50);
+
+    // 3. Ядра и Графика
+    function switchKernel() {
+        currentK = (currentK + 1) % 3;
+        const mode = kernels[currentK];
+        document.getElementById('kernel-tag').innerText = `CORE: ${mode}`;
+        const root = document.documentElement;
+        const colors = ['#00f2ff', '#00ff41', '#7000ff'];
+        root.style.setProperty('--neon', colors[currentK]);
+        voxSpeak("Ядро переключено на режим " + mode);
+    }
+
+    async function scanWireless() {
+        voxSpeak("Сканирую беспроводные частоты.");
+        try { await navigator.bluetooth.requestDevice({acceptAllDevices:true}); } 
+        catch(e) { voxSpeak("Устройства не найдены."); }
+    }
+
+    // Canvas Engine
+    const canvas = document.getElementById('canvas-layer');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const drops = Array(Math.floor(canvas.width/20)).fill(1);
+
+    function initGfx() {
+        function draw() {
+            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+            if(kernels[currentK] === 'MATRIX') {
+                ctx.fillStyle = "#00ff41"; ctx.font = "15px monospace";
+                drops.forEach((y,i) => {
+                    ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
+                    if(y*20 > canvas.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
+                });
+            }
+            if(kernels[currentK] === 'AURA') {
+                document.getElementById('aura-bg').style.background = `radial-gradient(circle, var(--neon)33 0%, transparent 70%)`;
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+    }
+
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString().slice(0,5); }, 1000);
 </script>
 </body>
