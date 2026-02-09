@@ -3,86 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX GENESIS // UNLIMITED</title>
+    <title>VOX GENESIS // SOUND-CLOUD</title>
     <style>
-        :root { --neon: #00f2ff; --bg: #000; }
-        body, html { width: 100%; height: 100%; background: #000; color: #fff; font-family: 'Consolas', monospace; margin: 0; overflow: hidden; }
-        #bg { position: fixed; inset: 0; background: radial-gradient(circle at center, #001a1c 0%, #000 100%); z-index: -1; }
-        #container { height: 100vh; display: flex; flex-direction: column; padding: 15px; justify-content: space-between; position: relative; }
+        :root { --neon: #00f2ff; --sc: #ff5500; --bg: #000; }
+        body, html { width: 100%; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
+        #bg { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a0f00 0%, #000 100%); z-index: -1; }
+        #container { height: 100vh; display: flex; flex-direction: column; padding: 20px; justify-content: space-between; position: relative; }
         
-        /* Ядро с визуализацией активности */
-        .core-zone { text-align: center; margin-top: 5px; }
-        .vox-core { width: 80px; height: 80px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .vox-ring { position: absolute; inset: -8px; border: 2px solid var(--neon); border-radius: 50%; animation: pulse 2s infinite; box-shadow: 0 0 15px var(--neon); }
-        .status-text { font-size: 8px; color: var(--neon); letter-spacing: 2px; margin-top: 10px; text-transform: uppercase; }
+        .vox-core { width: 90px; height: 90px; margin: 10px auto; position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .vox-ring { position: absolute; inset: -5px; border: 2px solid var(--neon); border-radius: 50%; animation: pulse 2s infinite; box-shadow: 0 0 15px var(--neon); }
+        .vox-icon { font-size: 35px; filter: drop-shadow(0 0 10px var(--neon)); }
 
-        /* Сетка Nexus */
-        .nexus-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-        .nexus-unit { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
+        .nexus-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .nexus-unit { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .nexus-shape { 
-            width: 60px; height: 60px; border: 1px solid var(--neon); margin-bottom: 5px;
-            display: flex; align-items: center; justify-content: center; font-size: 22px;
+            width: 65px; height: 65px; border: 1px solid var(--neon); margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 26px;
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            background: rgba(0, 242, 255, 0.03); 
+            background: rgba(0, 242, 255, 0.05); transition: 0.2s;
         }
-        .nexus-unit:active .nexus-shape { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        .label { font-size: 7px; color: var(--neon); text-align: center; }
-
-        /* Плеер & Браузер */
-        #media-hub { background: rgba(0, 242, 255, 0.05); border: 1px solid var(--neon); padding: 10px; border-radius: 5px; margin-top: 5px; }
-        .player-ctrl { display: flex; justify-content: space-around; font-size: 16px; margin-top: 5px; cursor: pointer; }
+        /* Оранжевый акцент для SoundCloud */
+        .sc-style { border-color: var(--sc); color: var(--sc); background: rgba(255, 85, 0, 0.1); }
+        
+        .nexus-unit:active .nexus-shape { background: var(--neon); color: #000; }
+        .label { font-size: 8px; color: var(--neon); text-align: center; font-weight: bold; }
 
         #lock { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        input { background: none; border: none; border-bottom: 2px solid var(--neon); color: var(--neon); font-size: 28px; text-align: center; width: 130px; outline: none; letter-spacing: 10px; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.1); opacity: 0.3; } 100% { transform: scale(1); opacity: 0.6; } }
+        input { background: none; border: none; border-bottom: 2px solid var(--neon); color: var(--neon); font-size: 30px; text-align: center; width: 140px; outline: none; letter-spacing: 10px; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.3); opacity: 0; } }
     </style>
 </head>
 <body>
     <div id="bg"></div>
     <div id="lock">
-        <div style="font-size: 9px; letter-spacing: 4px; margin-bottom: 15px;">VOX_UNLIMITED_ADMIN</div>
-        <input type="password" id="pass" maxlength="3">
-        <button onclick="boot()" style="margin-top:20px; background:none; border:1px solid var(--neon); color:var(--neon); padding:8px 20px; cursor:pointer;">START_OS</button>
+        <input type="password" id="pass" placeholder="PIN" maxlength="3">
+        <button onclick="boot()" style="margin-top:25px; background:none; border:1px solid var(--neon); color:var(--neon); padding:10px 30px; border-radius:5px;">ENTER_VOX</button>
     </div>
 
     <div id="container" style="display:none;">
-        <div class="core-zone">
-            <div class="vox-core" onclick="startVoice()">
-                <div class="vox-ring"></div>
-                <div class="vox-icon">💠</div>
-            </div>
-            <div class="status-text" id="vox-status">Vox: Ready to Hear</div>
+        <div class="vox-core" onclick="startVoice()">
+            <div class="vox-ring"></div>
+            <div class="vox-icon">💠</div>
         </div>
 
         <div class="nexus-grid">
             <div class="nexus-unit" onclick="launch('com.android.vending')">
-                <div class="nexus-shape">💎</div><div class="label">GOOGLE PLAY</div>
+                <div class="nexus-shape">💎</div><div class="label">PLAY STORE</div>
             </div>
             <div class="nexus-unit" onclick="launch('com.google.android.googlequicksearchbox')">
-                <div class="nexus-shape">🌐</div><div class="label">WEB SEARCH</div>
+                <div class="nexus-shape">🌐</div><div class="label">SEARCH</div>
             </div>
             <div class="nexus-unit" onclick="launch('com.google.android.play.games')">
                 <div class="nexus-shape">🎮</div><div class="label">ARCADE</div>
             </div>
             <div class="nexus-unit" onclick="launch('com.google.android.apps.meetings')">
-                <div class="nexus-shape">🎥</div><div class="label">MEET_CONF</div>
+                <div class="nexus-shape">👥</div><div class="label">MEET</div>
             </div>
-            <div class="nexus-unit" onclick="launch('com.google.android.videos')">
-                <div class="nexus-shape">🎬</div><div class="label">CINEMA</div>
+            <div class="nexus-unit" onclick="launch('com.miui.videoplayer')">
+                <div class="nexus-shape">🎬</div><div class="label">OFFLINE_FILMS</div>
             </div>
-            <div class="nexus-unit" onclick="launch('com.google.android.apps.youtube.music')">
-                <div class="nexus-shape">📻</div><div class="label">VOX PLAYER</div>
+            <div class="nexus-unit" onclick="launch('com.soundcloud.android')">
+                <div class="nexus-shape sc-style">☁️</div><div class="label" style="color:#ff5500">SOUNDCLOUD</div>
             </div>
         </div>
 
-        <div id="media-hub">
-            <div style="font-size: 8px; color: var(--neon); text-align: center;">OMNI_MEDIA_PROCESSOR</div>
-            <div class="player-ctrl">
-                <span onclick="speak('Поиск фильмов онлайн')">🌍</span>
-                <span onclick="speak('Запуск медиатеки')">📁</span>
-                <span onclick="speak('Генерация конференции')">⚙️</span>
-            </div>
-        </div>
+        <button onclick="location.reload()" style="background:none; border:1px solid #444; color:#444; padding:5px; font-size:9px; width:100px; margin: 0 auto;">REGENERATE_UI</button>
     </div>
 
     <script>
@@ -90,26 +75,35 @@
             if(document.getElementById('pass').value === '777') {
                 document.getElementById('lock').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
-                speak("Голосовое управление Вокс Генезис активно. Возможности безграничны.");
+                speak("Ядро обновлено. Саунд Клауд интегрирован.");
             }
         }
+        
         function launch(pkg) {
-            window.location.href = `intent://scan/#Intent;scheme=android-app;package=${pkg};end`;
+            const intent = `intent://scan/#Intent;scheme=android-app;package=${pkg};end`;
+            const start = Date.now();
+            window.location.href = intent;
+            
+            setTimeout(() => {
+                if (Date.now() - start < 1000) {
+                    // Если приложение не установлено, открываем веб-версию
+                    if(pkg === 'com.soundcloud.android') window.location.href = "https://soundcloud.com";
+                    else speak("Приложение не найдено.");
+                }
+            }, 500);
         }
+
         function startVoice() { 
             const r = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            r.lang = 'ru-RU'; 
-            r.onstart = () => { document.getElementById('vox-status').innerText = "Vox: Listening..."; };
+            r.lang = 'ru-RU'; r.start(); 
             r.onresult = (e) => {
                 const cmd = e.results[0][0].transcript.toLowerCase();
-                if(cmd.includes("фильм")) launch('com.google.android.videos');
-                else if(cmd.includes("музык")) launch('com.google.android.apps.youtube.music');
-                else if(cmd.includes("поиск")) launch('com.google.android.googlequicksearchbox');
-                else speak("Команда принята.");
-                document.getElementById('vox-status').innerText = "Vox: Ready to Hear";
+                if(cmd.includes("музык")) launch('com.soundcloud.android');
+                else if(cmd.includes("фильм")) launch('com.miui.videoplayer');
+                else speak("Запрос принят.");
             };
-            r.start(); 
         }
+
         function speak(t) {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(t);
