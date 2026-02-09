@@ -3,207 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX GENESIS | OMNI v215</title>
+    <title>VOX GENESIS // OMNI-OS</title>
     <style>
-        :root { 
-            --neon: #00f2ff; --bg: #050505; 
-            --glass: rgba(255, 255, 255, 0.05); --border: rgba(0, 242, 255, 0.3); 
-        }
-        body.night-mode { --neon: #00a8b3; --border: rgba(0, 168, 179, 0.2); }
-
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; }
-
-        #canvas-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
-
-        /* Статус-бар */
-        #status-bar { position: fixed; top: 0; width: 100%; padding: 12px 20px; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); align-items: center; }
+        :root { --neon: #00f2ff; --bg: #000; --glass: rgba(255,255,255,0.05); --border: rgba(0, 242, 255, 0.3); }
+        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
+        body, html { width: 100%; height: 100%; background: #000; color: #fff; font-family: 'Consolas', sans-serif; overflow: hidden; }
         
-        .lang-switch { display: flex; gap: 8px; font-size: 11px; border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; cursor: pointer; background: rgba(0,0,0,0.3); }
-        .lang-switch span { opacity: 0.3; transition: 0.3s; }
-        .lang-switch span.active { opacity: 1; color: var(--neon); text-shadow: 0 0 8px var(--neon); }
-
-        /* Локскрин */
-        #lock { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: 0.8s ease; }
-        .lock-content { text-align: center; width: 280px; }
-        input { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--neon); text-align: center; padding: 15px; border-radius: 15px; font-size: 22px; width: 100%; letter-spacing: 8px; margin-bottom: 15px; }
-        .btn { border: 1px solid var(--neon); color: var(--neon); padding: 15px; border-radius: 15px; cursor: pointer; background: transparent; font-weight: bold; width: 100%; text-transform: uppercase; transition: 0.3s; }
-        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
+        #canvas-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.4; }
+        #status-bar { position: fixed; top: 0; width: 100%; padding: 10px 20px; z-index: 1000; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
 
         /* Рабочий стол */
-        #desktop { position: relative; z-index: 10; display: none; padding: 100px 20px; height: 100%; overflow-y: auto; text-align: center; }
-        .main-hub { background: var(--glass); border: 1px solid var(--border); border-radius: 30px; padding: 30px 20px; backdrop-filter: blur(20px); margin-bottom: 30px; }
-        #kernel-core { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--neon); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px var(--neon); cursor: pointer; font-size: 40px; }
+        #desktop { position: relative; z-index: 10; display: none; padding: 70px 20px; height: 100%; overflow-y: auto; }
+        
+        /* Центральное ядро управления */
+        .core-wrapper { text-align: center; margin-bottom: 30px; }
+        #vox-core { 
+            width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--neon); 
+            margin: 0 auto; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px var(--neon); cursor: pointer; transition: 0.3s;
+            background: radial-gradient(circle, var(--neon) 0%, transparent 70%);
+        }
+        #vox-core.listening { animation: pulse 1s infinite; transform: scale(1.1); background: red; border-color: white; }
 
-        /* Сетка приложений */
-        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 15px; max-width: 500px; margin: 0 auto; }
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; padding: 12px; border-radius: 20px; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
-        .icon:active { transform: scale(0.9); background: var(--glass); }
-        .icon span { font-size: 32px; margin-bottom: 8px; filter: drop-shadow(0 0 8px var(--neon)); }
-        .icon label { font-size: 10px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        @keyframes pulse { 0% { box-shadow: 0 0 10px red; } 50% { box-shadow: 0 0 40px red; } 100% { box-shadow: 0 0 10px red; } }
+
+        /* Сетка приложений (динамическая) */
+        #apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 15px; }
+        .icon { 
+            display: flex; flex-direction: column; align-items: center; cursor: pointer; 
+            padding: 12px; border-radius: 15px; background: var(--glass); border: 1px solid var(--border);
+            animation: fadeIn 0.5s ease;
+        }
+        .icon span { font-size: 30px; margin-bottom: 5px; }
+        .icon label { font-size: 10px; text-transform: uppercase; font-weight: bold; }
+
+        /* Окно терминала ИИ */
+        #terminal { 
+            background: rgba(0,0,0,0.9); border: 1px solid var(--neon); padding: 10px; 
+            font-size: 12px; color: var(--neon); margin-bottom: 20px; display: none;
+            max-height: 150px; overflow-y: auto;
+        }
+
+        #lock { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .btn { border: 1px solid var(--neon); color: var(--neon); padding: 15px 40px; border-radius: 15px; cursor: pointer; background: transparent; margin-top: 20px;}
+        
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
-<body onload="checkTimeMode()">
+<body>
 
 <canvas id="canvas-layer"></canvas>
 
 <div id="status-bar">
-    <div style="color:var(--neon); font-size: 11px; font-weight:bold; letter-spacing: 2px;">VOX GENESIS // OMNI</div>
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <div class="lang-switch">
-            <span id="lang-ru" onclick="setLang('ru')" class="active">RU</span>
-            <span id="lang-en" onclick="setLang('en')">EN</span>
-            <span id="lang-ro" onclick="setLang('ro')">RO</span>
-        </div>
-        <div id="clock" style="font-family: monospace; font-size: 13px; color: var(--neon);">00:00</div>
-    </div>
+    <div id="os-label" style="color:var(--neon); font-size: 10px; font-weight:bold;">VOX GENESIS // HYBRID-OS</div>
+    <div id="clock">00:00</div>
 </div>
 
 <div id="lock">
-    <div class="lock-content">
-        <div style="font-size: 60px; margin-bottom: 30px; filter: drop-shadow(0 0 15px var(--neon));">⚛️</div>
-        <input type="password" id="pin" placeholder="••••" maxlength="3">
-        <button class="btn" id="btn-auth" onclick="auth()">Авторизация</button>
-    </div>
+    <div style="font-size: 50px; margin-bottom: 20px;">👤</div>
+    <input type="password" id="pin" style="background:none; border:1px solid var(--neon); color:white; text-align:center; padding:10px; border-radius:10px;" placeholder="PIN 777">
+    <button class="btn" onclick="auth()">BOOT SYSTEM</button>
 </div>
 
 <div id="desktop">
-    <div class="main-hub">
-        <div id="kernel-core" onclick="voxSpeak(langMap[currentLang].status)">💠</div>
-        <div id="kernel-tag" style="font-size: 10px; color: var(--neon); letter-spacing: 3px; font-weight: bold;">SYSTEM ONLINE</div>
+    <div id="terminal"></div>
+    <div class="core-wrapper">
+        <div id="vox-core" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()">💠</div>
+        <p style="font-size: 10px; margin-top: 10px; color: var(--neon);">HOLD TO COMMAND VOX</p>
     </div>
 
     <div id="apps-grid">
-        <div class="icon" onclick="switchKernel()"><span>🌀</span><label id="lbl-core">Ядро</label></div>
-        <div class="icon" onclick="openApp('https://play.google.com/store', 'Store')"><span>🏪</span><label>Store</label></div>
-        <div class="icon" onclick="openApp('https://music.youtube.com', 'Music')"><span>🎵</span><label>Music</label></div>
-        <div class="icon" onclick="openApp('https://web.telegram.org', 'Social')"><span>💬</span><label>Social</label></div>
-        <div class="icon" onclick="voxNotify('Scanning...')"><span>📡</span><label id="lbl-net">Связь</label></div>
-        <div class="icon" onclick="location.reload()"><span>🔒</span><label id="lbl-exit">Выход</label></div>
+        <div class="icon" onclick="switchOS()"><span>💻</span><label>Switch OS</label></div>
+        <div class="icon" onclick="window.open('https://play.google.com')"><span>🏪</span><label>Market</label></div>
+        <div class="icon" onclick="scanAll()"><span>📡</span><label>Wireless</label></div>
     </div>
 </div>
 
 <script>
-    let currentLang = 'ru';
-    let currentK = 0;
-    const kernels = ['AURA', 'MATRIX', 'NEURAL'];
-    const colors = ['#00f2ff', '#00ff41', '#7000ff'];
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'ru-RU';
+    recognition.continuous = false;
 
-    const langMap = {
-        ru: {
-            auth: "Авторизация", ready: "СИСТЕМА ГОТОВА", core: "Ядро", net: "Связь", exit: "Выход",
-            welcome: "Добро пожаловать", denied: "Отказ", status: "Ядро стабильно",
-            morn: "Доброе утро", day: "Добрый день", eve: "Добрый вечер", night: "Доброй ночи", voice: "ru-RU"
-        },
-        en: {
-            auth: "Authorize", ready: "SYSTEM READY", core: "Kernel", net: "Network", exit: "Exit",
-            welcome: "Welcome", denied: "Denied", status: "Kernel stable",
-            morn: "Good morning", day: "Good day", eve: "Good evening", night: "Good night", voice: "en-US"
-        },
-        ro: {
-            auth: "Autorizare", ready: "SISTEM GATA", core: "Nucleu", net: "Rețea", exit: "Ieșire",
-            welcome: "Bun venit", denied: "Refuzat", status: "Sistem stabil",
-            morn: "Bună dimineața", day: "Bună ziua", eve: "Bună seara", night: "Noapte bună", voice: "ro-RO"
+    let currentOS = "Genesis";
+
+    function auth() {
+        if(document.getElementById('pin').value === '777') {
+            document.getElementById('lock').style.display = 'none';
+            document.getElementById('desktop').style.display = 'block';
+            voxSpeak("Система Вокс Генезис активна. Слушаю голос.");
+            initGfx();
         }
+    }
+
+    // ГОЛОСОВОЕ УПРАВЛЕНИЕ
+    function startVoice() {
+        document.getElementById('vox-core').classList.add('listening');
+        recognition.start();
+        logTerminal("VOICE RECOGNITION ACTIVE...");
+    }
+
+    function stopVoice() {
+        document.getElementById('vox-core').classList.remove('listening');
+        recognition.stop();
+    }
+
+    recognition.onresult = (event) => {
+        const command = event.results[0][0].transcript.toLowerCase();
+        logTerminal("USER: " + command);
+        handleCommand(command);
     };
 
-    function setLang(lang) {
-        currentLang = lang;
-        document.querySelectorAll('.lang-switch span').forEach(s => s.classList.remove('active'));
-        document.getElementById(`lang-${lang}`).classList.add('active');
-        updateUI();
-        voxSpeak(lang === 'ro' ? "Sistem activat" : (lang === 'en' ? "System active" : "Система активна"));
+    function handleCommand(cmd) {
+        if(cmd.includes("открой") || cmd.includes("open")) {
+            if(cmd.includes("ютуб") || cmd.includes("youtube")) window.open("https://youtube.com");
+            if(cmd.includes("маркет") || cmd.includes("market")) window.open("https://play.google.com");
+        } 
+        else if(cmd.includes("добавь") || cmd.includes("add")) {
+            const appName = cmd.split("добавь ")[1] || "New App";
+            addApp(appName);
+            voxSpeak("Приложение " + appName + " добавлено в ядро.");
+        }
+        else if(cmd.includes("сканируй") || cmd.includes("scan")) {
+            scanAll();
+        }
+        else if(cmd.includes("переключи") || cmd.includes("switch")) {
+            switchOS();
+        }
     }
 
-    function updateUI() {
-        const t = langMap[currentLang];
-        document.getElementById('btn-auth').innerText = t.auth;
-        document.getElementById('kernel-tag').innerText = t.ready;
-        document.getElementById('lbl-core').innerText = t.core;
-        document.getElementById('lbl-net').innerText = t.net;
-        document.getElementById('lbl-exit').innerText = t.exit;
+    function addApp(name) {
+        const grid = document.getElementById('apps-grid');
+        const div = document.createElement('div');
+        div.className = 'icon';
+        div.innerHTML = `<span>📂</span><label>${name}</label>`;
+        div.onclick = () => voxNotify("Запуск " + name);
+        grid.appendChild(div);
     }
 
-    function getTimeGreeting() {
-        const h = new Date().getHours();
-        const l = langMap[currentLang];
-        if(h >= 5 && h < 12) return l.morn;
-        if(h >= 12 && h < 18) return l.day;
-        if(h >= 18 && h < 23) return l.eve;
-        return l.night;
+    function switchOS() {
+        const oss = ["Android", "iOS", "Windows", "Kali Linux", "Vox Genesis"];
+        currentOS = oss[(oss.indexOf(currentOS) + 1) % oss.length];
+        document.getElementById('os-label').innerText = "VOX // " + currentOS.toUpperCase();
+        document.documentElement.style.setProperty('--neon', currentOS === "Kali Linux" ? "#00ff00" : "#00f2ff");
+        voxSpeak("Переключение на протокол " + currentOS);
+        logTerminal("OS ARCHITECTURE SWITCHED К " + currentOS);
+    }
+
+    function scanAll() {
+        logTerminal("INTRUDING WIRELESS CHANNELS...");
+        voxNotify("ATTEMPTING WIRELESS SYNC...");
+        setTimeout(() => {
+            logTerminal("SIGNAL CAPTURED: BT-04, WIFI-MESH-7, 5G_TOWER_3");
+            voxSpeak("Доступ к беспроводным сетям получен.");
+        }, 2000);
     }
 
     function voxSpeak(text) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = langMap[currentLang].voice;
+        u.lang = 'ru-RU';
         window.speechSynthesis.speak(u);
     }
 
-    function auth() {
-        const p = document.getElementById('pin').value;
-        if(p === '777' || p === '111') {
-            document.getElementById('lock').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('lock').style.display = 'none';
-                document.getElementById('desktop').style.display = 'block';
-                initGfx();
-                voxSpeak(getTimeGreeting() + ". " + langMap[currentLang].welcome);
-            }, 500);
-        } else {
-            voxSpeak(langMap[currentLang].denied);
-            alert(langMap[currentLang].denied);
-        }
-    }
-
-    function openApp(url, name) {
-        voxSpeak(currentLang === 'ru' ? "Запуск " + name : "Starting " + name);
-        window.open(url, '_blank');
-    }
-
-    function switchKernel() {
-        currentK = (currentK + 1) % 3;
-        document.documentElement.style.setProperty('--neon', colors[currentK]);
-        document.getElementById('kernel-tag').innerText = `SYSTEM // ${kernels[currentK]}`;
-        voxSpeak(kernels[currentK]);
+    function logTerminal(msg) {
+        const term = document.getElementById('terminal');
+        term.style.display = 'block';
+        term.innerHTML += `<div>> ${msg}</div>`;
+        term.scrollTop = term.scrollHeight;
     }
 
     function voxNotify(msg) {
         const n = document.createElement('div');
-        n.style = `position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.9); border:1px solid var(--neon); color:white; padding:10px 25px; border-radius:30px; z-index:10000; font-size:12px;`;
-        n.innerText = msg.toUpperCase();
+        n.style = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:red; padding:10px; z-index:10000; font-size:10px;";
+        n.innerText = msg;
         document.body.appendChild(n);
         setTimeout(() => n.remove(), 2000);
-    }
-
-    function checkTimeMode() {
-        const h = new Date().getHours();
-        if(h >= 0 && h < 6) document.body.classList.add('night-mode');
-        else document.body.classList.remove('night-mode');
     }
 
     function initGfx() {
         const canvas = document.getElementById('canvas-layer');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const drops = Array(Math.floor(canvas.width / 20)).fill(1);
         function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--neon');
-            ctx.font = "15px monospace";
-            drops.forEach((y, i) => {
-                ctx.fillText(Math.floor(Math.random()*2), i * 20, y * 20);
-                if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
+            for(let i=0; i<20; i++) ctx.fillText(Math.random()>0.5?"1":"0", Math.random()*canvas.width, Math.random()*canvas.height);
         }
-        setInterval(draw, 45);
+        setInterval(draw, 50);
     }
 
     setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        checkTimeMode();
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
     }, 1000);
 </script>
 </body>
