@@ -3,56 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="manifest" href="data:application/manifest+json,{'name':'VoxGenesis','display':'standalone'}">
-    <title>VOX GENESIS // ULTIMATE</title>
+    <title>VOX GENESIS // HYBRID-X</title>
     <style>
         :root { --neon: #00ff41; --bg: #000; --warn: #ff003c; --dim: rgba(0,255,65,0.1); }
-        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; background: none; }
-        body, html { width: 100%; height: 100%; background: #000; color: var(--neon); font-family: 'Consolas', monospace; overflow: hidden; }
+        * { box-sizing: border-box; cursor: crosshair; font-family: 'Courier New', monospace; }
+        body, html { width: 100%; height: 100%; background: #000; color: var(--neon); overflow: hidden; margin: 0; }
+        
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2; z-index: 1; pointer-events: none; }
 
-        #terminal { position: fixed; top: 0; height: 35%; width: 100%; border-bottom: 2px solid var(--neon); background: rgba(0,10,0,0.95); overflow-y: auto; padding: 15px; font-size: 11px; z-index: 100; }
-        #cam-view { position: fixed; top: 0; width: 100%; height: 35%; object-fit: cover; opacity: 0.3; z-index: 50; display: none; }
-
-        #ui-layer { position: relative; top: 35%; height: 65%; padding: 20px; z-index: 150; display: none; }
-        .node { width: 85px; height: 85px; border: 3px solid var(--neon); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px var(--dim); }
-        .node.active { animation: pulse 0.5s infinite; background: var(--dim); }
+        #terminal { position: fixed; top: 0; height: 35%; width: 100%; border-bottom: 2px solid var(--neon); background: rgba(0,10,0,0.9); overflow-y: auto; padding: 15px; font-size: 10px; z-index: 100; box-shadow: 0 0 20px var(--dim); }
+        
+        #ui-layer { position: relative; top: 35%; height: 65%; padding: 20px; z-index: 150; display: none; flex-direction: column; }
+        
+        .core-node { width: 80px; height: 80px; border: 3px solid var(--neon); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 35px; cursor: pointer; transition: 0.3s; }
+        .core-node.active { animation: glitch 0.2s infinite; box-shadow: 0 0 30px var(--neon); background: var(--dim); }
 
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .unit { border: 1px solid var(--neon); padding: 10px 5px; text-align: center; font-size: 9px; cursor: pointer; text-transform: uppercase; }
-        .unit.locked { opacity: 0.2; border-color: #555; color: #555; }
+        .unit { border: 1px solid var(--neon); padding: 12px 5px; text-align: center; font-size: 9px; cursor: pointer; text-transform: uppercase; background: rgba(0,0,0,0.5); }
+        .unit.locked { opacity: 0.2; border-color: #444; color: #444; pointer-events: none; }
         .unit.admin-only { border-color: var(--warn); color: var(--warn); }
 
-        #gate { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .key-in { border: 2px solid var(--neon); color: var(--neon); padding: 15px; width: 220px; text-align: center; font-size: 20px; margin: 20px 0; }
+        #auth-gate { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px double var(--neon); }
+        input { border: 2px solid var(--neon); color: var(--neon); padding: 15px; width: 220px; text-align: center; font-size: 20px; background: #000; margin: 20px 0; }
         
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 80% { transform: translate(2px, -2px); } 100% { transform: translate(0); } }
     </style>
 </head>
-<body>
+<body onclick="unlock()">
 
-<video id="cam-view" autoplay playsinline></video>
-<div id="terminal">>> VOX_GENESIS_v6.0: STANDBY...</div>
+<canvas id="m"></canvas>
 
-<div id="gate">
-    <div style="letter-spacing: 5px;">[ SELECT_ACCESS ]</div>
+<div id="auth-gate">
+    <div style="font-size: 18px; letter-spacing: 5px;">[ VOX_ACCESS_LINK ]</div>
     <div style="display:flex; gap:10px; margin-top:20px;">
-        <button onclick="preAuth('GUEST')">GUEST</button>
-        <button onclick="preAuth('USER')">USER</button>
-        <button onclick="preAuth('ADMIN')">ADMIN</button>
+        <button onclick="pre('GUEST')" style="color:var(--neon); border:1px solid var(--neon); padding:10px;">GUEST</button>
+        <button onclick="pre('USER')" style="color:var(--neon); border:1px solid var(--neon); padding:10px;">USER</button>
+        <button onclick="pre('ADMIN')" style="color:var(--neon); border:1px solid var(--neon); padding:10px;">ADMIN</button>
     </div>
-    <input type="password" id="pin" class="key-in" style="display:none;" placeholder="CODE">
-    <button id="exec" style="display:none; color:var(--neon); border:1px solid var(--neon); padding:10px 40px;" onclick="authenticate()">EXECUTE</button>
+    <input type="password" id="key" style="display:none;" placeholder="PASS_CODE">
+    <button id="go" style="display:none; color:var(--neon); border:1px solid var(--neon); padding:10px 40px;" onclick="auth()">BOOT</button>
 </div>
 
 <div id="ui-layer">
-    <div class="node" id="main-node" onclick="startVoice()">💠</div>
-    <div id="app-grid" class="grid"></div>
+    <div class="core-node" id="vox-node" onclick="listen()">💠</div>
+    <div id="grid" class="grid"></div>
 </div>
 
 <script>
     let role = "GUEST";
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'ru-RU';
+    const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    rec.lang = 'ru-RU';
+
+    // --- Matrix Engine ---
+    const c = document.getElementById('m');
+    const x = c.getContext('2d');
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    const s = 10; const cols = c.width / s; const d = Array(Math.floor(cols)).fill(1);
+    function matrix() {
+        x.fillStyle = "rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
+        x.fillStyle = "#00ff41"; x.font = s + "px monospace";
+        d.forEach((y, i) => {
+            const t = String.fromCharCode(Math.random() * 128);
+            x.fillText(t, i * s, y * s);
+            if (y * s > c.height && Math.random() > 0.975) d[i] = 0;
+            d[i]++;
+        });
+    }
+    setInterval(matrix, 50);
 
     const apps = [
         { id: 'TG', name: 'Telegram', url: 'https://t.me', min: 'USER' },
@@ -60,98 +77,83 @@
         { id: 'TT', name: 'TikTok', url: 'https://tiktok.com', min: 'USER' },
         { id: 'YT', name: 'YouTube', url: 'https://youtube.com', min: 'GUEST' },
         { id: 'MK', name: 'Market', url: 'https://play.google.com', min: 'USER' },
-        { id: 'BT', name: 'Bluetooth', action: 'connectBT', min: 'USER' },
-        { id: 'FS', name: 'Files', action: 'readFile', min: 'ADMIN' },
-        { id: 'CM', name: 'Vision', action: 'toggleCam', min: 'GUEST' }
+        { id: 'BT', name: 'Bluetooth', action: 'bt', min: 'USER' },
+        { id: 'FS', name: 'Files', action: 'fs', min: 'ADMIN' },
+        { id: 'CM', name: 'Vision', action: 'cam', min: 'GUEST' }
     ];
 
-    let permissions = { 'TG': true, 'WA': true, 'TT': true, 'MK': true };
+    function log(m, strong = false) {
+        const out = document.getElementById('terminal');
+        out.innerHTML += `<div style="${strong ? 'color:#fff; font-weight:bold' : ''}">[${new Date().toLocaleTimeString()}] > ${m.toUpperCase()}</div>`;
+        out.scrollTop = out.scrollHeight;
+    }
 
-    function log(m) { const t = document.getElementById('terminal'); t.innerHTML += `<br>> ${m.toUpperCase()}`; t.scrollTop = t.scrollHeight; }
-
-    function preAuth(r) {
+    function pre(r) {
         role = r;
-        if(r === 'GUEST') authenticate();
-        else {
-            document.getElementById('pin').style.display = 'block';
-            document.getElementById('exec').style.display = 'block';
-        }
+        if(r === 'GUEST') auth();
+        else { document.getElementById('key').style.display='block'; document.getElementById('go').style.display='block'; }
     }
 
-    function authenticate() {
-        const pin = document.getElementById('pin').value;
-        if(role === 'ADMIN' && pin !== '777') return alert("WRONG_CODE");
-        if(role === 'USER' && pin !== '000') return alert("WRONG_CODE");
-        
-        document.getElementById('gate').style.display = 'none';
-        document.getElementById('ui-layer').style.display = 'block';
-        renderGrid();
-        speak(`Доступ уровня ${role} подтвержден.`);
-        log(`ACCESS_LEVEL: ${role}`);
+    function auth() {
+        const k = document.getElementById('key').value;
+        if(role === 'ADMIN' && k !== '777') return;
+        if(role === 'USER' && k !== '000') return;
+        document.getElementById('auth-gate').style.display = 'none';
+        document.getElementById('ui-layer').style.display = 'flex';
+        render();
+        speak(`Система активирована. Режим ${role}.`);
+        log(`Authorization granted. Role: ${role}`, true);
     }
 
-    function renderGrid() {
-        const grid = document.getElementById('app-grid');
-        grid.innerHTML = '';
+    function render() {
+        const g = document.getElementById('grid');
+        g.innerHTML = '';
         apps.forEach(app => {
-            const isAllowed = (role === 'ADMIN') || (role === 'USER' && permissions[app.id] && app.min !== 'ADMIN') || (role === 'GUEST' && app.min === 'GUEST');
-            
-            const btn = document.createElement('div');
-            btn.className = `unit ${!isAllowed ? 'locked' : ''}`;
-            btn.innerText = app.name;
-            if(isAllowed) {
-                btn.onclick = () => app.action ? window[app.action]() : window.open(app.url, '_blank');
-            }
-            grid.appendChild(btn);
+            const allowed = (role === 'ADMIN') || (role === 'USER' && app.min !== 'ADMIN') || (role === 'GUEST' && app.min === 'GUEST');
+            const b = document.createElement('div');
+            b.className = `unit ${!allowed ? 'locked' : ''}`;
+            b.innerText = app.name;
+            if(allowed) b.onclick = () => app.action ? window[app.action]() : window.open(app.url, '_blank');
+            g.appendChild(b);
         });
-
         if(role === 'ADMIN') {
             const sd = document.createElement('div');
-            sd.className = 'unit admin-only';
-            sd.style.gridColumn = "span 3";
-            sd.innerText = "SELF_DESTRUCT";
-            sd.onclick = selfDestruct;
-            grid.appendChild(sd);
+            sd.className = 'unit admin-only'; sd.style.gridColumn = "span 3";
+            sd.innerText = "CRITICAL_SELF_DESTRUCT";
+            sd.onclick = () => {
+                speak("Прощайте.");
+                document.body.style.background = "red";
+                setTimeout(() => document.body.innerHTML = "", 2000);
+            };
+            g.appendChild(sd);
         }
     }
 
-    function startVoice() {
-        recognition.start();
-        document.getElementById('main-node').classList.add('active');
+    function listen() {
+        rec.start();
+        document.getElementById('vox-node').classList.add('active');
+        log("Listening for voice input...");
     }
 
-    recognition.onresult = (e) => {
-        const cmd = e.results[0][0].transcript.toLowerCase();
-        log("CMD: " + cmd);
-        document.getElementById('main-node').classList.remove('active');
-        if(cmd.includes("самоуничтож") && role === "ADMIN") selfDestruct();
-        else speak("Команда принята к анализу.");
-    }
-
-    async function toggleCam() {
-        const v = document.getElementById('cam-view');
-        if(v.style.display === 'block') { v.style.display = 'none'; log("CAM: OFF"); }
-        else {
-            const s = await navigator.mediaDevices.getUserMedia({video:true});
-            v.srcObject = s; v.style.display = 'block'; log("CAM: LIVE");
-        }
-    }
-
-    function selfDestruct() {
-        speak("Прощайте, Админ.");
-        document.body.style.background = "red";
-        setTimeout(() => document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50%'>VOID</h1>", 2000);
+    rec.onresult = (e) => {
+        const c = e.results[0][0].transcript.toLowerCase();
+        log(c, true);
+        document.getElementById('vox-node').classList.remove('active');
+        if(c.includes("уничтож") && role === "ADMIN") { /* Destruct logic */ }
+        else speak("Запрос обработан.");
     }
 
     function speak(t) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(t);
-        u.lang = 'ru-RU'; u.pitch = role === 'ADMIN' ? 0.5 : 1;
+        u.lang = 'ru-RU'; u.pitch = role === 'ADMIN' ? 0.6 : 1;
         window.speechSynthesis.speak(u);
     }
 
-    function connectBT() { log("BT_SCAN: ACTIVE"); }
-    function readFile() { log("FS_READ: PENDING"); }
+    function cam() { log("Vision stream: Initialized"); }
+    function fs() { log("Accessing secure files..."); }
+    function bt() { log("Scanning bluetooth devices..."); }
+    function unlock() {}
 </script>
 </body>
 </html>
