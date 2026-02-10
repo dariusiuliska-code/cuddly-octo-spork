@@ -3,58 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX GENESIS ZERO-G</title>
+    <title>VOX GENESIS OS</title>
     <style>
-        :root { --n: #00f2ff; --bg: #000; }
+        :root { --n: #00f2ff; --bg: #000; --accent: #ff0055; --sub: #555; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body, html { width: 100%; height: 100%; background: #000; color: var(--n); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
-        #container { height: 100vh; display: flex; flex-direction: column; padding: 20px; justify-content: space-around; align-items: center; }
+        
+        #container { height: 100vh; display: flex; flex-direction: column; padding: 15px; justify-content: space-between; align-items: center; }
 
-        /* Голосовое Ядро */
-        .core { width: 90px; height: 90px; border: 2px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,242,255,0.3); }
-        .dot { width: 35px; height: 35px; background: var(--n); border-radius: 50%; animation: p 1.5s infinite; }
-        @keyframes p { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
+        /* Ядро системы */
+        .core-zone { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .core { width: 80px; height: 80px; border: 1px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,242,255,0.1); transition: 0.3s; }
+        .dot { width: 25px; height: 25px; background: var(--n); border-radius: 50%; animation: pulse 2s infinite; }
 
-        /* Поисковая консоль */
-        .search-bar { width: 100%; max-width: 300px; position: relative; }
-        #s-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--n); padding: 12px; color: var(--n); font-family: 'Courier New'; font-size: 14px; text-align: center; border-radius: 5px; }
+        /* Поиск */
+        .search-bar { width: 100%; margin: 10px 0 20px 0; }
+        #s-input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(0,242,255,0.2); padding: 14px; color: var(--n); font-family: 'Courier New'; font-size: 16px; text-align: center; border-radius: 12px; }
 
-        /* Сетка Порталов */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; }
-        .btn { cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--n); }
-        .icon { width: 60px; height: 60px; border: 1px solid var(--n); display: flex; align-items: center; justify-content: center; font-size: 28px; background: rgba(0,242,255,0.05); border-radius: 15px; }
-        .txt { font-size: 8px; margin-top: 8px; letter-spacing: 1px; font-weight: bold; }
+        /* Сетка приложений 4x4 */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 400px; padding-bottom: 10px; }
+        .btn { cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--n); transition: 0.2s; }
+        .icon { width: 52px; height: 52px; border: 1px solid rgba(0,242,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(255,255,255,0.02); border-radius: 14px; }
+        .txt { font-size: 8px; margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; font-weight: bold; }
 
+        @keyframes pulse { 0% { transform: scale(0.85); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 25px var(--n); } 100% { transform: scale(0.85); opacity: 0.5; } }
+        
         #lock { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        input[type="password"] { background: none; border: none; border-bottom: 2px solid var(--n); color: var(--n); font-size: 40px; text-align: center; width: 150px; margin-bottom: 20px; }
+        input[type="password"] { background: none; border: none; border-bottom: 2px solid var(--n); color: var(--n); font-size: 40px; text-align: center; width: 120px; margin-bottom: 30px; letter-spacing: 10px; }
     </style>
 </head>
 <body>
+
     <div id="lock">
-        <div style="font-size: 10px; margin-bottom: 20px; letter-spacing: 5px;">VOX_GATE_777</div>
-        <input type="password" id="pin" maxlength="3">
-        <button onclick="boot()" style="background:none; border:1px solid var(--n); color:var(--n); padding:10px 40px; cursor:pointer; letter-spacing:3px;">OPEN</button>
+        <div style="font-size: 10px; margin-bottom: 20px; letter-spacing: 5px; color: var(--n);">VOX SYSTEM HOLD</div>
+        <input type="password" id="pin" maxlength="3" autofocus autocomplete="off" inputmode="numeric">
+        <button onclick="boot()" style="background:none; border:1px solid var(--n); color:var(--n); padding:10px 40px; cursor:pointer; font-family: 'Courier New';">UNLOCK</button>
     </div>
 
     <div id="container" style="display:none;">
-        <div class="core" onclick="startVox()">
-            <div class="dot" id="v-dot"></div>
+        <div class="core-zone">
+            <div class="core" onclick="startVox()"><div class="dot" id="v-dot"></div></div>
+            <div style="font-size: 8px; margin-top: 10px; letter-spacing: 2px; opacity: 0.5;">VOX GENESIS CORE</div>
         </div>
 
         <div class="search-bar">
-            <input type="text" id="s-input" placeholder="[ ВВЕДИТЕ ЗАПРОС ]" onkeydown="if(event.key==='Enter') goSearch(this.value)">
+            <input type="text" id="s-input" placeholder="[ SCAN REQUEST ]" onkeydown="if(event.key==='Enter') goSearch(this.value)">
         </div>
 
         <div class="grid">
-            <div class="btn" onclick="nav('https://play.google.com')"><div class="icon">💎</div><div class="txt">MARKET</div></div>
-            <div class="btn" onclick="nav('https://www.google.com')"><div class="icon">🌐</div><div class="txt">GOOGLE</div></div>
-            <div class="btn" onclick="nav('https://www.google.com/search?q=arcade+games')"><div class="icon">🎮</div><div class="txt">ARCADE</div></div>
-            <div class="btn" onclick="nav('https://meet.google.com')"><div class="icon">👥</div><div class="txt">MEET</div></div>
-            <div class="btn" onclick="nav('https://www.youtube.com')"><div class="icon">🎬</div><div class="txt">YOUTUBE</div></div>
-            <div class="btn" onclick="nav('https://soundcloud.com')"><div class="icon" style="color:#ff5500; border-color:#ff5500;">☁️</div><div class="txt" style="color:#ff5500;">SOUND</div></div>
+            <div class="btn" onclick="nav('https://t.me')"><div class="icon">✈️</div><div class="txt">TG</div></div>
+            <div class="btn" onclick="nav('https://www.viber.com/ru/')"><div class="icon" style="color:#7360f2; border-color:#7360f2;">🟣</div><div class="txt">VIBE</div></div>
+            <div class="btn" onclick="nav('https://web.whatsapp.com')"><div class="icon">💬</div><div class="txt">WA</div></div>
+            <div class="btn" onclick="nav('https://mail.google.com')"><div class="icon">✉️</div><div class="txt">MAIL</div></div>
+            
+            <div class="btn" onclick="nav('https://www.tiktok.com')"><div class="icon" style="border-color:#ff0055;">🎵</div><div class="txt">TIK</div></div>
+            <div class="btn" onclick="nav('https://www.instagram.com')"><div class="icon">📸</div><div class="txt">INST</div></div>
+            <div class="btn" onclick="nav('https://www.youtube.com')"><div class="icon">🎬</div><div class="txt">YT</div></div>
+            <div class="btn" onclick="nav('https://www.netflix.com')"><div class="icon">🍿</div><div class="txt">NET</div></div>
+
+            <div class="btn" onclick="nav('https://www.microsoft365.com')"><div class="icon" style="color:#eb3c00; border-color:#eb3c00;">📑</div><div class="txt">OFFICE</div></div>
+            <div class="btn" onclick="nav('https://chatgpt.com')"><div class="icon">🤖</div><div class="txt">AI</div></div>
+            <div class="btn" onclick="nav('https://github.com')"><div class="icon">💻</div><div class="txt">GIT</div></div>
+            <div class="btn" onclick="nav('https://www.google.com/maps')"><div class="icon">📍</div><div class="txt">MAP</div></div>
+
+            <div class="btn" onclick="nav('https://www.google.com')"><div class="icon">🌐</div><div class="txt">WEB</div></div>
+            <div class="btn" onclick="nav('https://music.youtube.com')"><div class="icon">🎧</div><div class="txt">BEATS</div></div>
+            <div class="btn" onclick="nav('https://poki.com')"><div class="icon">🎮</div><div class="txt">PLAY</div></div>
+            <div class="btn" onclick="nav('https://soundcloud.com')"><div class="icon">☁️</div><div class="txt">SOUND</div></div>
         </div>
 
-        <div style="font-size: 7px; opacity: 0.4;">VOX GENESIS // ZERO-G // NO_ERRORS_MODE</div>
+        <div style="font-size: 7px; opacity: 0.3; padding: 5px;">VOX GENESIS // HYPER_LINK_OS // 2026</div>
     </div>
 
     <script>
@@ -62,34 +80,32 @@
             if(document.getElementById('pin').value === '777') {
                 document.getElementById('lock').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
-                talk("Система обнулена. Прямой доступ к порталам открыт.");
+                talk("Система Vox Genesis активирована. Все порталы открыты.");
             }
         }
 
-        function nav(url) {
-            window.location.href = url;
-        }
-
-        function goSearch(q) {
-            if(q) window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
-        }
+        function nav(url) { window.location.href = url; }
+        function goSearch(q) { if(q) window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`; }
 
         function startVox() {
-            const r = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!Speech) return alert("Vox не слышит: обновите браузер");
+            const r = new Speech();
             r.lang = 'ru-RU';
             r.onstart = () => { document.getElementById('v-dot').style.background = '#ff0055'; };
             r.onresult = (e) => {
                 const cmd = e.results[0][0].transcript;
                 document.getElementById('s-input').value = cmd;
-                goSearch(cmd);
+                setTimeout(() => goSearch(cmd), 800);
             };
+            r.onend = () => { document.getElementById('v-dot').style.background = '#00f2ff'; };
             r.start();
         }
 
         function talk(t) {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(t);
-            u.lang = 'ru-RU'; u.pitch = 0.5;
+            u.lang = 'ru-RU'; u.pitch = 0.8; u.rate = 1;
             window.speechSynthesis.speak(u);
         }
     </script>
