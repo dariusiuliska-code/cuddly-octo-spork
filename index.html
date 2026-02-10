@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>VOX GENESIS OS</title>
     <style>
         :root { --n: #00f2ff; --bg: #000; --accent: #ff0055; --sub: #555; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body, html { width: 100%; height: 100%; background: #000; color: var(--n); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         
-        #container { height: 100vh; display: flex; flex-direction: column; padding: 15px; justify-content: space-between; align-items: center; }
+        #container { height: 100vh; display: flex; flex-direction: column; padding: 15px; }
 
         /* Ядро системы */
-        .core-zone { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .core { width: 80px; height: 80px; border: 1px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,242,255,0.1); transition: 0.3s; }
-        .dot { width: 25px; height: 25px; background: var(--n); border-radius: 50%; animation: pulse 2s infinite; }
+        .core-zone { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; }
+        .core { width: 70px; height: 70px; border: 1px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,242,255,0.1); transition: 0.3s; }
+        .dot { width: 20px; height: 20px; background: var(--n); border-radius: 50%; animation: pulse 2s infinite; }
 
         /* Поиск */
-        .search-bar { width: 100%; margin: 10px 0 20px 0; }
+        .search-bar { width: 100%; margin-bottom: 20px; flex-shrink: 0; }
         #s-input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(0,242,255,0.2); padding: 14px; color: var(--n); font-family: 'Courier New'; font-size: 16px; text-align: center; border-radius: 12px; }
 
-        /* Сетка приложений 4x4 */
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 400px; padding-bottom: 10px; }
+        /* Прокручиваемая сетка */
+        .grid-container { flex-grow: 1; overflow-y: auto; padding-bottom: 30px; scrollbar-width: none; }
+        .grid-container::-webkit-scrollbar { display: none; }
+        
+        .section-title { font-size: 10px; letter-spacing: 3px; margin: 20px 0 10px 5px; opacity: 0.5; text-transform: uppercase; border-left: 2px solid var(--accent); padding-left: 10px; }
+
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; }
         .btn { cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--n); transition: 0.2s; }
-        .icon { width: 52px; height: 52px; border: 1px solid rgba(0,242,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(255,255,255,0.02); border-radius: 14px; }
-        .txt { font-size: 8px; margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; font-weight: bold; }
+        .icon { width: 55px; height: 55px; border: 1px solid rgba(0,242,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(255,255,255,0.02); border-radius: 16px; }
+        .txt { font-size: 7px; margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; font-weight: bold; text-align: center; }
 
         @keyframes pulse { 0% { transform: scale(0.85); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 25px var(--n); } 100% { transform: scale(0.85); opacity: 0.5; } }
         
@@ -50,37 +56,72 @@
             <input type="text" id="s-input" placeholder="[ SCAN REQUEST ]" onkeydown="if(event.key==='Enter') goSearch(this.value)">
         </div>
 
-        <div class="grid">
-            <div class="btn" onclick="nav('https://t.me')"><div class="icon">✈️</div><div class="txt">TG</div></div>
-            <div class="btn" onclick="nav('https://www.viber.com/ru/')"><div class="icon" style="color:#7360f2; border-color:#7360f2;">🟣</div><div class="txt">VIBE</div></div>
-            <div class="btn" onclick="nav('https://web.whatsapp.com')"><div class="icon">💬</div><div class="txt">WA</div></div>
-            <div class="btn" onclick="nav('https://mail.google.com')"><div class="icon">✉️</div><div class="txt">MAIL</div></div>
+        <div class="grid-container">
             
-            <div class="btn" onclick="nav('https://www.tiktok.com')"><div class="icon" style="border-color:#ff0055;">🎵</div><div class="txt">TIK</div></div>
-            <div class="btn" onclick="nav('https://www.instagram.com')"><div class="icon">📸</div><div class="txt">INST</div></div>
-            <div class="btn" onclick="nav('https://www.youtube.com')"><div class="icon">🎬</div><div class="txt">YT</div></div>
-            <div class="btn" onclick="nav('https://www.netflix.com')"><div class="icon">🍿</div><div class="txt">NET</div></div>
+            <div class="section-title">Communication</div>
+            <div class="grid">
+                <div class="btn" onclick="nav('tg://')"><div class="icon">✈️</div><div class="txt">TG</div></div>
+                <div class="btn" onclick="nav('viber://')"><div class="icon">🟣</div><div class="txt">VIBE</div></div>
+                <div class="btn" onclick="nav('whatsapp://')"><div class="icon">💬</div><div class="txt">WA</div></div>
+                <div class="btn" onclick="nav('fb://')"><div class="icon">👥</div><div class="txt">FB</div></div>
+            </div>
 
-            <div class="btn" onclick="nav('https://www.microsoft365.com')"><div class="icon" style="color:#eb3c00; border-color:#eb3c00;">📑</div><div class="txt">OFFICE</div></div>
-            <div class="btn" onclick="nav('https://chatgpt.com')"><div class="icon">🤖</div><div class="txt">AI</div></div>
-            <div class="btn" onclick="nav('https://github.com')"><div class="icon">💻</div><div class="txt">GIT</div></div>
-            <div class="btn" onclick="nav('https://www.google.com/maps')"><div class="icon">📍</div><div class="txt">MAP</div></div>
+            <div class="section-title">Finance & Crypto</div>
+            <div class="grid">
+                <div class="btn" onclick="nav('https://binance.com')"><div class="icon" style="color:yellow;">🔶</div><div class="txt">BNB</div></div>
+                <div class="btn" onclick="nav('https://revolut.com')"><div class="icon">💳</div><div class="txt">REVO</div></div>
+                <div class="btn" onclick="nav('https://metamask.io')"><div class="icon">🦊</div><div class="txt">META</div></div>
+                <div class="btn" onclick="nav('https://okx.com')"><div class="icon">⬛</div><div class="txt">OKX</div></div>
+            </div>
 
-            <div class="btn" onclick="nav('https://www.google.com')"><div class="icon">🌐</div><div class="txt">WEB</div></div>
-            <div class="btn" onclick="nav('https://music.youtube.com')"><div class="icon">🎧</div><div class="txt">BEATS</div></div>
-            <div class="btn" onclick="nav('https://poki.com')"><div class="icon">🎮</div><div class="txt">PLAY</div></div>
-            <div class="btn" onclick="nav('https://soundcloud.com')"><div class="icon">☁️</div><div class="txt">SOUND</div></div>
+            <div class="section-title">Automotive OBD</div>
+            <div class="grid">
+                <div class="btn" onclick="alert('Scan: Car Scanner')"><div class="icon" style="border-color:orange;">🚗</div><div class="txt">SCAN</div></div>
+                <div class="btn" onclick="alert('Scan: Infocar')"><div class="icon">📊</div><div class="txt">INFO</div></div>
+                <div class="btn" onclick="alert('Scan: OBD Doctor')"><div class="icon">🩺</div><div class="txt">DOCT</div></div>
+                <div class="btn" onclick="alert('Scan: Torque')"><div class="icon">⚙️</div><div class="txt">TRQ</div></div>
+            </div>
+
+            <div class="section-title">Intelligence & Work</div>
+            <div class="grid">
+                <div class="btn" onclick="nav('https://chatgpt.com')"><div class="icon">🧠</div><div class="txt">GPT</div></div>
+                <div class="btn" onclick="nav('https://gemini.google.com')"><div class="icon" style="color:#4285f4;">✨</div><div class="txt">GEMINI</div></div>
+                <div class="btn" onclick="nav('https://github.com')"><div class="icon">🐙</div><div class="txt">GIT</div></div>
+                <div class="btn" onclick="nav('https://kwork.ru')"><div class="icon">💼</div><div class="txt">KWORK</div></div>
+            </div>
+
+            <div class="section-title">Media & Entertainment</div>
+            <div class="grid">
+                <div class="btn" onclick="nav('https://youtube.com')"><div class="icon" style="color:red;">🎬</div><div class="txt">YT</div></div>
+                <div class="btn" onclick="nav('https://spotify.com')"><div class="icon" style="color:#1ed760;">🎧</div><div class="txt">SPOT</div></div>
+                <div class="btn" onclick="nav('https://tiktok.com')"><div class="icon">🎵</div><div class="txt">TIK</div></div>
+                <div class="btn" onclick="nav('https://soundcloud.com')"><div class="icon" style="color:#ff5500;">☁️</div><div class="txt">SOUND</div></div>
+            </div>
+
+            <div class="section-title">Local Tools</div>
+            <div class="grid">
+                <div class="btn" onclick="nav('https://999.md')"><div class="icon">📦</div><div class="txt">999.md</div></div>
+                <div class="btn" onclick="nav('https://maps.google.com')"><div class="icon">📍</div><div class="txt">MAPS</div></div>
+                <div class="btn" onclick="nav('https://translate.google.com')"><div class="icon">🌍</div><div class="txt">TRANSL</div></div>
+                <div class="btn" onclick="nav('https://weather.com')"><div class="icon">☁️</div><div class="txt">METEO</div></div>
+            </div>
+
         </div>
 
-        <div style="font-size: 7px; opacity: 0.3; padding: 5px;">VOX GENESIS // HYPER_LINK_OS // 2026</div>
+        <div style="font-size: 7px; opacity: 0.3; padding: 10px; text-align: center;">VOX GENESIS // HYPER_LINK_OS // 2026</div>
     </div>
 
     <script>
+        // Разблокировка по Enter
+        document.getElementById('pin').addEventListener('keypress', (e) => { if (e.key === 'Enter') boot(); });
+
         function boot() {
             if(document.getElementById('pin').value === '777') {
                 document.getElementById('lock').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
-                talk("Система Vox Genesis активирована. Все порталы открыты.");
+                talk("Доступ разрешен. Vox Genesis в вашем распоряжении.");
+            } else {
+                alert("ACCESS DENIED");
             }
         }
 
