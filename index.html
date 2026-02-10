@@ -3,44 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOX GENESIS TITANIUM</title>
+    <title>VOX GENESIS ZERO-G</title>
     <style>
-        :root { --n: #00f2ff; --sc: #ff5500; }
-        body, html { width: 100%; height: 100%; background: #000; color: var(--n); font-family: 'monospace'; margin: 0; overflow: hidden; }
-        #container { height: 100vh; display: flex; flex-direction: column; padding: 15px; justify-content: space-around; text-align: center; }
-        .vox-main { width: 85px; height: 85px; margin: 0 auto; border: 2px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--n); cursor: pointer; }
-        .vox-pulse { width: 35px; height: 35px; background: var(--n); border-radius: 50%; animation: pulse 1.2s infinite; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .unit { cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
-        .unit:active { transform: scale(0.9); }
-        .icon { width: 60px; height: 60px; border: 1px solid var(--n); display: flex; align-items: center; justify-content: center; font-size: 25px; background: rgba(0,242,255,0.05); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
-        .label { font-size: 7px; margin-top: 5px; letter-spacing: 1px; text-transform: uppercase; }
+        :root { --n: #00f2ff; --bg: #000; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        body, html { width: 100%; height: 100%; background: #000; color: var(--n); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
+        #container { height: 100vh; display: flex; flex-direction: column; padding: 20px; justify-content: space-around; align-items: center; }
+
+        /* Голосовое Ядро */
+        .core { width: 90px; height: 90px; border: 2px solid var(--n); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,242,255,0.3); }
+        .dot { width: 35px; height: 35px; background: var(--n); border-radius: 50%; animation: p 1.5s infinite; }
+        @keyframes p { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
+
+        /* Поисковая консоль */
+        .search-bar { width: 100%; max-width: 300px; position: relative; }
+        #s-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--n); padding: 12px; color: var(--n); font-family: 'Courier New'; font-size: 14px; text-align: center; border-radius: 5px; }
+
+        /* Сетка Порталов */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; }
+        .btn { cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--n); }
+        .icon { width: 60px; height: 60px; border: 1px solid var(--n); display: flex; align-items: center; justify-content: center; font-size: 28px; background: rgba(0,242,255,0.05); border-radius: 15px; }
+        .txt { font-size: 8px; margin-top: 8px; letter-spacing: 1px; font-weight: bold; }
+
         #lock { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        input { background: none; border: none; border-bottom: 2px solid var(--n); color: var(--n); font-size: 30px; text-align: center; width: 130px; margin-bottom: 20px; outline: none; }
-        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.4; } }
+        input[type="password"] { background: none; border: none; border-bottom: 2px solid var(--n); color: var(--n); font-size: 40px; text-align: center; width: 150px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div id="lock">
-        <div style="font-size: 10px; margin-bottom: 15px;">VOX_GENESIS_AUTH</div>
+        <div style="font-size: 10px; margin-bottom: 20px; letter-spacing: 5px;">VOX_GATE_777</div>
         <input type="password" id="pin" maxlength="3">
-        <button onclick="boot()" style="background:none; border:1px solid var(--n); color:var(--n); padding:10px 40px; cursor:pointer;">CONNECT</button>
+        <button onclick="boot()" style="background:none; border:1px solid var(--n); color:var(--n); padding:10px 40px; cursor:pointer; letter-spacing:3px;">OPEN</button>
     </div>
 
     <div id="container" style="display:none;">
-        <div class="vox-main" onclick="startVox()">
-            <div class="vox-pulse"></div>
+        <div class="core" onclick="startVox()">
+            <div class="dot" id="v-dot"></div>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="s-input" placeholder="[ ВВЕДИТЕ ЗАПРОС ]" onkeydown="if(event.key==='Enter') goSearch(this.value)">
         </div>
 
         <div class="grid">
-            <div class="unit" onclick="run('com.android.vending')"><div class="icon">💎</div><div class="label">PLAY STORE</div></div>
-            <div class="unit" onclick="run('com.google.android.googlequicksearchbox')"><div class="icon">🔍</div><div class="label">GOOGLE</div></div>
-            <div class="unit" onclick="run('com.xiaomi.mipicks')"><div class="icon">🎮</div><div class="label">GAMES</div></div>
-            <div class="unit" onclick="run('com.google.android.apps.meetings')"><div class="icon">👥</div><div class="label">MEET</div></div>
-            <div class="unit" onclick="run('com.miui.videoplayer')"><div class="icon">🎬</div><div class="label">FILMS</div></div>
-            <div class="unit" onclick="run('com.soundcloud.android')"><div class="icon" style="color:#ff5500; border-color:#ff5500;">☁️</div><div class="label" style="color:#ff5500;">SOUNDCLOUD</div></div>
+            <div class="btn" onclick="nav('https://play.google.com')"><div class="icon">💎</div><div class="txt">MARKET</div></div>
+            <div class="btn" onclick="nav('https://www.google.com')"><div class="icon">🌐</div><div class="txt">GOOGLE</div></div>
+            <div class="btn" onclick="nav('https://www.google.com/search?q=arcade+games')"><div class="icon">🎮</div><div class="txt">ARCADE</div></div>
+            <div class="btn" onclick="nav('https://meet.google.com')"><div class="icon">👥</div><div class="txt">MEET</div></div>
+            <div class="btn" onclick="nav('https://www.youtube.com')"><div class="icon">🎬</div><div class="txt">YOUTUBE</div></div>
+            <div class="btn" onclick="nav('https://soundcloud.com')"><div class="icon" style="color:#ff5500; border-color:#ff5500;">☁️</div><div class="txt" style="color:#ff5500;">SOUND</div></div>
         </div>
-        <div style="font-size: 8px; opacity: 0.3;">VOX TITANIUM // ADMIN MODE</div>
+
+        <div style="font-size: 7px; opacity: 0.4;">VOX GENESIS // ZERO-G // NO_ERRORS_MODE</div>
     </div>
 
     <script>
@@ -48,25 +62,31 @@
             if(document.getElementById('pin').value === '777') {
                 document.getElementById('lock').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
-                speak("Админ, Vox Genesis v13 активирован. Все системы в норме.");
+                talk("Система обнулена. Прямой доступ к порталам открыт.");
             }
         }
-        function run(pkg) {
-            window.location.href = `intent://scan/#Intent;scheme=android-app;package=${pkg};end`;
+
+        function nav(url) {
+            window.location.href = url;
         }
+
+        function goSearch(q) {
+            if(q) window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+        }
+
         function startVox() {
             const r = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             r.lang = 'ru-RU';
+            r.onstart = () => { document.getElementById('v-dot').style.background = '#ff0055'; };
             r.onresult = (e) => {
-                const cmd = e.results[0][0].transcript.toLowerCase();
-                if(cmd.includes("музык")) run('com.soundcloud.android');
-                else if(cmd.includes("поиск")) run('com.google.android.googlequicksearchbox');
-                else if(cmd.includes("маркет")) run('com.android.vending');
-                else speak("Команда принята.");
+                const cmd = e.results[0][0].transcript;
+                document.getElementById('s-input').value = cmd;
+                goSearch(cmd);
             };
             r.start();
         }
-        function speak(t) {
+
+        function talk(t) {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(t);
             u.lang = 'ru-RU'; u.pitch = 0.5;
